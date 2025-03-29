@@ -1,6 +1,5 @@
 .main img {
-  max-width: 80%;
-  max-height: 80%;
+  max-width: 70%;
 }
 :root {
   --body-bg-color: #eee;
@@ -1179,7 +1178,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #585df7;
+  background: #998acc;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
