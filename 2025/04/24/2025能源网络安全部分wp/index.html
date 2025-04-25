@@ -28,7 +28,7 @@
 <meta property="og:description" content="本次介绍的是社会组的一些简单题目，主要针对密码方向">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-04-24T15:19:25.000Z">
-<meta property="article:modified_time" content="2025-04-25T10:30:16.577Z">
+<meta property="article:modified_time" content="2025-04-25T11:05:21.679Z">
 <meta property="article:author" content="zh1yu">
 <meta property="article:tag" content="比赛wp">
 <meta name="twitter:card" content="summary">
@@ -191,7 +191,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-04-25 18:30:16" itemprop="dateModified" datetime="2025-04-25T18:30:16+08:00">2025-04-25</time>
+                <time title="修改时间：2025-04-25 19:05:21" itemprop="dateModified" datetime="2025-04-25T19:05:21+08:00">2025-04-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -216,12 +216,19 @@
       
         <p> <em>本次介绍的是社会组的一些简单题目，主要针对密码方向</em></p>
 <span id="more"></span>
-
 <h2 id="crypto"><a href="#crypto" class="headerlink" title="crypto"></a>crypto</h2><h3 id="NumberTheory"><a href="#NumberTheory" class="headerlink" title="NumberTheory"></a>NumberTheory</h3><p>题目源码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> hint</span><br><span class="line"></span><br><span class="line">flag=<span class="string">b&#x27;xxx&#x27;</span></span><br><span class="line">e=<span class="number">65537</span></span><br><span class="line">p=getPrime(<span class="number">512</span>)</span><br><span class="line">q=getPrime(<span class="number">512</span>)</span><br><span class="line">n=p*q</span><br><span class="line">m=bytes_to_long(flag)</span><br><span class="line">c=<span class="built_in">pow</span>(m,e,n)</span><br><span class="line">k=getPrime(<span class="number">1024</span>)</span><br><span class="line"><span class="keyword">assert</span> hint + <span class="number">233</span> * k == <span class="number">233</span> * k * p</span><br><span class="line"><span class="built_in">print</span>(n)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"><span class="built_in">print</span>(hint)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 84099006955126261966925371456202769943592466221370095794235167154956697927281125181449320270460637820908574232493978429962263974458426503598700104493216727535451616752760724333653967152401716945549285008242019874215196489846481143398374860288545040874468108191037481101604627874268575884573685952474988256841</span></span><br><span class="line"><span class="comment"># 28098063654079651384124474197746356824080585622155888018279898490747561415908220072536298610509681898119018709183606442183944207485940115624047842734359988590155403601250406116023121958193303908964857108526965815235457652033182982467968474248778435731228104089366239566977364311197776651102290796373095167764</span></span><br><span class="line"><span class="comment"># 411245630228311610573345621334618725748702407327926883063919892785851166202383809662483938501531987094884084543300939673794551515912845363503988032311234800260819110323258416786417746444373651130257247926678135654564298408894174083333804257126735899220917359603430399033328133462456659839525671074605146583034398735379485362144932899212206419889556154825755723979850750847762362288223441051219637465296077020565435562941976546609555729574021362954126496825972439730</span></span><br></pre></td></tr></table></figure>
-
 <p><strong>思路分析：</strong></p>
-<p>由 hint + 233 * k &#x3D;&#x3D; 233 * k * p 可以推出 hint&#x3D; 233 * k * (p-1)，根据费马小定理：a^{p-1} \equiv 1 \pmod{p}, \quad \text{其中 } p \text{ 是素数且 } \gcd(a, p) &#x3D; 1.</p>
+<p>由 hint + 233 <em> k == 233 </em> k <em> p 可以推出 hint= 233 </em> k * (p-1)，根据费马小定理：</p>
+<script type="math/tex; mode=display">
+a^{p-1} \equiv 1 \pmod{p}, \quad \text{其中 } p \text{ 是素数且 } \gcd(a, p) = 1.</script><script type="math/tex; mode=display">
+a^{k(p-1)} \equiv 1 \pmod{p}</script><script type="math/tex; mode=display">
+gcd(a^{k(p-1)}-1,n)=p</script><p>但是有一个难题，即使我们令a=2(最小的素数，一般推荐令a=3或者5)，在python中仍然不容易算出<script type="math/tex">a^{k(p-1)}-1</script>，更没法与n求公因子了</p>
+<p>所以我们这里先<script type="math/tex">t \equiv 2^{k(p-1)} \pmod{n}</script>，以此来降低指数<script type="math/tex">k(p-1)</script>里面的k的大小，从而求t-1与n的公因子，即如下：</p>
+<script type="math/tex; mode=display">
+t \equiv 2^{k(p-1)} \pmod{n}\\
+p=gcd(t-1,n)</script><p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> gmpy2 <span class="keyword">import</span> gcd</span><br><span class="line"></span><br><span class="line">n = <span class="number">105531804094410236294687082475828411218788143973352026416392542762437103918840861241726193253936370648195682452618343195471719649394086997793137653518966739212122830015579955183805636213883066694989610003565432493653164047938048521354525623612253955387430773546124647105772639376194421783783651686606080214099</span></span><br><span class="line">c = <span class="number">6838127295540107402282470465780599628759317234806902778570348919850980664834107227012249617036087381075344016550381137159643512672239826438903241091658619314078921936719784123522758604349399440232971511649918093228288847534685526358191804172060250409498531941883162873696671060909325234109062997554795436940</span></span><br><span class="line">hint = <span class="number">225457129615945961139095949356083106510992163176770860368085043522677811094793442173512565115313130227614423196268240217775831118417780318014842280209747426271227826513967791945116378179885000662888744992914390207196310600996050316737090999399962338133222370745589250853315876818226312453376340282748842779666176953455553054310328901299083159029050169950812885486884682347263045764918907196922313892044095742248895091717187372068779768743879411865275203496650858608</span></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line"></span><br><span class="line">t = <span class="built_in">pow</span>(<span class="number">3</span>, hint // <span class="number">233</span>, n)</span><br><span class="line">p = gcd(t - <span class="number">1</span>, n)</span><br><span class="line">q = n // p</span><br><span class="line">phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">d = inverse(e, phi)</span><br><span class="line">m = <span class="built_in">pow</span>(c, d, n)</span><br><span class="line"><span class="built_in">print</span>(long_to_bytes(m))</span><br><span class="line"></span><br><span class="line"><span class="comment"># flag&#123;158f26cca09e89b08cbd234c1f9c98c0&#125;</span></span><br></pre></td></tr></table></figure>
 <h3 id="easy-lwe"><a href="#easy-lwe" class="headerlink" title="easy_lwe"></a>ea<strong>s</strong>y_lwe</h3>
     </div>
 
@@ -431,6 +438,61 @@
 
 
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
