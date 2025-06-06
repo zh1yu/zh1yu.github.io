@@ -1,4 +1,3 @@
-/*样式一*/
 (function ($) {
     $.fn.snow = function (options) {
         var $flake = $('<div id="snowbox" />').css({
