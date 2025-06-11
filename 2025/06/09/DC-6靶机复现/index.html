@@ -57,7 +57,7 @@
 <meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/27.png">
 <meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/28.png">
 <meta property="article:published_time" content="2025-06-09T10:47:18.000Z">
-<meta property="article:modified_time" content="2025-06-11T15:10:36.910Z">
+<meta property="article:modified_time" content="2025-06-11T15:12:57.702Z">
 <meta property="article:author" content="zh1yu">
 <meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
@@ -221,7 +221,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-11 23:10:36" itemprop="dateModified" datetime="2025-06-11T23:10:36+08:00">2025-06-11</time>
+                <time title="修改时间：2025-06-11 23:12:57" itemprop="dateModified" datetime="2025-06-11T23:12:57+08:00">2025-06-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -325,7 +325,8 @@
 <p>这里失败了，因为必须以jens用户执行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
 <p><img src="25.png" alt="图片"></p>
-<p>成功切换到jens用户，查看其可以执行的命令</p>
+<p>成功切换到jens用户</p>
+<h2 id="nmap提权"><a href="#nmap提权" class="headerlink" title="nmap提权"></a>nmap提权</h2><p>查看其可以执行的命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br></pre></td></tr></table></figure>
 <p><img src="26.png" alt="图片"></p>
 <p>有namp命令，尝试提权，我们可以写一个nse脚本，脚本中写入打开一个新的shell，那我们就可以以root用户的身份切换到该shell中</p>
@@ -438,7 +439,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">命令注入</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">命令注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap%E6%8F%90%E6%9D%83"><span class="nav-number">3.</span> <span class="nav-text">nmap提权</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
