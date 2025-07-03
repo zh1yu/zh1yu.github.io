@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="信息收集（Information Gathering）是网络安全、渗透测试、威胁情报分析等领域的关键步骤，也是企业风险管理、竞争情报分析等场景中的重要环节。它的核心目的是全面了解目标，为后续决策或行动提供数据支持。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息收集">
+<meta property="og:url" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="信息收集（Information Gathering）是网络安全、渗透测试、威胁情报分析等领域的关键步骤，也是企业风险管理、竞争情报分析等场景中的重要环节。它的核心目的是全面了解目标，为后续决策或行动提供数据支持。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/11.png">
+<meta property="article:published_time" content="2025-07-02T08:57:46.000Z">
+<meta property="article:modified_time" content="2025-07-03T02:00:52.708Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="信息收集">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/3.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>信息收集 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          信息收集
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-07-02 16:57:46" itemprop="dateCreated datePublished" datetime="2025-07-02T16:57:46+08:00">2025-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-07-03 10:00:52" itemprop="dateModified" datetime="2025-07-03T10:00:52+08:00">2025-07-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>信息收集（Information Gathering）</strong>是网络安全、渗透测试、威胁情报分析等领域的关键步骤，也是企业风险管理、竞争情报分析等场景中的重要环节。它的核心目的是<strong>全面了解目标，为后续决策或行动提供数据支持</strong>。</p>
+<span id="more"></span>
+<h2 id="资产信息收集"><a href="#资产信息收集" class="headerlink" title="资产信息收集"></a>资产信息收集</h2><h3 id="主域名资产收集"><a href="#主域名资产收集" class="headerlink" title="主域名资产收集"></a>主域名资产收集</h3><h4 id="ICP备案查询"><a href="#ICP备案查询" class="headerlink" title="ICP备案查询"></a>ICP备案查询</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>工信部备案</td>
+<td><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">https://beian.miit.gov.cn/#/Integrated/index</a></td>
+</tr>
+<tr>
+<td>ICP备案查询-站长之家</td>
+<td><a target="_blank" rel="noopener" href="http://icp.chinaz.com/">http://icp.chinaz.com/</a></td>
+</tr>
+<tr>
+<td>公安备案</td>
+<td><a target="_blank" rel="noopener" href="https://www.beian.gov.cn/portal/registerSystemInfo">https://www.beian.gov.cn/portal/registerSystemInfo</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="Whois查询"><a href="#Whois查询" class="headerlink" title="Whois查询"></a>Whois查询</h4><p>通过whois查询可以获得域名注册者邮箱地址等信息。一般情况下对于中小型网站，域名注册者就是网站管理员。利用搜索引擎对whois查询到的信息进行搜索，获取更多域名注册者的个人信息。通过whois查询获取IP、法人的名字、电话、邮箱、地址等信息对社工攻击具有很大的作用。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>站长之家</td>
+<td><a target="_blank" rel="noopener" href="https://whois.chinaz.com/">https://whois.chinaz.com/</a></td>
+</tr>
+<tr>
+<td>全球whois</td>
+<td><a target="_blank" rel="noopener" href="https://www.whois.com/whois/">https://www.whois.com/whois/</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="子域名资产收集"><a href="#子域名资产收集" class="headerlink" title="子域名资产收集"></a>子域名资产收集</h3><h4 id="子域名爆破工具"><a href="#子域名爆破工具" class="headerlink" title="子域名爆破工具"></a>子域名爆破工具</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>layer子域名挖掘机</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/euphrat1ca/LayerDomainFinder">https://github.com/euphrat1ca/LayerDomainFinder</a></td>
+</tr>
+<tr>
+<td>OneforAll</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/shmilylty/OneForAll">https://github.com/shmilylty/OneForAll</a></td>
+</tr>
+<tr>
+<td>subfinder</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/projectdiscovery/subfinder">https://github.com/projectdiscovery/subfinder</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="SSL-TLS证书查询"><a href="#SSL-TLS证书查询" class="headerlink" title="SSL/TLS证书查询"></a>SSL/TLS证书查询</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>crt.sh</td>
+<td><a target="_blank" rel="noopener" href="https://crt.sh/">https://crt.sh/</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="子域名的信息泄露包括JS文件泄露、网络爬虫等"><a href="#子域名的信息泄露包括JS文件泄露、网络爬虫等" class="headerlink" title="子域名的信息泄露包括JS文件泄露、网络爬虫等"></a>子域名的信息泄露包括JS文件泄露、网络爬虫等</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSFinder是一款用作快速在网站的js文件中提取URL，子域名的工具。</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Threezh1/JSFinder">https://github.com/Threezh1/JSFinder</a></td>
+</tr>
+<tr>
+<td>FindSomething</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/momosecurity/FindSomething">https://github.com/momosecurity/FindSomething</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="旁站和C段扫描"><a href="#旁站和C段扫描" class="headerlink" title="旁站和C段扫描"></a>旁站和C段扫描</h3><p>旁站指的是同一服务器上的其他网站，很多时候，有些网站可能不是那么容易入侵。那么，可以查看该网站所在的服务器上是否还有其他网站。如果有其他网站的话，可以先拿下其他网站的webshell，然后再<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=提权&amp;spm=1001.2101.3001.7020">提权</a>拿到服务器的权限，最后就自然可以拿下该网站了！</p>
+<p>C段指的是同一<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=内网&amp;spm=1001.2101.3001.7020">内网</a>段内的其他服务器，每个IP有ABCD四个段，举个例子，192.168.0.1，A段就是192，B段是168，C段是0，D段是1，而C段嗅探的意思就是拿下它同一C段中的其中一台服务器，也就是说是D段1-255中的一台服务器，然后利用工具嗅探拿下该服务器。</p>
+<h4 id="绕过CDN寻找真实IP"><a href="#绕过CDN寻找真实IP" class="headerlink" title="绕过CDN寻找真实IP"></a>绕过CDN寻找真实IP</h4><p>CDN (内容分发网络) 指的是一组分布在各个地区的<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=服务器&amp;spm=1001.2101.3001.7020">服务器</a>。这些服务器存储着数据的副本，因此服务器可以根据哪些服务器与用户距离最近，来满足数据的请求。CDN 提供快速服务，较少受高流量影响。<br>  通俗来讲，CDN就是用来加速访问的。例如百度引擎，全国几亿人每天都在时不时使用百度进行内容搜索，如果只靠自身的服务器是很难支撑的，这个时候百度就使用了CDN技术，在全国各处设置CDN节点，当用户使用百度引擎时，其实就是在使用离用户最近的百度CDN节点来搜索内容。</p>
+<p>1.使用各种多地 ping 的服务，查看对应 IP 地址是否唯一，如果不唯一大概是使用了CDN</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>站长之家</td>
+<td><a target="_blank" rel="noopener" href="http://ping.chinaz.com/">http://ping.chinaz.com/</a></td>
+</tr>
+<tr>
+<td>爱站</td>
+<td><a target="_blank" rel="noopener" href="http://ping.aizhan.com/">http://ping.aizhan.com/</a></td>
+</tr>
+<tr>
+<td>ipip</td>
+<td><a target="_blank" rel="noopener" href="https://tools.ipip.net/ping.php">https://tools.ipip.net/ping.php</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>2.使用 nslookup 进行检测，原理同上，如果返回域名解析对应多个 IP 地址多半是使用了 CDN</p>
+<p>3.毕竟 CDN 还是不便宜的，所以很多站长可能只会对主站或者流量大的子站点做了 CDN，而很多小站子站点又跟主站在同一台服务器或者同一个C段内，此时就可以通过查询子域名对应的 IP 来辅助查找网站的真实IP。</p>
+<h4 id="旁站"><a href="#旁站" class="headerlink" title="旁站"></a>旁站</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>在线工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://c.webscan.cc/">https://c.webscan.cc/</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.webscan.cc/">https://www.webscan.cc/</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://chapangzhan.com/">https://chapangzhan.com/</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="c段"><a href="#c段" class="headerlink" title="c段"></a>c段</h4><p>1.<strong>网络空间搜索引擎（fofa）</strong></p>
+<p><img src="3.png" alt="图片"></p>
+<p>2.<a target="_blank" rel="noopener" href="https://c.webscan.cc/">https://c.webscan.cc/</a></p>
+<h2 id="网站指纹识别"><a href="#网站指纹识别" class="headerlink" title="网站指纹识别"></a>网站指纹识别</h2><h3 id="网站指纹识别-1"><a href="#网站指纹识别-1" class="headerlink" title="网站指纹识别"></a>网站指纹识别</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>潮汐</td>
+<td><a target="_blank" rel="noopener" href="http://sso.tidesec.com/">http://sso.tidesec.com/</a></td>
+</tr>
+<tr>
+<td>whatweb</td>
+<td><a target="_blank" rel="noopener" href="http://whatweb.bugscaner.com/look/">http://whatweb.bugscaner.com/look/</a></td>
+</tr>
+<tr>
+<td>github查找</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/search?q=cms识别">https://github.com/search?q=cms识别</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="网站waf识别"><a href="#网站waf识别" class="headerlink" title="网站waf识别"></a>网站waf识别</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>wafw00f</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/EnableSecurity/wafw00f">https://github.com/EnableSecurity/wafw00f</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="敏感信息收集"><a href="#敏感信息收集" class="headerlink" title="敏感信息收集"></a>敏感信息收集</h2><h3 id="网站漏洞扫描"><a href="#网站漏洞扫描" class="headerlink" title="网站漏洞扫描"></a>网站漏洞扫描</h3><p>网站漏洞扫描，各种扫描器，如：nessus，极光，xray，AWVS，goby，AppScan</p>
+<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><p>目录扫描，主要扫描敏感信息、隐藏的目录和api、代码仓库、备份文件等。工具有：各种御剑，dirmap，Dirsearch，dirbuster，7kbstorm，gobuster等等。</p>
+<h3 id="JS信息收集"><a href="#JS信息收集" class="headerlink" title="JS信息收集"></a>JS信息收集</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jsfinder</td>
+<td><a target="_blank" rel="noopener" href="https://gitee.com/kn1fes/JSFinder">https://gitee.com/kn1fes/JSFinder</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="框架识别"><a href="#框架识别" class="headerlink" title="框架识别"></a>框架识别</h2><h3 id="常用php框架识别"><a href="#常用php框架识别" class="headerlink" title="常用php框架识别"></a>常用php框架识别</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">thinkphp框架识别方法</th>
+<th style="text-align:center">Laravel框架识别方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Wappalyzer插件</td>
+<td style="text-align:center">Wappalyzer插件</td>
+</tr>
+<tr>
+<td style="text-align:center">ico图标</td>
+<td style="text-align:center">header头部：Set-Cookie特征</td>
+</tr>
+<tr>
+<td style="text-align:center">header返回头部</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">报错信息</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">源码</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="4.png" alt="图片"><img src="5.png" alt="图片"><img src="6.png" alt="图片"><img src="7.png" alt="图片"></p>
+<h3 id="常用Java框架识别"><a href="#常用Java框架识别" class="headerlink" title="常用Java框架识别"></a>常用Java框架识别</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">方法</th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">shiro框架</td>
+<td style="text-align:center">请求包中cookie中：rememberMe字段</td>
+<td style="text-align:center">返回包中：rememberMe=deleteMe</td>
+</tr>
+<tr>
+<td style="text-align:center">strust2框架</td>
+<td style="text-align:center">一般url中看到：.do或.action结尾，大概率是struts2框架</td>
+<td style="text-align:center">常见的404，500等报错页面</td>
+</tr>
+<tr>
+<td style="text-align:center">spring,springboot框架</td>
+<td style="text-align:center">小绿叶默认图标</td>
+<td style="text-align:center">常见的404，500等报错页面</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>shiro框架</p>
+<p><img src="8.png" alt="图片"></p>
+<p>strust2框架</p>
+<p><img src="9.png" alt="图片"></p>
+<p>springboot框架</p>
+<p><img src="10.png" alt="图片"><img src="11.png" alt="图片"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" title="信息收集">http://zh1yu.xyz/2025/07/02/信息收集/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="tag"># 信息收集</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/01/dvwa%E4%B9%8Bxss/" rel="prev" title="dvwa&pikachu之xss">
+      <i class="fa fa-chevron-left"></i> dvwa&pikachu之xss
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E4%BA%A7%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">资产信息收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%9F%9F%E5%90%8D%E8%B5%84%E4%BA%A7%E6%94%B6%E9%9B%86"><span class="nav-number">1.1.</span> <span class="nav-text">主域名资产收集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ICP%E5%A4%87%E6%A1%88%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.1.</span> <span class="nav-text">ICP备案查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Whois%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.2.</span> <span class="nav-text">Whois查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E5%9F%9F%E5%90%8D%E8%B5%84%E4%BA%A7%E6%94%B6%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">子域名资产收集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E5%9F%9F%E5%90%8D%E7%88%86%E7%A0%B4%E5%B7%A5%E5%85%B7"><span class="nav-number">1.2.1.</span> <span class="nav-text">子域名爆破工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSL-TLS%E8%AF%81%E4%B9%A6%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.2.</span> <span class="nav-text">SSL&#x2F;TLS证书查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%90%E5%9F%9F%E5%90%8D%E7%9A%84%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E5%8C%85%E6%8B%ACJS%E6%96%87%E4%BB%B6%E6%B3%84%E9%9C%B2%E3%80%81%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E7%AD%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">子域名的信息泄露包括JS文件泄露、网络爬虫等</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%81%E7%AB%99%E5%92%8CC%E6%AE%B5%E6%89%AB%E6%8F%8F"><span class="nav-number">1.3.</span> <span class="nav-text">旁站和C段扫描</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%95%E8%BF%87CDN%E5%AF%BB%E6%89%BE%E7%9C%9F%E5%AE%9EIP"><span class="nav-number">1.3.1.</span> <span class="nav-text">绕过CDN寻找真实IP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%81%E7%AB%99"><span class="nav-number">1.3.2.</span> <span class="nav-text">旁站</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c%E6%AE%B5"><span class="nav-number">1.3.3.</span> <span class="nav-text">c段</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%AB%99%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">网站指纹识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%AB%99%E6%8C%87%E7%BA%B9%E8%AF%86%E5%88%AB-1"><span class="nav-number">2.1.</span> <span class="nav-text">网站指纹识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%AB%99waf%E8%AF%86%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">网站waf识别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">3.</span> <span class="nav-text">敏感信息收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%AB%99%E6%BC%8F%E6%B4%9E%E6%89%AB%E6%8F%8F"><span class="nav-number">3.1.</span> <span class="nav-text">网站漏洞扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E6%89%AB%E6%8F%8F"><span class="nav-number">3.2.</span> <span class="nav-text">目录扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JS%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">3.3.</span> <span class="nav-text">JS信息收集</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E8%AF%86%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">框架识别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8php%E6%A1%86%E6%9E%B6%E8%AF%86%E5%88%AB"><span class="nav-number">4.1.</span> <span class="nav-text">常用php框架识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8Java%E6%A1%86%E6%9E%B6%E8%AF%86%E5%88%AB"><span class="nav-number">4.2.</span> <span class="nav-text">常用Java框架识别</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
