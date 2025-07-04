@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="继续来学习owasp top10之一的文件上传，使用的靶场是upload-labs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="upload-labs之文件上传">
+<meta property="og:url" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="继续来学习owasp top10之一的文件上传，使用的靶场是upload-labs">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/15.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/16.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/18.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/19.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/20.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/21.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/22.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/23.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/20.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/24.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/25.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/26.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/27.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/28.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/29.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/30.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/31.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/32.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/33.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/34.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/35.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/36.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/37.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/38.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/39.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/40.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/41.png">
+<meta property="article:published_time" content="2025-07-03T02:29:00.000Z">
+<meta property="article:modified_time" content="2025-07-04T09:31:26.046Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="文件上传">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/1.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>upload-labs之文件上传 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          upload-labs之文件上传
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-07-03 10:29:00" itemprop="dateCreated datePublished" datetime="2025-07-03T10:29:00+08:00">2025-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-07-04 17:31:26" itemprop="dateModified" datetime="2025-07-04T17:31:26+08:00">2025-07-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 继续来学习owasp top10之一的文件上传，使用的靶场是upload-labs</p>
+<span id="more"></span>
+<h2 id="pass-01（前端js绕过）"><a href="#pass-01（前端js绕过）" class="headerlink" title="pass-01（前端js绕过）"></a>pass-01（前端js绕过）</h2><p>直接右键查看源码：</p>
+<p>发现前端有js拦截，只允许上传<code>.jpg，.png和.gif</code>文件，不确定后端有没有校验，先尝试抓包绕过：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>把文件后缀改成png，点击上传：</p>
+<p><img src="2.png" alt="图片"></p>
+<p>修改后缀为php，然后放包</p>
+<p><img src="3.png" alt="图片"></p>
+<p>在后台可以看到一句话木马成功上传</p>
+<p><img src="4.png" alt="图片"></p>
+<p>但如果我们作为攻击者，我们是看不到后台的，我们需要在前端找到上传的路径：</p>
+<p><img src="5.png" alt="图片"></p>
+<p>发现上传的文件在上一级目录下upload下，然后蚁剑连接：</p>
+<p><img src="6.png" alt="图片"></p>
+<h2 id="pass-02（MIME绕过）"><a href="#pass-02（MIME绕过）" class="headerlink" title="pass-02（MIME绕过）"></a>pass-02（MIME绕过）</h2><p>常见MIME类型：</p>
+<blockquote>
+<p><code>text/plain</code> （纯文本）<br> <code>text/html</code> （HTML文档）<br> <code>text/javascript</code> （js代码）<br> <code>application/xhtml+xml</code> （XHTML文档）<br> <code>image/gif</code> （GIF图像）<br> <code>image/jpeg</code> （JPEG图像）<br> <code>image/png</code> （PNG图像）<br> <code>video/mpeg</code> （MPEG动画）<br> <code>application/octet-stream</code> （二进制数据）<br> <code>application/pdf</code> （PDF文档）</p>
+</blockquote>
+<p>绕过方法：</p>
+<p><strong>修改Content-Type头</strong>：</p>
+<ul>
+<li>将恶意文件(如PHP)的Content-Type改为无害类型(如image/jpeg)</li>
+<li>示例：<code>Content-Type: image/jpeg</code>（实际是PHP文件）</li>
+</ul>
+<p><strong>双扩展名绕过</strong>：</p>
+<ul>
+<li>例如：<code>malicious.php.jpg</code></li>
+<li><code>Content-Type: image/jpeg</code>，但删掉.jpg，就又变成了php文件</li>
+</ul>
+<p>这里直接上传php木马文件，会上传失败，观察前端源码并没有过滤，也就是后端进行了校验，那依旧是上传jpg后缀的木马，然后抓包把文件后缀名改成php；也可以上传muma.php.jpg，抓包的结果<code>Content-Type: image/jpeg</code>，所以只需要把.jpg给删掉即可，两个方法对应上面的<strong>修改Content-Type头</strong>和<strong>双扩展名绕过</strong>，但本质没什么区别</p>
+<p><img src="8.png" alt="图片"></p>
+<p><img src="7.png" alt="图片"></p>
+<p>看下后端源码：</p>
+<p><img src="9.png" alt="图片"></p>
+<p>getshell的方法同第一关</p>
+<h2 id="pass-03（黑名单绕过）"><a href="#pass-03（黑名单绕过）" class="headerlink" title="pass-03（黑名单绕过）"></a>pass-03（黑名单绕过）</h2><p>先尝试上传muma.php，提示：不允许上传.asp,.aspx,.php,.jsp后缀文件！原来有<strong>黑名单</strong>，我们如果继续按照前两关的方式，抓包修改文件后缀为php，Content-Type: image/jpeg依旧不行，因为后端专门检验你的文件后缀是不是php</p>
+<p><img src="10.png" alt="图片"></p>
+<p>虽然php被禁，但我们还可以尝试<code>php3</code>, <code>.php4</code>, <code>.php5</code>, <code>.php7</code>, <code>.php8</code>（旧版 PHP 遗留支持），<code>.phtml</code>（PHP + HTML 混合文件），<code>.phps</code>（PHP 源代码显示，但某些配置仍可执行）</p>
+<p><img src="11.png" alt="图片"></p>
+<p>根据返回信息可见这些都被上传成功了（除了php后缀，不是看状态码），但是其中存在未被解析的文件，我们只能根据响应数据包里的上传路径一个一个测试：如果说显示空白页面，那么就是被解析了，如果显示一句话木马，那就是没被解析，前提是我们需要在Apache的httpd.conf配置文件中设置<code>AddType application/x-httpd-php</code>，才可以解析<code>php3</code>, <code>.php4</code>, <code>.php5</code>, <code>.php7</code>, <code>.php8</code>，<code>.phtml</code>，<code>.phps</code></p>
+<p>因为我是高版本phpstudy，于是想手动添加该字段，但即便添加后，在web中访问该文件会将该文件下载（这挺让人懵逼的，按道理不应该是这样啊），未添加前，在web中访问该文件只是空白（但并未解析），两种共同点都是未被解析（因为我上传phpinfo内容依旧是空白），我看别的博主说要将php的版本改为ts（参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/mooyuan/article/details/147541272），但我的phpstudy里面没有ts版本，遂放弃。">https://blog.csdn.net/mooyuan/article/details/147541272），但我的phpstudy里面没有ts版本，遂放弃。</a></p>
+<p>不过本关的重点在于知道当php被后端校验时应该如何绕过：尝试上传<code>php3</code>, <code>.php4</code>, <code>.php5</code>, <code>.php7</code>, <code>.php8</code>，<code>.phtml</code>，<code>.phps</code></p>
+<h2 id="pass-04（黑名单，-htaccess绕过）"><a href="#pass-04（黑名单，-htaccess绕过）" class="headerlink" title="pass-04（黑名单，.htaccess绕过）"></a>pass-04（黑名单，.htaccess绕过）</h2><p>源码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$msg = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="title function_">isset</span>($_POST[<span class="string">&#x27;submit&#x27;</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">file_exists</span>(<span class="variable constant_">UPLOAD_PATH</span>)) &#123;</span><br><span class="line">        $deny_ext = <span class="title function_">array</span>(<span class="string">&quot;.php&quot;</span>,<span class="string">&quot;.php5&quot;</span>,<span class="string">&quot;.php4&quot;</span>,<span class="string">&quot;.php3&quot;</span>,<span class="string">&quot;.php2&quot;</span>,<span class="string">&quot;.php1&quot;</span>,<span class="string">&quot;.html&quot;</span>,<span class="string">&quot;.htm&quot;</span>,<span class="string">&quot;.phtml&quot;</span>,<span class="string">&quot;.pht&quot;</span>,<span class="string">&quot;.pHp&quot;</span>,<span class="string">&quot;.pHp5&quot;</span>,<span class="string">&quot;.pHp4&quot;</span>,<span class="string">&quot;.pHp3&quot;</span>,<span class="string">&quot;.pHp2&quot;</span>,<span class="string">&quot;.pHp1&quot;</span>,<span class="string">&quot;.Html&quot;</span>,<span class="string">&quot;.Htm&quot;</span>,<span class="string">&quot;.pHtml&quot;</span>,<span class="string">&quot;.jsp&quot;</span>,<span class="string">&quot;.jspa&quot;</span>,<span class="string">&quot;.jspx&quot;</span>,<span class="string">&quot;.jsw&quot;</span>,<span class="string">&quot;.jsv&quot;</span>,<span class="string">&quot;.jspf&quot;</span>,<span class="string">&quot;.jtml&quot;</span>,<span class="string">&quot;.jSp&quot;</span>,<span class="string">&quot;.jSpx&quot;</span>,<span class="string">&quot;.jSpa&quot;</span>,<span class="string">&quot;.jSw&quot;</span>,<span class="string">&quot;.jSv&quot;</span>,<span class="string">&quot;.jSpf&quot;</span>,<span class="string">&quot;.jHtml&quot;</span>,<span class="string">&quot;.asp&quot;</span>,<span class="string">&quot;.aspx&quot;</span>,<span class="string">&quot;.asa&quot;</span>,<span class="string">&quot;.asax&quot;</span>,<span class="string">&quot;.ascx&quot;</span>,<span class="string">&quot;.ashx&quot;</span>,<span class="string">&quot;.asmx&quot;</span>,<span class="string">&quot;.cer&quot;</span>,<span class="string">&quot;.aSp&quot;</span>,<span class="string">&quot;.aSpx&quot;</span>,<span class="string">&quot;.aSa&quot;</span>,<span class="string">&quot;.aSax&quot;</span>,<span class="string">&quot;.aScx&quot;</span>,<span class="string">&quot;.aShx&quot;</span>,<span class="string">&quot;.aSmx&quot;</span>,<span class="string">&quot;.cEr&quot;</span>,<span class="string">&quot;.sWf&quot;</span>,<span class="string">&quot;.swf&quot;</span>,<span class="string">&quot;.ini&quot;</span>);</span><br><span class="line">        $file_name = <span class="title function_">trim</span>($_FILES[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line">        $file_name = <span class="title function_">deldot</span>($file_name);<span class="comment">//删除文件名末尾的点</span></span><br><span class="line">        $file_ext = <span class="title function_">strrchr</span>($file_name, <span class="string">&#x27;.&#x27;</span>);</span><br><span class="line">        $file_ext = <span class="title function_">strtolower</span>($file_ext); <span class="comment">//转换为小写</span></span><br><span class="line">        $file_ext = <span class="title function_">str_ireplace</span>(<span class="string">&#x27;::$DATA&#x27;</span>, <span class="string">&#x27;&#x27;</span>, $file_ext);<span class="comment">//去除字符串::$DATA</span></span><br><span class="line">        $file_ext = <span class="title function_">trim</span>($file_ext); <span class="comment">//收尾去空</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_">in_array</span>($file_ext, $deny_ext)) &#123;</span><br><span class="line">            $temp_file = $_FILES[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line">            $img_path = <span class="variable constant_">UPLOAD_PATH</span>.<span class="string">&#x27;/&#x27;</span>.<span class="property">$file_name</span>;</span><br><span class="line">            <span class="keyword">if</span> (<span class="title function_">move_uploaded_file</span>($temp_file, $img_path)) &#123;</span><br><span class="line">                $is_upload = <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                $msg = <span class="string">&#x27;上传出错！&#x27;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $msg = <span class="string">&#x27;此文件不允许上传!&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        $msg = <span class="variable constant_">UPLOAD_PATH</span> . <span class="string">&#x27;文件夹不存在,请手工创建！&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里将pass-03能上传的文件也校验了，所以pass-03的方法也行不通</p>
+<p>但是这里没有禁止上传<code>.htaccess</code>文件，介绍下该文件：<strong>.htaccess</strong>（Hypertext Access）是 Apache Web 服务器的一个配置文件，主要用于<strong>目录级配置</strong>，允许在不修改主服务器配置（<code>httpd.conf</code>）的情况下，对特定目录进行权限、重定向、URL 重写等设置。</p>
+<p>而且其可以<strong>修改 PHP 解析规则</strong>，攻击者可上传 <code>.htaccess</code> 文件，使 <code>.jpg</code> 等文件被当作 PHP 执行：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddType application/x-httpd-php .jpg</span><br></pre></td></tr></table></figure>
+<p>使用htaccess文件前提：</p>
+<ul>
+<li>黑名单中未过滤 .htaccess</li>
+<li>apache配置文件httpd.conf中启用了AllowOverride All</li>
+<li>服务端未处理文件名（否则上传到htaccess到目录下成为其它文件名则不奏效）</li>
+</ul>
+<p>上传.htaccess文件成功：</p>
+<p><img src="12.png" alt="图片"></p>
+<p><img src="13.png" alt="图片"></p>
+<p>然后上传phpinfo.php文件，抓包将文件后缀改成jpg（htaccess中可以将jpg文件解析成php文件）</p>
+<p><img src="14.png" alt="图片"></p>
+<p><img src="15.png" alt="图片"></p>
+<p>访问时又出错了，又变成下载了，和pass-03遇到的情况一样，这里还是php的版本问题，不过知道原理就可以了</p>
+<p>有个师傅把版本改成ts后做得：<a target="_blank" rel="noopener" href="https://blog.csdn.net/mooyuan/article/details/147542111">https://blog.csdn.net/mooyuan/article/details/147542111</a></p>
+<h2 id="pass-05（黑名单，-user-ini绕过"><a href="#pass-05（黑名单，-user-ini绕过" class="headerlink" title="pass-05（黑名单，.user.ini绕过)"></a>pass-05（黑名单，.user.ini绕过)</h2><p>提示说：上传目录存在php文件（readme.php），本次使用配置文件.uer.ini，该配置文件的效果是在.user.ini相同的目录下，所有的php文件都包含pass5.jpg这个文件。如果我们上传.uer.ini，而且该目录下存在readme.php，我们再上传一个修改为jpg后缀的phpinfo，虽然jpg不能解析为php，但该文件被写入readme.php，这样就可以解析了</p>
+<p>.user.ini重要配置项:<code>auto_prepend_file=文件名</code>：在页面头部加载的文件，<code>auto_append_file=文件名</code>：在页面尾部加载的文件，写入一个就行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auto_prepend_file=phpinfo.jpg</span><br></pre></td></tr></table></figure>
+<p>依次上传文件，然后访问readme.php</p>
+<p><img src="16.png" alt="图片"><img src="17.png" alt="图片"><img src="18.png" alt="图片"></p>
+<p>看下后台上传的文件：</p>
+<p><img src="19.png" alt="图片"></p>
+<p><strong>注：本次上传禁止了.htaccess</strong></p>
+<h2 id="pass-06（黑名单，大小写绕过）"><a href="#pass-06（黑名单，大小写绕过）" class="headerlink" title="pass-06（黑名单，大小写绕过）"></a>pass-06（黑名单，大小写绕过）</h2><p>通过源码可知，这里把.htaccess和.user.ini都给禁用了，但不同的是这里并没有转换成小写再校验：</p>
+<p><img src="20.png" alt="图片"></p>
+<p><img src="21.png" alt="图片"></p>
+<p>我们只需要把后缀改成没有校验的大写即可，但如果你使用的是高版本的phpstudy，还用的是apach服务器，那么当访问文件的上传路径时，大概率会遇到500的报错，这里使用nginx即可：</p>
+<p><img src="22.png" alt="图片"><img src="23.png" alt="图片"></p>
+<h2 id="pass-07（黑名单，后空格绕过）"><a href="#pass-07（黑名单，后空格绕过）" class="headerlink" title="pass-07（黑名单，后空格绕过）"></a>pass-07（黑名单，后空格绕过）</h2><p>依旧是把所有后缀都给禁用了，与pass 05不同的是，校验的代码又少了一行：</p>
+<p><img src="20.png" alt="图片"></p>
+<p><img src="24.png" alt="图片"></p>
+<p>这里少了<strong>首尾去空</strong>这个过滤，我们通过抓包在文件尾处添加一个空格：</p>
+<p><img src="25.png" alt="图片"></p>
+<p><img src="26.png" alt="图片"></p>
+<p>如果在<code>.</code>后面加空格呢？？？</p>
+<p><img src="27.png" alt="图片"></p>
+<p><img src="28.png" alt="图片"></p>
+<p>可见能上传，回显空白页面说明存在该文件，但不能被解析</p>
+<h2 id="pass-08（黑名单，加点绕过）"><a href="#pass-08（黑名单，加点绕过）" class="headerlink" title="pass-08（黑名单，加点绕过）"></a>pass-08（黑名单，加点绕过）</h2><p>与上面相比，过滤少了<strong>删除文件名末尾的点</strong>，既然如此，那我们主动构造一个点</p>
+<p><img src="29.png" alt="图片"></p>
+<p><img src="30.png" alt="图片"></p>
+<p>访问该文件时，最后加不加点都可以成功</p>
+<p><img src="31.png" alt="图片"><img src="32.png" alt="图片"></p>
+<blockquote>
+<p>原理：在 <strong>Windows 系统</strong> 中，文件名末尾的点（<code>.</code>）会被自动忽略，导致 <code>phpinfo.php.</code> 实际保存为 <code>phpinfo.php</code>，从而绕过某些文件上传检查。</p>
+</blockquote>
+<h2 id="pass-09（黑名单，-DATA绕过）"><a href="#pass-09（黑名单，-DATA绕过）" class="headerlink" title="pass-09（黑名单，::$DATA绕过）"></a>pass-09（黑名单，::$DATA绕过）</h2><p>过滤又少了<code>$file_ext = str_ireplace(&#39;::$DATA&#39;, &#39;&#39;, $file_ext);//去除字符串::$DATA</code>，我们继续再文件尾处加上<code>::$DATA</code>:</p>
+<p><img src="33.png" alt="图片"></p>
+<p>访问时不用加<code>::$DATA</code>:</p>
+<p><img src="34.png" alt="图片"></p>
+<blockquote>
+<p>原理：在 <strong>Windows 系统</strong> 中，<code>文件名::$DATA</code> 是一种特殊写法，用来直接访问文件的<strong>原始数据流</strong>，常用于绕过文件上传限制或隐藏恶意代码。</p>
+<ul>
+<li><strong>NTFS 文件系统特性</strong>：<br>Windows 的 NTFS 格式允许文件附带“数据流”（Alternate Data Streams, ADS），比如文件可以有隐藏的额外内容。</li>
+<li><strong><code>::$DATA</code> 的作用</strong>：<br>加在文件名后，表示直接操作文件的<strong>主数据流</strong>（默认存储内容的部分）。</li>
+</ul>
+<p>上传名为 <code>phpinfo.php::$DATA</code> 的文件，Windows 会自动忽略 <code>::$DATA</code>，最终保存为 <code>phpinfo.php</code>。</p>
+</blockquote>
+<h2 id="pass-10（黑名单，点空格点绕过）"><a href="#pass-10（黑名单，点空格点绕过）" class="headerlink" title="pass-10（黑名单，点空格点绕过）"></a>pass-10（黑名单，点空格点绕过）</h2><p>查看源码，这次将所有该过滤的都过滤了，我们观察它的逻辑，它是先去除文件名末尾的点，然后转换为小写，去掉::$DATA，然后再去除空格，如何我们在文件名后面加上一个点，再加上空格，再加上一个点，第二个点按照代码的逻辑是不会被过滤的，所以当进行in_array匹配时，可以成功绕过</p>
+<p>抓包修改文件后缀为<code>. .</code></p>
+<p><img src="35.png" alt="图片"></p>
+<p><img src="36.png" alt="图片"></p>
+<p>顺便提一嘴，我们上面所有的绕过，都可以采用这种<strong>点空格点</strong>的方式</p>
+<h2 id="pass-11（黑名单，双写绕过）"><a href="#pass-11（黑名单，双写绕过）" class="headerlink" title="pass-11（黑名单，双写绕过）"></a>pass-11（黑名单，双写绕过）</h2><p>直接看源码，与上面都不一样，这里的str_ireplace的第一个参数设置为黑名单，str_ireplace不区分大小写，所以无法通过大写绕过，如何我们后缀设置为pphphp，str_ireplace会匹配到php并将其删除，然后左边剩下的p和右边的hp可以合并再次生成php后缀，因为该函数是通过递归进行匹配，所以就绕过了前面的p，当执行到最后一个p，结束匹配，成功绕过；</p>
+<p><img src="37.png" alt="图片"></p>
+<p>这里文件名phpinfo中的php也被删掉了</p>
+<p><img src="38.png" alt="图片"></p>
+<h2 id="pass-12（白名单，前提：上传路径可控，get，-00截断绕过）"><a href="#pass-12（白名单，前提：上传路径可控，get，-00截断绕过）" class="headerlink" title="pass-12（白名单，前提：上传路径可控，get，%00截断绕过）"></a>pass-12（白名单，前提：上传路径可控，get，%00截断绕过）</h2><p>我们先上传一个符合要求的图片：</p>
+<p><img src="39.png" alt="图片"></p>
+<p>发现上面有save_path的参数，我们再看下源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$is_upload</span> = <span class="literal">false</span>;</span><br><span class="line"><span class="variable">$msg</span> = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$ext_arr</span> = <span class="keyword">array</span>(<span class="string">&#x27;jpg&#x27;</span>,<span class="string">&#x27;png&#x27;</span>,<span class="string">&#x27;gif&#x27;</span>);</span><br><span class="line">    <span class="variable">$file_ext</span> = <span class="title function_ invoke__">substr</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>],<span class="title function_ invoke__">strrpos</span>(<span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>],<span class="string">&quot;.&quot;</span>)+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$file_ext</span>,<span class="variable">$ext_arr</span>))&#123;</span><br><span class="line">        <span class="variable">$temp_file</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;upload_file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line">        <span class="variable">$img_path</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;save_path&#x27;</span>].<span class="string">&quot;/&quot;</span>.<span class="title function_ invoke__">rand</span>(<span class="number">10</span>, <span class="number">99</span>).<span class="title function_ invoke__">date</span>(<span class="string">&quot;YmdHis&quot;</span>).<span class="string">&quot;.&quot;</span>.<span class="variable">$file_ext</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(<span class="title function_ invoke__">move_uploaded_file</span>(<span class="variable">$temp_file</span>,<span class="variable">$img_path</span>))&#123;</span><br><span class="line">            <span class="variable">$is_upload</span> = <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="variable">$msg</span> = <span class="string">&#x27;上传出错！&#x27;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$msg</span> = <span class="string">&quot;只允许上传.jpg|.png|.gif类型文件！&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>只允许上传<code>&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;</code>，上传<code>.jpg.php</code>这样是不行的，看下最终的图片保存路径，文件名是save_path加上一个rand随机数和一个date日期，和默认的文件后缀，我们刚才上传正常图片时观察到图片的save_path是<code>/upload/</code>，也就是我们最终上传的文件路径是/upload/rand+date.jpg，但如果我们能主动在/upload/后面加上个文件名，再使用%00截断后面的rand+date.jpg，即/upload/自定义文件名+%00+rand+date.jpg，当我们自定义的文件名是phpinfo.php，那我们上传的phpinfo.jpg，最终在服务中生成的名字是不是变成了/upload/phpinfo.php？？？</p>
+<blockquote>
+<p>还有两个前置条件：</p>
+<p>配置文件php.ini中的magic_quotes_gpc = off</p>
+<p>php的版本要求是5.2.x</p>
+</blockquote>
+<p><img src="40.png" alt="图片"></p>
+<p>因为我是8.1.1.3的phpstudy，上面最低的php版本是5.2.17，可死活下载不下来，下载高版本的就可以，也是离了个大谱，不过还是重在知道方法</p>
+<p>最终也是上传失败，只要我在upload/后面拼接任何路径，上传都是失败的，大概率是因为php版本过高的问题</p>
+<h2 id="pass-13（白名单，post，-00截断绕过）"><a href="#pass-13（白名单，post，-00截断绕过）" class="headerlink" title="pass-13（白名单，post，%00截断绕过）"></a>pass-13（白名单，post，%00截断绕过）</h2><p>与上一关设计方法一样，区别就是这里是post控制上传路径，遇到的问题也一样</p>
+<p><img src="41.png" alt="图片"></p>
+<h2 id="pass-14"><a href="#pass-14" class="headerlink" title="pass-14"></a>pass-14</h2>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" title="upload-labs之文件上传">http://zh1yu.xyz/2025/07/03/upload-labs之文件上传/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" rel="tag"># 文件上传</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/02/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/" rel="prev" title="信息收集">
+      <i class="fa fa-chevron-left"></i> 信息收集
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-01%EF%BC%88%E5%89%8D%E7%AB%AFjs%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">pass-01（前端js绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-02%EF%BC%88MIME%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">pass-02（MIME绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-03%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">pass-03（黑名单绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-04%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C-htaccess%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">pass-04（黑名单，.htaccess绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-05%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C-user-ini%E7%BB%95%E8%BF%87"><span class="nav-number">5.</span> <span class="nav-text">pass-05（黑名单，.user.ini绕过)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-06%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">pass-06（黑名单，大小写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-07%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C%E5%90%8E%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">pass-07（黑名单，后空格绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-08%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C%E5%8A%A0%E7%82%B9%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">pass-08（黑名单，加点绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-09%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C-DATA%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">pass-09（黑名单，::$DATA绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-10%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C%E7%82%B9%E7%A9%BA%E6%A0%BC%E7%82%B9%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">10.</span> <span class="nav-text">pass-10（黑名单，点空格点绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-11%EF%BC%88%E9%BB%91%E5%90%8D%E5%8D%95%EF%BC%8C%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">11.</span> <span class="nav-text">pass-11（黑名单，双写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-12%EF%BC%88%E7%99%BD%E5%90%8D%E5%8D%95%EF%BC%8C%E5%89%8D%E6%8F%90%EF%BC%9A%E4%B8%8A%E4%BC%A0%E8%B7%AF%E5%BE%84%E5%8F%AF%E6%8E%A7%EF%BC%8Cget%EF%BC%8C-00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">12.</span> <span class="nav-text">pass-12（白名单，前提：上传路径可控，get，%00截断绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-13%EF%BC%88%E7%99%BD%E5%90%8D%E5%8D%95%EF%BC%8Cpost%EF%BC%8C-00%E6%88%AA%E6%96%AD%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">13.</span> <span class="nav-text">pass-13（白名单，post，%00截断绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pass-14"><span class="nav-number">14.</span> <span class="nav-text">pass-14</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
