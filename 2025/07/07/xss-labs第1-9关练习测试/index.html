@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.xyz","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在dvwa的pikachu学会xss的一些基本原理和方法后，来xss-labs测试一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xss-labs第1-9关练习测试">
+<meta property="og:url" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="在dvwa的pikachu学会xss的一些基本原理和方法后，来xss-labs测试一下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/1.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/2.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/3.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/4.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/5.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/6.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/7.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/8.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/9.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/10.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/11.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/12.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/13.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/14.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/15.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/16.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/17.png">
+<meta property="og:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/18.png">
+<meta property="article:published_time" content="2025-07-07T00:58:11.000Z">
+<meta property="article:modified_time" content="2025-07-07T02:23:07.662Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="xss">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/1.png">
+
+<link rel="canonical" href="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>xss-labs第1-9关练习测试 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          xss-labs第1-9关练习测试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-07 08:58:11 / 修改时间：10:23:07" itemprop="dateCreated datePublished" datetime="2025-07-07T08:58:11+08:00">2025-07-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 在dvwa的pikachu学会xss的一些基本原理和方法后，来xss-labs测试一下</p>
+<span id="more"></span>
+<p>ps：这里好像都是反射型的，至少前九关是这样，后面的没有做</p>
+<h2 id="leve1（无过滤）"><a href="#leve1（无过滤）" class="headerlink" title="leve1（无过滤）"></a>leve1（无过滤）</h2><p>第一关没难度</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：?name=<span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="leve2（闭合script标签绕过）"><a href="#leve2（闭合script标签绕过）" class="headerlink" title="leve2（闭合script标签绕过）"></a>leve2（闭合script标签绕过）</h2><p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>失败，看下前端源码：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>我们需要主动闭合，使<code>&lt;script&gt;标签</code>逃逸出来</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：?keyword=<span class="string">&#x27;&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="2.png" alt="图片"></p>
+<p>或者下面的payload：<code>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+<h2 id="leve3（单引号onclick事件绕过）"><a href="#leve3（单引号onclick事件绕过）" class="headerlink" title="leve3（单引号onclick事件绕过）"></a>leve3（单引号onclick事件绕过）</h2><p>尝试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>失败，继续看源码：</p>
+<p><img src="3.png" alt="图片"></p>
+<p>左尖括号和右尖括号都被转义了，所以我们用不了标签，接下来只能尝试<strong>事件弹窗</strong>，先看下<code>&#39; &quot; &lt; &gt;</code>有哪些被转义</p>
+<p><img src="4.png" alt="图片"></p>
+<p>这里只有单引号没有被转义，那就用<code>onclick</code>来弹窗</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：#<span class="string">&#x27; onclick=&#x27;</span><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><br></pre></td></tr></table></figure>
+<p>这里的井号可有可无的，onclick后面的单引号与后面原先的单引号闭合，然后我们点击输入框，即可成功</p>
+<p><img src="5.png" alt="图片"></p>
+<h2 id="leve4（双引号onclick事件绕过）"><a href="#leve4（双引号onclick事件绕过）" class="headerlink" title="leve4（双引号onclick事件绕过）"></a>leve4（双引号onclick事件绕过）</h2><p>这里同样方法测试，发现单双引号都没过滤，还发现value的值是被双引号包含（与上一题的不同点），直接把payload的单引号换成双引号即可</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：#<span class="string">&quot; onclick=&quot;</span><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="6.png" alt="图片"></p>
+<p>然后点击输入框的#即可</p>
+<h2 id="leve5（a标签js伪协议绕过）"><a href="#leve5（a标签js伪协议绕过）" class="headerlink" title="leve5（a标签js伪协议绕过）"></a>leve5（a标签js伪协议绕过）</h2><p>发现script标签里的r和i之间被加上了下划线，那么script肯定用不了了，<code>&#39; &quot; &lt; &gt;</code>都没被过滤，然后发现onclick事件也用不了</p>
+<p><img src="7.png" alt="图片"><img src="8.png" alt="图片"></p>
+<p>那这里只能用a标签了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：#<span class="string">&quot;&gt;&lt;a href=javascript:alert(1)&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="9.png" alt="图片"></p>
+<h2 id="level6（大小写绕过）"><a href="#level6（大小写绕过）" class="headerlink" title="level6（大小写绕过）"></a>level6（大小写绕过）</h2><p>测试一下href和ri和on，确认下a标签和script标签和onclick事件能不能用</p>
+<p><img src="10.png" alt="图片"></p>
+<p>只能尝试script大小写了（双写肯定不行的）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：<span class="string">&quot;&gt;&lt;scRipt&gt;alert(1)&lt;/scRipt&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="11.png" alt="图片"></p>
+<p><strong>除了script大小写，还可以href大小写，和on大小写都能绕</strong></p>
+<h2 id="level7（双写绕过）"><a href="#level7（双写绕过）" class="headerlink" title="level7（双写绕过）"></a>level7（双写绕过）</h2><p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，发现script没了，只剩下尖括号了，那这里应该是过滤了script关键字，那就可以用双写绕过了</p>
+<p><img src="12.png" alt="图片"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">paylaod：<span class="string">&quot;&gt;&lt;scscriptript&gt;alert(1)&lt;/scscriptript&gt;</span></span><br></pre></td></tr></table></figure>
+<p><img src="13.png" alt="图片"></p>
+<p><strong>这里用其他的双写也能绕过，如a标签的href和事件的onclick中的on双写都可以</strong></p>
+<h2 id="level8（href之unicode编码绕过）"><a href="#level8（href之unicode编码绕过）" class="headerlink" title="level8（href之unicode编码绕过）"></a>level8（href之unicode编码绕过）</h2><p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+<p><img src="14.png" alt="图片"></p>
+<p>可以看到输入的内容赋值给href，而href可以执行js伪协议即<code>href=javascript:alert(1)</code>，但是这里被过滤了，大小写也绕不了，但是href在执行过程中回对unicode编码，如果我们传输的是<code>javascript:alert(1)</code>的unicode编码，那么执行过程就会解码，就成功绕过了，在线<a target="_blank" rel="noopener" href="https://www.matools.com/code-convert-unicode">unicode编码</a></p>
+<p><img src="15.png" alt="图片"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">paylaod：&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#41;</span><br></pre></td></tr></table></figure>
+<p><img src="16.png" alt="图片"></p>
+<p>然后点击友情链接就能绕过</p>
+<h2 id="level9（href之unicode编码绕过）"><a href="#level9（href之unicode编码绕过）" class="headerlink" title="level9（href之unicode编码绕过）"></a>level9（href之unicode编码绕过）</h2><p>查看源码发现我（href之unicode编码绕过）们的输入中需要包含<code>http://</code>，我们可以这样构造：</p>
+<p><img src="17.png" alt="图片"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#41;//http://</span><br></pre></td></tr></table></figure>
+<p>我们最后使用一个双斜杠给它隔断</p>
+<p><img src="18.png" alt="图片"></p>
+<p>然后点击友情链接就能绕过</p>
+<p>后面的有点难，有时间再搞吧</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.xyz/2025/07/07/xss-labs%E7%AC%AC1-9%E5%85%B3%E7%BB%83%E4%B9%A0%E6%B5%8B%E8%AF%95/" title="xss-labs第1-9关练习测试">http://zh1yu.xyz/2025/07/07/xss-labs第1-9关练习测试/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/xss/" rel="tag"># xss</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/03/upload-labs%E4%B9%8B%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" rel="prev" title="upload-labs之文件上传">
+      <i class="fa fa-chevron-left"></i> upload-labs之文件上传
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#leve1%EF%BC%88%E6%97%A0%E8%BF%87%E6%BB%A4%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">leve1（无过滤）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve2%EF%BC%88%E9%97%AD%E5%90%88script%E6%A0%87%E7%AD%BE%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">leve2（闭合script标签绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve3%EF%BC%88%E5%8D%95%E5%BC%95%E5%8F%B7onclick%E4%BA%8B%E4%BB%B6%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">leve3（单引号onclick事件绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve4%EF%BC%88%E5%8F%8C%E5%BC%95%E5%8F%B7onclick%E4%BA%8B%E4%BB%B6%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">leve4（双引号onclick事件绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve5%EF%BC%88a%E6%A0%87%E7%AD%BEjs%E4%BC%AA%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">leve5（a标签js伪协议绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level6%EF%BC%88%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">level6（大小写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level7%EF%BC%88%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">level7（双写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level8%EF%BC%88href%E4%B9%8Bunicode%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">level8（href之unicode编码绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level9%EF%BC%88href%E4%B9%8Bunicode%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">level9（href之unicode编码绕过）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
