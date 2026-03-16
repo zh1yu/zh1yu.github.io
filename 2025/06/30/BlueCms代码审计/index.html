@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="初识代码审计，先学习bluecms，这个系统因为比较老，所以相对而言比较简单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCMS代码审计">
+<meta property="og:url" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="初识代码审计，先学习bluecms，这个系统因为比较老，所以相对而言比较简单">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/1.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/2.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/3.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/4.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/5.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/6.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/7.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/8.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/9.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/10.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/11.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/12.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/13.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/14.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/15.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/16.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/17.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/18.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/19.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/20.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/21.png">
+<meta property="og:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/22.png">
+<meta property="article:published_time" content="2025-06-30T06:13:17.000Z">
+<meta property="article:modified_time" content="2025-07-02T08:59:36.794Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/1.png">
+
+<link rel="canonical" href="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MCMS代码审计 | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MCMS代码审计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-06-30 14:13:17" itemprop="dateCreated datePublished" datetime="2025-06-30T14:13:17+08:00">2025-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-07-02 16:59:36" itemprop="dateModified" datetime="2025-07-02T16:59:36+08:00">2025-07-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E6%B8%97%E9%80%8F/" itemprop="url" rel="index"><span itemprop="name">web渗透</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 初识代码审计，先学习bluecms，这个系统因为比较老，所以相对而言比较简单</p>
+<span id="more"></span>
+<h3 id="系统搭建"><a href="#系统搭建" class="headerlink" title="系统搭建"></a>系统搭建</h3><p>该系统的下载地址：<a href="https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fsource-trace%2Fbluecms">https://github.com/source-trace/bluecms</a>，先把源码下载到www的目录下：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>访问<code>http://localhost:90/bluecms/uploads/install</code></p>
+<p><img src="2.png" alt="图片"></p>
+<p>然后安装程序(ps：这里phpstudy搭建的bluecms所用的apach版本要低于7才可以)</p>
+<p><img src="3.png" alt="图片"></p>
+<p>安装后访问<code>http://localhost:90/bluecms/uploads</code>，即可来到登录页面</p>
+<p><img src="4.png" alt="图片"></p>
+<h3 id="第一个xss"><a href="#第一个xss" class="headerlink" title="第一个xss"></a>第一个xss</h3><p>这里有用户名和密码，弱口令和sql注入都可以尝试下，但随着安全意识提升，这种登录口的漏洞越来越少，我们尝试这里的注册点：</p>
+<p><img src="5.png" alt="图片"></p>
+<p><img src="6.png" alt="图片"></p>
+<p>这里需要我们写入个人信息，<strong>关键点：</strong>这里可能存在<strong>存储型xss</strong>，我们填入信息：</p>
+<p><img src="7.png" alt="图片"></p>
+<p>我们如果直接向其中一个信息字段写入xss的内容，可能会被前端给拦截，我们赌它后端不会被检测，使用抓包软件修改字段内容再发送，加入该xss字段：<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+<p><img src="8.png" alt="图片"></p>
+<p>我们使用这个账号进行登录：</p>
+<p><img src="9.png" alt="图片"></p>
+<p>查看源码：</p>
+<p><img src="10.png" alt="图片"></p>
+<p>成功写入，存在存储型xss漏洞</p>
+<h3 id="sql注入漏洞（宽字节）"><a href="#sql注入漏洞（宽字节）" class="headerlink" title="sql注入漏洞（宽字节）"></a>sql注入漏洞（宽字节）</h3><p>观察到uploads目录下有admin文件，访问该目录：</p>
+<p><img src="11.png" alt="图片"></p>
+<p>测试语句：<code>admin&#39; or 1=1 --+</code>，<code>admin or 1=1 --+</code>也不行，那就看下源码：</p>
+<p><img src="12.png" alt="图片"></p>
+<p>这里用到了<code>check_admin</code>函数校验，我们去看下它的执行逻辑，跳到<code>common.fun.php</code>文件：</p>
+<p><img src="13.png" alt="图片"></p>
+<p>这里有一个全局类对象<code>global $db</code>，然后调用<code>getone</code>方法判断输入是否合法</p>
+<p><img src="14.png" alt="图片"></p>
+<p>我们需要要找到这个对象从哪new得到的，在当前文件查找<strong>include关键字</strong>，没找到，不过在login.php找到了包含<code>/include/common.inc.php</code></p>
+<p>然后果然在/include/common.inc.php中找到了$db的所属类：<strong>mysql</strong></p>
+<p><img src="15.png" alt="图片"></p>
+<p>还发现了一个对输入参数的过滤：</p>
+<p><img src="16.png" alt="图片"></p>
+<p><code>get_magic_quotes_gpc()</code>是 PHP 5.4 之前的一个函数，用于检测是否启用了 <code>magic_quotes_gpc</code>（自动对用户输入转义的功能）。</p>
+<p>如果返回 <code>false</code>（未启用），则手动调用 <code>deep_addslashes()</code> 对输入数据转义</p>
+<p><strong><code>deep_addslashes()</code></strong></p>
+<ul>
+<li>是一个自定义函数（递归处理数组的 <code>addslashes()</code>），作用是为特殊字符（如单引号 <code>&#39;</code>、双引号 <code>&quot;</code>、反斜杠 <code>\</code>）添加反斜杠转义。</li>
+<li>例如：<code>I&#39;m</code> → <code>I\&#39;m</code>，<strong>防止 SQL 语句被恶意闭合</strong></li>
+</ul>
+<p><code>deep_addslashes()</code>的处理逻辑：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deep_addslashes</span>(<span class="params"><span class="variable">$str</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">is_array</span>(<span class="variable">$str</span>))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">foreach</span>(<span class="variable">$str</span> <span class="keyword">as</span> <span class="variable">$key</span>=&gt;<span class="variable">$val</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="variable">$str</span>[<span class="variable">$key</span>] = <span class="title function_ invoke__">deep_addslashes</span>(<span class="variable">$val</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$str</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="variable">$str</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>找到了这些之后，我们还需要找到mysql类的初始化定义，发现在<code>mysql.class.php</code>文件中</p>
+<p><img src="17.png" alt="图片"></p>
+<p>不过我们注意到使用了gbk编码，而这很容易导致宽字节注入，宽字节注入的两个条件就是<strong>1.数据库使用GBK/GB2312等多字节字符集</strong>，<strong>2.使用了不安全的转义函数</strong>，显然这里同时满足，可以宽字节注入的原因：如果我们使用<code>&#39;</code>闭合，那么系统会给我们加上一个转义字符<code>\</code>，使<code>&#39;</code>成为普通字符，但如果我们在<code>&#39;</code>前面加上<code>%df</code>，而<code>\</code>的ascii(gbk)编码是<code>%5c</code>，拼接在一起就是<code>%df%5c&#39;</code>，因为gbk的编码字符涉及到汉字编码非常广泛，所以会将<code>%df%5c</code>视作一个汉字<code>運</code>来解码，从而单引号逃逸，构成宽字节注入</p>
+<p>我们尝试宽字节注入：<code>%df&#39; or 1=1 #</code>，这里用<code>--+</code>不行，不知道为什么，但没关系，我们先在前端提交，密码随便输：</p>
+<p><img src="18.png" alt="图片"></p>
+<p>发现失败大概率就是因为经过这里有特殊字符，经过url编码，后端解码得到的字符不是我们最初的构造字符，所以失败，对于这种，一般在抓包软件中提交，这样不经过前端校验，直接由后端处理</p>
+<p><img src="19.png" alt="图片"></p>
+<p>当然并非只有这一种形式构造，还可以：<code>%ef&#39; or 1=1 #</code>，<strong>只要%ef和%5c经过gbk编码可以得到一个汉字即可</strong></p>
+<p><img src="20.png" alt="图片"></p>
+<h3 id="第二个xss"><a href="#第二个xss" class="headerlink" title="第二个xss"></a>第二个xss</h3><p>根据源码，我们找到<code>/bluecms/uploads/admin/ad_phone.php</code>，写入xss内容：</p>
+<p><img src="21.png" alt="图片"></p>
+<p><img src="22.png" alt="图片"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.fun/2025/06/30/BlueCms%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="MCMS代码审计">http://zh1yu.fun/2025/06/30/BlueCms代码审计/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/27/kali%E5%AE%89%E8%A3%85docker/" rel="prev" title="kali安装docker">
+      <i class="fa fa-chevron-left"></i> kali安装docker
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/07/01/dvwa%E4%B9%8Bxss/" rel="next" title="dvwa&pikachu之xss">
+      dvwa&pikachu之xss <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">系统搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAxss"><span class="nav-number">2.</span> <span class="nav-text">第一个xss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%EF%BC%88%E5%AE%BD%E5%AD%97%E8%8A%82%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">sql注入漏洞（宽字节）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AAxss"><span class="nav-number">4.</span> <span class="nav-text">第二个xss</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>

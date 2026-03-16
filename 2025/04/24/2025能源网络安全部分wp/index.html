@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zh1yu.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本次介绍的是能源网络安全的一些简单题目，主要针对密码方向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2025能源网络安全部分wp">
+<meta property="og:url" content="http://zh1yu.fun/2025/04/24/2025%E8%83%BD%E6%BA%90%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%83%A8%E5%88%86wp/index.html">
+<meta property="og:site_name" content="知鱼的Blog">
+<meta property="og:description" content="本次介绍的是能源网络安全的一些简单题目，主要针对密码方向">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.fun/2025/04/24/2025%E8%83%BD%E6%BA%90%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%83%A8%E5%88%86wp/1.png">
+<meta property="article:published_time" content="2025-04-24T15:19:25.000Z">
+<meta property="article:modified_time" content="2025-07-07T06:41:37.993Z">
+<meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="比赛wp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.fun/2025/04/24/2025%E8%83%BD%E6%BA%90%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%83%A8%E5%88%86wp/1.png">
+
+<link rel="canonical" href="http://zh1yu.fun/2025/04/24/2025%E8%83%BD%E6%BA%90%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%83%A8%E5%88%86wp/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2025能源网络安全部分wp | 知鱼的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">知鱼的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.fun/2025/04/24/2025%E8%83%BD%E6%BA%90%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%83%A8%E5%88%86wp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2025能源网络安全部分wp
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-04-24 23:19:25" itemprop="dateCreated datePublished" datetime="2025-04-24T23:19:25+08:00">2025-04-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-07-07 14:41:37" itemprop="dateModified" datetime="2025-07-07T14:41:37+08:00">2025-07-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%AF%94%E8%B5%9Bwp/" itemprop="url" rel="index"><span itemprop="name">比赛wp</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> <em>本次介绍的是能源网络安全的一些简单题目，主要针对密码方向</em></p>
+<span id="more"></span>
+<h2 id="社会组"><a href="#社会组" class="headerlink" title="社会组"></a>社会组</h2><h3 id="crypto"><a href="#crypto" class="headerlink" title="crypto"></a>crypto</h3><h4 id="NumberTheory"><a href="#NumberTheory" class="headerlink" title="NumberTheory"></a>NumberTheory</h4><p>题目源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> hint</span><br><span class="line"></span><br><span class="line">flag=<span class="string">b&#x27;xxx&#x27;</span></span><br><span class="line">e=<span class="number">65537</span></span><br><span class="line">p=getPrime(<span class="number">512</span>)</span><br><span class="line">q=getPrime(<span class="number">512</span>)</span><br><span class="line">n=p*q</span><br><span class="line">m=bytes_to_long(flag)</span><br><span class="line">c=<span class="built_in">pow</span>(m,e,n)</span><br><span class="line">k=getPrime(<span class="number">1024</span>)</span><br><span class="line"><span class="keyword">assert</span> hint + <span class="number">233</span> * k == <span class="number">233</span> * k * p</span><br><span class="line"><span class="built_in">print</span>(n)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"><span class="built_in">print</span>(hint)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 84099006955126261966925371456202769943592466221370095794235167154956697927281125181449320270460637820908574232493978429962263974458426503598700104493216727535451616752760724333653967152401716945549285008242019874215196489846481143398374860288545040874468108191037481101604627874268575884573685952474988256841</span></span><br><span class="line"><span class="comment"># 28098063654079651384124474197746356824080585622155888018279898490747561415908220072536298610509681898119018709183606442183944207485940115624047842734359988590155403601250406116023121958193303908964857108526965815235457652033182982467968474248778435731228104089366239566977364311197776651102290796373095167764</span></span><br><span class="line"><span class="comment"># 411245630228311610573345621334618725748702407327926883063919892785851166202383809662483938501531987094884084543300939673794551515912845363503988032311234800260819110323258416786417746444373651130257247926678135654564298408894174083333804257126735899220917359603430399033328133462456659839525671074605146583034398735379485362144932899212206419889556154825755723979850750847762362288223441051219637465296077020565435562941976546609555729574021362954126496825972439730</span></span><br></pre></td></tr></table></figure>
+<p><strong>思路分析：</strong></p>
+<p>由<script type="math/tex">hint + 233 * k == 233 * k * p</script>可以推出<script type="math/tex">hint= 233 * k * (p-1)</script>，根据费马小定理：</p>
+<script type="math/tex; mode=display">
+a^{p-1} \equiv 1 \pmod{p}, \quad \text{其中 } p \text{ 是素数且 } \gcd(a, p) = 1.</script><script type="math/tex; mode=display">
+a^{k(p-1)} \equiv 1 \pmod{p}</script><script type="math/tex; mode=display">
+gcd(a^{k(p-1)}-1,n)=p</script><p>但是有一个难题，即使我们令a=2(最小的素数，一般推荐令a=3或者5)，在python中仍然不容易算出<script type="math/tex">a^{k(p-1)}-1</script>，更没法与n求公因子了</p>
+<p>所以我们这里先<script type="math/tex">t \equiv 2^{k(p-1)} \pmod{n}</script>，以此来降低指数<script type="math/tex">k(p-1)</script>里面的k的大小，从而求t-1与n的公因子，即如下：</p>
+<script type="math/tex; mode=display">
+t \equiv 2^{k(p-1)} \pmod{n}\\</script><script type="math/tex; mode=display">
+p=gcd(t-1,n)</script><p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> gmpy2 <span class="keyword">import</span> gcd</span><br><span class="line"></span><br><span class="line">n = <span class="number">105531804094410236294687082475828411218788143973352026416392542762437103918840861241726193253936370648195682452618343195471719649394086997793137653518966739212122830015579955183805636213883066694989610003565432493653164047938048521354525623612253955387430773546124647105772639376194421783783651686606080214099</span></span><br><span class="line">c = <span class="number">6838127295540107402282470465780599628759317234806902778570348919850980664834107227012249617036087381075344016550381137159643512672239826438903241091658619314078921936719784123522758604349399440232971511649918093228288847534685526358191804172060250409498531941883162873696671060909325234109062997554795436940</span></span><br><span class="line">hint = <span class="number">225457129615945961139095949356083106510992163176770860368085043522677811094793442173512565115313130227614423196268240217775831118417780318014842280209747426271227826513967791945116378179885000662888744992914390207196310600996050316737090999399962338133222370745589250853315876818226312453376340282748842779666176953455553054310328901299083159029050169950812885486884682347263045764918907196922313892044095742248895091717187372068779768743879411865275203496650858608</span></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line"></span><br><span class="line">t = <span class="built_in">pow</span>(<span class="number">3</span>, hint // <span class="number">233</span>, n)</span><br><span class="line">p = gcd(t - <span class="number">1</span>, n)</span><br><span class="line">q = n // p</span><br><span class="line">phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">d = inverse(e, phi)</span><br><span class="line">m = <span class="built_in">pow</span>(c, d, n)</span><br><span class="line"><span class="built_in">print</span>(long_to_bytes(m))</span><br><span class="line"></span><br><span class="line"><span class="comment"># flag&#123;158f26cca09e89b08cbd234c1f9c98c0&#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="easy-lwe"><a href="#easy-lwe" class="headerlink" title="easy_lwe"></a>ea<strong>s</strong>y_lwe</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> secrets <span class="keyword">import</span> flag</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(flag) == <span class="number">38</span></span><br><span class="line"></span><br><span class="line">p = getPrime(<span class="number">512</span>)</span><br><span class="line">m = getPrime(<span class="number">512</span>)</span><br><span class="line"><span class="keyword">while</span> m &gt; p:</span><br><span class="line">    m = getPrime(<span class="number">512</span>)</span><br><span class="line"></span><br><span class="line">aa = []</span><br><span class="line">cc = []</span><br><span class="line">bb = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">    a = getPrime(<span class="number">512</span>)</span><br><span class="line">    b = getPrime(<span class="number">400</span>)</span><br><span class="line">    c = (a * m + b) % p</span><br><span class="line">    aa.append(a)</span><br><span class="line">    cc.append(c)</span><br><span class="line">    bb.append(b)</span><br><span class="line"></span><br><span class="line">enc = <span class="built_in">pow</span>(m,flag,p)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;p = <span class="subst">&#123;p&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;aa = <span class="subst">&#123;aa&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;cc = <span class="subst">&#123;cc&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;enc = <span class="subst">&#123;enc&#125;</span>&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># p = 0x83b05d231fd40ff8ca26b4fb8136dc920754c14412960ce2ec700457861d48fe74f3958fc3a153f77a23fb850ecf0ac1e9722c71b6cc8a104b372cc17bf1528f</span></span><br><span class="line"><span class="comment"># aa = [0xf53f440f2e76b60380e68e96508f5dd716b2c3df2ed8265ced83a93fd61a708eeff31fbee9efa22fa7b441cbc406c210de6273f81eb7d093561d5c6394ef2abd,0xe9ecbd5457dcf1bdbc1a852b625c7a8ae6f530e348c2dc0416afd6a375aeb06d4800cc6471ae7d29681715d0407aa8726c32cd35e54960f56b0d9b47a2eed9ed,0x86a261c1590a774ced6c7db439e53e4068a8dbc0ad111a0e0371e8731fb939a068348d035da04afb9a3914a011574e35cefc4d5c5740f7cbc27459d944f51d15,0xba99a871d8f805e3c0dcd4e04cee66ec5e213a7902a65f2faa8e86368e56c42d09fde536b07471fff8f72db922725a24d6288d1bfe9edc2cd76b756eb464e1eb,0xa99efeb79377db6baa8787b5d2d2ebf123d8ec77e820d1b88644883a07c38498aa08df82cb9802c7fa128a5fa08b66c56a0805f70a78b7cb45b1a74bde095165,0xe6341800304b0a6f2de941432bb253f53a3c73c7b0f0382fd1ec4c882da5fd1b5151c619f9279de3767ae03af387c495c50c8c0ff79fd6c8acb51bd0b16afc23,0xa8670f7142e5d90e781e335d5e870188b94288defd8302c1b183bf20b5a3720be1ae1afe0ad937bc4678727e1daf262194c430086f3810447dfce721c8fb36a5,0xe9d150d4e7a7f82e89d26fcaa003579c8dfc25f4a50794175ae0a4407dd33e87eb5fded328155009548c002d2a3198afa356e1692a6bb820d8ae71ca6e506b35,0xd7ec72dd643449f5d21a32a11e2458d292c524b91b4b1a8515a5f8351717813f51a55c5675aa0eaa5c80a32d26aa385d7425e7d3e1e50936b2744a1534e3c7b7,0xaf5d8062f6bc03875b5fb10d0888d586cb08fa62709910cd7d931201d4d833d31d935003b801cac4fd51ef1e4db3bc13e41d740d7881560c0942faf9acca55d5,0xf63c4a5add0474bf6c4fb6617a2965e2474a2902c59bcc4243d5dcffa0f1aa0a6136e9c9093ea05d84a26888aaad63ec652602200141abdfcdc0d1912d208dbb,0xd65c8ef9b01085819f2f5f2dfbb7641521966600ddd7a03b886320328144ec42ed5585206744c8e1b5beb5502aff6f0cd01934890926bbb5387363b321dbb6bd,0x9bd7a0e9d4940126c9668de7e29e198ac38010d505b90e92ee560307b8a134545bbd0277f14e7651e91c5a9362207097e17888b9a49a889c672f76681f41962f,0xff387c4e94f47cba242936e80d620d3eeb203a1c7f365ae178b33b29ff3d8c2f932733d0605876c23942bae7f096b3ee457d02758796bda01bbcd3bd2e1229a1,0xbd6c24205cf5b9b2acc909296369ca77ef34ceac5f9900742a7ec37c00b94a56418d168d576d33383d9f782386524c4cecebc3a9fa68c81a5a6867de564d07e3,0x8850ac2051b6a7450f228e676abbfd510ce08a43a0b791182aedcfb6b3f1d478e3dc953e59eb99fe370f71d52af3a1625e0700078927f8a5919becbfa60af96b,0xfa474444b5372681c5b7316871cf9a93306b4d6a3eac2492c71780eb6903bd4ff77b1c4a28608dfa10c0c8b8bfc23942fc0a8ec64d3967504621e692eafcf4af,0xfd7f772c719929d33f15ce0122f6efc278b728d75dbd16a343c649e49118a79084d169d6db1b6b859e1f4c82694a850622dcdff23c8fbd7d0a736a409b94f471,0xedf6566ecd7f0a0beaa2f45a2a509358c9537dbf772e6f63ccb0e21b5c5c3dae0939e9e15c9bcdf80f7875e74ebfba16f0660737719c8ad435981b5b8df89a23,0xd7e718dafb753084cb7c1deee139f6e158a0228bbf9b0ae5ed3a8b3d2508ce62e4e32cd43a3135540b31e052e6e3a0dba3ae623c69d74da34387c3429b6f0487,0xbff5ab718c54909a34ba8ab5787cbfb0c9c57394350b71744d5751f577cefda87cc8263b21dd2c21a8f19fff8362c3371fcb054dddb1293df7d6efe2d661e4ab,0xb946ad47cf1f9186c1eeaeed12f21b41a29f9fb74b14f577c97731004b372c5f41023aafc9b93557c984ff87dd263b293aa500c3a2ce1f0815319263cf7c42d5,0x9b93853dc5f4c052fdda339f69c625bc98ffdbde439078458b84278e34542f9110863e5beef166a766f565f7a815ec4a462510b42f81454b65e648622c610b27,0xae050aaa86b9580747efa33561973597d7d7a0684a45219eed3224ebc37fdf067ed61a29ecaa501266c9bcdd16b850c0dd40da3f964a5b03ae60c3967fd55913,0xea57b0482a876d49a3e21bb885bda0aae21f5fcf2521f7e1db771998b6b639d0833c17d7c8c67c12ce9b60e4210e068f98344a8cabc5faa17a048100bab797bb,0x9f866ad27c9ea2fb29168ec6db0f7755221484d0c89bfef0cd70fc2ed14fda15f7b59bbca2e23f40b5effeb9e53ad821e06cf986b34da4407c85bfbf78d2920b,0xab0939605dcff5d1ec8405b6daeb65eccc6e3b5956601dddea95c6310ac32bfeec1bab6b83e85371078a16ea9489050175098d39488aaed2a190c647fe2b1b69,0xe85698e04d8bedbac2c7884c914b7026dbb1dd5134c4a5a8e7541b07c8a94ab3d2f12eb7f1171ccd564054e1dc63d5ac044e5c5552870b419fef35a572199239,0xea94663e103e4354fb7feb80b11d06c7e16feb7265f69ee882180baba70fa075df24e3fe1ad12a99f054cabf4a3f5e4823416d4c4daa02ca51ce3926034186db,0x93662718294005f4ac8f79b0799e240a05eea871ef07d623ea7c68ef818b3b55fb4f9b6f06c399726e59cec03389053b448f187404cddb93cb3c55e3d12cebc9]</span></span><br><span class="line"><span class="comment"># cc = [0x4aae29aaaab89fbc672db400c41d1ad3ffce937e7810065bed552c12101fb778046d22b00c05bbc3f61825b5af3c3e57f1abaafe3d9a58a573a905e2a1cecde7,0x502a1c23ef44f174aaedb9a49705eb72f805bab13e82d599525ea7484cc11f2e7c4475526b4be344390e46bcb8bcdaba2768c6321f8ca5482666171eee498f28,0x546f2276b59b7186ef5b9a04e0ba2691648d005fc780303411a1082ea3b05be127a10e26921a4b84b14d8acc45a6c32a0142ac6eb396415ecb5841a01b775b5d,0x43986eb7208b66dd86c12f953e10b2d3907873151170278393b6a4f7ea518ab5745e2db5f4dbec84087c4817c5df10e743f35ed1190515aba34832b1b274bf2e,0x7b2e448342bc7409ed891cdbf5137014f417866097297302085d8800458495e374fba8398d069f1c1c7792a9f03194e36921c378308de18313fb9b62db45cc0a,0x41ac8f265bc96ae868256fb08caf0a43a547346522b5d90cb9489c87cd5d726447d20354332dd3cb771003eddfa9c4bfa6923ae45ac8c0994f7cce46a3302eea,0x51b59ad39b388fdb2056279e2de02d32d36b52da1cc1fe4f6843964273b4585704e21405e2528e5894bd4fdb436c382a5f7d3849f9c5d7902be74edd2b16a31c,0x4e52d207f16a6f42497b25600e039de3ce49d7945ac2201ac12bf9fa9b3dc136f35328cbe9d3f9d4204d90f29fe1ce209c8904c99de0f85c5c572d05609095a6,0x6485f505cd8296e9f1c9abdc39eebc6e767e98e1587b18878fa8a582a012bb609c2f36daffc2b9c460514bc47533525ce6835e7f8123331a833958fa47f2e40,0x1ff809e71ab0347a8a9ec4356d5b8fbf109ade5881e5b59ac14adaaef2034fc40880e495070442513f42434fa8cbfcd9bce0501574997b35939f201ba1c87872,0x5b3fad73b402fcc1148758d80a61f637257d35f2773c8dc9f22859a01aecaa37a37858232ab5b3e3622f234bf35bb02a6e93ecd5a06182b61e583d0193afaf55,0x640e3556a526209f8528fbe678da3914d912a7e701abc3d4fcd65d84bcdbfc22623dfa3db31f9585a615c6de869b39c040dbfe94bb7eafd91bde15c4b87bd2c0,0x335b0ff42f39541539752faade7510a301a861720d85958ce2890ddca9e0693b342604a5b134a0974ea21dc0dc0a156c01159898e5f87e16b4a56121c2e3bbb5,0x89621740ec8b81065457105685666dfe6e31ee4f0a6efa6901e20ad6e5ea19ba438ea92f632764e52ccfb1ed35639443b5536f19ca69e9c295c6f5287a5e31b,0x1e4162060327045be0f5a0ae5d7b87c60b928e4669450339af64a39ae45b108eb58bbe83e15bef7a5c92243b213adc3e9d3514632249314bf5b588df6202ae10,0x5d10e308a16f8cd5c53b3ecd1081624e6eed4c3bfe522a8b7daf301aa6fc370b0a1cff1db7ea27aa6f5200903b365c53bc6d890ca1167ca57de87f80c5321742,0x434ac82b1ed073a1d73606ffe973e316768368fb522644f6cc76d2a0e6b83f533524c7589113aeb2db35d50c2f9ff64ceb27958a93d47b6875b8eb9b158ebaac,0x7cf3028273ece2a8af9790d3a689875bf7a3894e351a639d88fa13de05dc7f18be20ddeef4414a31b0f3dd65291e5d4d47d098027dbec25d4bc5409c017f0b03,0x5d0eefe7de32360d7950d96d821ce06741b737a1dca016cb003f75e380f5c8e3d9b8505b0eda21b36879a6455d1f640bdac5ad648b97d80eacf406b57bb1d692,0x4e4c6156da7f71123e1b4efde4a436985c6f2cccdc9b182735a75153927c6e7dc94693ab7fdd8646821a9d42eeb76c1be54984f81296a10e689805975185bf2c,0x68db6b837d968569ba944591efb36587f0022b05cefbedaad1e1d7652d0c233d1c0b036364f25e0865c7a1dab8d9d1081f23928a3573b5ec711e5b7f32714a4,0x333db46bc5fb83cbbf68475fd612bcad6becd30f95bf5b9ab6058ed0777fcb78cfe6da5c3386799fe9a1d6616801154ae7f45e35612de08efed7e2e750088b8e,0x70d4dc8986c228e12329af934c08f7c0ca94ce6913b5c641c59b3cf629a1957f82d4f40aaa7faa765c75e4f994a8222a4d08e045fb529da5ee277e1b9540c148,0x20421569b3bc73da4505760f7798a504f2276e6df9c9e48320b23201fb682021d168f6ee657fc2080722eb576ac78bf4b63ad7419983a05196fa0724fc4886d,0x5f523df584f43d7eff229d562793c8e5d4713d9c80bd40b95434c34c982324f7c282ac2fe3ac151cb62435b85bece2ef115c6f4b7a33d47dcbfa8360f89b91ac,0x7cbedea149640064a93cb75b909804ee7a896e17da808579206d1db7523b98bdf15bdc70e267e0a201bf293f980c1b5304337a7a78cc655aca07b9818b7169ab,0x62b34eaac3d3a2b360805cc23147ff8754a9d90788461107a5c8cc7053a0910ca7af45035d333c9a0b7cf6a2c13c9c367ad8eea0ccda2a6d8e089b5ee07a76ef,0x3e1c31f988e238869fad4794beb32164fa3bf3880041d1f9f2a65e2679f951491fcbeff1aa067313bf02100ae15d1af4d87050db05cec934e077c3eec238b72,0x3c056ad33432e1cf5548ae3a6db21ee1471eb70619e0ad542bd38dd80f37b76b571ae6469bacd33f9618b7a61b8e8424fc33cae479375df72b064a5d1b8cd90f,0x4caf081f5b949e65115e18b613ad8dc1fc208d2c5bea710b27b1db11d4a7eecc455c13f2fd92481f8cfea3e6fa75c0a58a154f12b6ce92c66107f617fd7ed7d8]</span></span><br><span class="line"><span class="comment"># enc = 0x191eb43459bd0f2d5ece00ab52c612668bb4c161014641a6e4afb41020465d7b82e9b60a55ab831bb5695f2fd832d08258c752ebf27ba0374b7b11b001b2629a</span></span><br></pre></td></tr></table></figure>
+<p><strong>思路分析：</strong></p>
+<p>第一部分是<strong>HNP问题</strong>，第二部分是<strong>DLP问题</strong>。</p>
+<script type="math/tex; mode=display">
+HNP</script><p>HNP，即the Hidden Number Problem，隐藏数问题。本题中的是LHNP，即线性隐藏数问题。定义是从形如<script type="math/tex">c_i = r_i \cdot x + e_i \pmod{p}</script>的一组方程组恢复。将单个方程可以转化为<script type="math/tex">e_i = c_i - r_i \cdot x + k_i p</script>。</p>
+<p>我们可以构造出矩阵：</p>
+<p><img src="1.png" alt="图片"></p>
+<p>其中<script type="math/tex">K</script>为<script type="math/tex">e_i</script>的上界，<script type="math/tex">k_i</script>为常系数。我们进行LLL算法即可得到该向量，并从中还原。</p>
+<script type="math/tex; mode=display">
+DLP</script><p>DLP（离散对数问题），由很多算法求解，对于本题。经过检测我们发现<script type="math/tex">p-1</script>有很多小因子，因此我们可以认为<script type="math/tex">p-1</script>是光滑的，那么就适用于Pohlig-Hellman算法进行求解，对于<script type="math/tex">p-1</script>的最后一个大素数因子，我们采用爆破的方法求解最后几位。</p>
+<p>完整exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line">p= <span class="number">0x83b05d231fd40ff8ca26b4fb8136dc920754c14412960ce2ec700457861d48fe74f3958fc3a153f77a23fb850ecf0ac1e9722c71b6cc8a104b372cc17bf1528f</span></span><br><span class="line">rs =[<span class="number">0xf53f440f2e76b60380e68e96508f5dd716b2c3df2ed8265ced83a93fd61a708eeff31fbee9efa22fa7b441cbc406c210de6273f81eb7d093561d5c6394ef2abd</span>,<span class="number">0xe9ecbd5457dcf1bdbc1a852b625c7a8ae6f530e348c2dc0416afd6a375aeb06d4800cc6471ae7d29681715d0407aa8726c32cd35e54960f56b0d9b47a2eed9ed</span>,<span class="number">0x86a261c1590a774ced6c7db439e53e4068a8dbc0ad111a0e0371e8731fb939a068348d035da04afb9a3914a011574e35cefc4d5c5740f7cbc27459d944f51d15</span>,<span class="number">0xba99a871d8f805e3c0dcd4e04cee66ec5e213a7902a65f2faa8e86368e56c42d09fde536b07471fff8f72db922725a24d6288d1bfe9edc2cd76b756eb464e1eb</span>,<span class="number">0xa99efeb79377db6baa8787b5d2d2ebf123d8ec77e820d1b88644883a07c38498aa08df82cb9802c7fa128a5fa08b66c56a0805f70a78b7cb45b1a74bde095165</span>,<span class="number">0xe6341800304b0a6f2de941432bb253f53a3c73c7b0f0382fd1ec4c882da5fd1b5151c619f9279de3767ae03af387c495c50c8c0ff79fd6c8acb51bd0b16afc23</span>,<span class="number">0xa8670f7142e5d90e781e335d5e870188b94288defd8302c1b183bf20b5a3720be1ae1afe0ad937bc4678727e1daf262194c430086f3810447dfce721c8fb36a5</span>,<span class="number">0xe9d150d4e7a7f82e89d26fcaa003579c8dfc25f4a50794175ae0a4407dd33e87eb5fded328155009548c002d2a3198afa356e1692a6bb820d8ae71ca6e506b35</span>,<span class="number">0xd7ec72dd643449f5d21a32a11e2458d292c524b91b4b1a8515a5f8351717813f51a55c5675aa0eaa5c80a32d26aa385d7425e7d3e1e50936b2744a1534e3c7b7</span>,<span class="number">0xaf5d8062f6bc03875b5fb10d0888d586cb08fa62709910cd7d931201d4d833d31d935003b801cac4fd51ef1e4db3bc13e41d740d7881560c0942faf9acca55d5</span>,<span class="number">0xf63c4a5add0474bf6c4fb6617a2965e2474a2902c59bcc4243d5dcffa0f1aa0a6136e9c9093ea05d84a26888aaad63ec652602200141abdfcdc0d1912d208dbb</span>,<span class="number">0xd65c8ef9b01085819f2f5f2dfbb7641521966600ddd7a03b886320328144ec42ed5585206744c8e1b5beb5502aff6f0cd01934890926bbb5387363b321dbb6bd</span>,<span class="number">0x9bd7a0e9d4940126c9668de7e29e198ac38010d505b90e92ee560307b8a134545bbd0277f14e7651e91c5a9362207097e17888b9a49a889c672f76681f41962f</span>,<span class="number">0xff387c4e94f47cba242936e80d620d3eeb203a1c7f365ae178b33b29ff3d8c2f932733d0605876c23942bae7f096b3ee457d02758796bda01bbcd3bd2e1229a1</span>,<span class="number">0xbd6c24205cf5b9b2acc909296369ca77ef34ceac5f9900742a7ec37c00b94a56418d168d576d33383d9f782386524c4cecebc3a9fa68c81a5a6867de564d07e3</span>,<span class="number">0x8850ac2051b6a7450f228e676abbfd510ce08a43a0b791182aedcfb6b3f1d478e3dc953e59eb99fe370f71d52af3a1625e0700078927f8a5919becbfa60af96b</span>,<span class="number">0xfa474444b5372681c5b7316871cf9a93306b4d6a3eac2492c71780eb6903bd4ff77b1c4a28608dfa10c0c8b8bfc23942fc0a8ec64d3967504621e692eafcf4af</span>,<span class="number">0xfd7f772c719929d33f15ce0122f6efc278b728d75dbd16a343c649e49118a79084d169d6db1b6b859e1f4c82694a850622dcdff23c8fbd7d0a736a409b94f471</span>,<span class="number">0xedf6566ecd7f0a0beaa2f45a2a509358c9537dbf772e6f63ccb0e21b5c5c3dae0939e9e15c9bcdf80f7875e74ebfba16f0660737719c8ad435981b5b8df89a23</span>,<span class="number">0xd7e718dafb753084cb7c1deee139f6e158a0228bbf9b0ae5ed3a8b3d2508ce62e4e32cd43a3135540b31e052e6e3a0dba3ae623c69d74da34387c3429b6f0487</span>,<span class="number">0xbff5ab718c54909a34ba8ab5787cbfb0c9c57394350b71744d5751f577cefda87cc8263b21dd2c21a8f19fff8362c3371fcb054dddb1293df7d6efe2d661e4ab</span>,<span class="number">0xb946ad47cf1f9186c1eeaeed12f21b41a29f9fb74b14f577c97731004b372c5f41023aafc9b93557c984ff87dd263b293aa500c3a2ce1f0815319263cf7c42d5</span>,<span class="number">0x9b93853dc5f4c052fdda339f69c625bc98ffdbde439078458b84278e34542f9110863e5beef166a766f565f7a815ec4a462510b42f81454b65e648622c610b27</span>,<span class="number">0xae050aaa86b9580747efa33561973597d7d7a0684a45219eed3224ebc37fdf067ed61a29ecaa501266c9bcdd16b850c0dd40da3f964a5b03ae60c3967fd55913</span>,<span class="number">0xea57b0482a876d49a3e21bb885bda0aae21f5fcf2521f7e1db771998b6b639d0833c17d7c8c67c12ce9b60e4210e068f98344a8cabc5faa17a048100bab797bb</span>,<span class="number">0x9f866ad27c9ea2fb29168ec6db0f7755221484d0c89bfef0cd70fc2ed14fda15f7b59bbca2e23f40b5effeb9e53ad821e06cf986b34da4407c85bfbf78d2920b</span>,<span class="number">0xab0939605dcff5d1ec8405b6daeb65eccc6e3b5956601dddea95c6310ac32bfeec1bab6b83e85371078a16ea9489050175098d39488aaed2a190c647fe2b1b69</span>,<span class="number">0xe85698e04d8bedbac2c7884c914b7026dbb1dd5134c4a5a8e7541b07c8a94ab3d2f12eb7f1171ccd564054e1dc63d5ac044e5c5552870b419fef35a572199239</span>,<span class="number">0xea94663e103e4354fb7feb80b11d06c7e16feb7265f69ee882180baba70fa075df24e3fe1ad12a99f054cabf4a3f5e4823416d4c4daa02ca51ce3926034186db</span>,<span class="number">0x93662718294005f4ac8f79b0799e240a05eea871ef07d623ea7c68ef818b3b55fb4f9b6f06c399726e59cec03389053b448f187404cddb93cb3c55e3d12cebc9</span>]</span><br><span class="line">cs =[<span class="number">0x4aae29aaaab89fbc672db400c41d1ad3ffce937e7810065bed552c12101fb778046d22b00c05bbc3f61825b5af3c3e57f1abaafe3d9a58a573a905e2a1cecde7</span>,<span class="number">0x502a1c23ef44f174aaedb9a49705eb72f805bab13e82d599525ea7484cc11f2e7c4475526b4be344390e46bcb8bcdaba2768c6321f8ca5482666171eee498f28</span>,<span class="number">0x546f2276b59b7186ef5b9a04e0ba2691648d005fc780303411a1082ea3b05be127a10e26921a4b84b14d8acc45a6c32a0142ac6eb396415ecb5841a01b775b5d</span>,<span class="number">0x43986eb7208b66dd86c12f953e10b2d3907873151170278393b6a4f7ea518ab5745e2db5f4dbec84087c4817c5df10e743f35ed1190515aba34832b1b274bf2e</span>,<span class="number">0x7b2e448342bc7409ed891cdbf5137014f417866097297302085d8800458495e374fba8398d069f1c1c7792a9f03194e36921c378308de18313fb9b62db45cc0a</span>,<span class="number">0x41ac8f265bc96ae868256fb08caf0a43a547346522b5d90cb9489c87cd5d726447d20354332dd3cb771003eddfa9c4bfa6923ae45ac8c0994f7cce46a3302eea</span>,<span class="number">0x51b59ad39b388fdb2056279e2de02d32d36b52da1cc1fe4f6843964273b4585704e21405e2528e5894bd4fdb436c382a5f7d3849f9c5d7902be74edd2b16a31c</span>,<span class="number">0x4e52d207f16a6f42497b25600e039de3ce49d7945ac2201ac12bf9fa9b3dc136f35328cbe9d3f9d4204d90f29fe1ce209c8904c99de0f85c5c572d05609095a6</span>,<span class="number">0x6485f505cd8296e9f1c9abdc39eebc6e767e98e1587b18878fa8a582a012bb609c2f36daffc2b9c460514bc47533525ce6835e7f8123331a833958fa47f2e40</span>,<span class="number">0x1ff809e71ab0347a8a9ec4356d5b8fbf109ade5881e5b59ac14adaaef2034fc40880e495070442513f42434fa8cbfcd9bce0501574997b35939f201ba1c87872</span>,<span class="number">0x5b3fad73b402fcc1148758d80a61f637257d35f2773c8dc9f22859a01aecaa37a37858232ab5b3e3622f234bf35bb02a6e93ecd5a06182b61e583d0193afaf55</span>,<span class="number">0x640e3556a526209f8528fbe678da3914d912a7e701abc3d4fcd65d84bcdbfc22623dfa3db31f9585a615c6de869b39c040dbfe94bb7eafd91bde15c4b87bd2c0</span>,<span class="number">0x335b0ff42f39541539752faade7510a301a861720d85958ce2890ddca9e0693b342604a5b134a0974ea21dc0dc0a156c01159898e5f87e16b4a56121c2e3bbb5</span>,<span class="number">0x89621740ec8b81065457105685666dfe6e31ee4f0a6efa6901e20ad6e5ea19ba438ea92f632764e52ccfb1ed35639443b5536f19ca69e9c295c6f5287a5e31b</span>,<span class="number">0x1e4162060327045be0f5a0ae5d7b87c60b928e4669450339af64a39ae45b108eb58bbe83e15bef7a5c92243b213adc3e9d3514632249314bf5b588df6202ae10</span>,<span class="number">0x5d10e308a16f8cd5c53b3ecd1081624e6eed4c3bfe522a8b7daf301aa6fc370b0a1cff1db7ea27aa6f5200903b365c53bc6d890ca1167ca57de87f80c5321742</span>,<span class="number">0x434ac82b1ed073a1d73606ffe973e316768368fb522644f6cc76d2a0e6b83f533524c7589113aeb2db35d50c2f9ff64ceb27958a93d47b6875b8eb9b158ebaac</span>,<span class="number">0x7cf3028273ece2a8af9790d3a689875bf7a3894e351a639d88fa13de05dc7f18be20ddeef4414a31b0f3dd65291e5d4d47d098027dbec25d4bc5409c017f0b03</span>,<span class="number">0x5d0eefe7de32360d7950d96d821ce06741b737a1dca016cb003f75e380f5c8e3d9b8505b0eda21b36879a6455d1f640bdac5ad648b97d80eacf406b57bb1d692</span>,<span class="number">0x4e4c6156da7f71123e1b4efde4a436985c6f2cccdc9b182735a75153927c6e7dc94693ab7fdd8646821a9d42eeb76c1be54984f81296a10e689805975185bf2c</span>,<span class="number">0x68db6b837d968569ba944591efb36587f0022b05cefbedaad1e1d7652d0c233d1c0b036364f25e0865c7a1dab8d9d1081f23928a3573b5ec711e5b7f32714a4</span>,<span class="number">0x333db46bc5fb83cbbf68475fd612bcad6becd30f95bf5b9ab6058ed0777fcb78cfe6da5c3386799fe9a1d6616801154ae7f45e35612de08efed7e2e750088b8e</span>,<span class="number">0x70d4dc8986c228e12329af934c08f7c0ca94ce6913b5c641c59b3cf629a1957f82d4f40aaa7faa765c75e4f994a8222a4d08e045fb529da5ee277e1b9540c148</span>,<span class="number">0x20421569b3bc73da4505760f7798a504f2276e6df9c9e48320b23201fb682021d168f6ee657fc2080722eb576ac78bf4b63ad7419983a05196fa0724fc4886d</span>,<span class="number">0x5f523df584f43d7eff229d562793c8e5d4713d9c80bd40b95434c34c982324f7c282ac2fe3ac151cb62435b85bece2ef115c6f4b7a33d47dcbfa8360f89b91ac</span>,<span class="number">0x7cbedea149640064a93cb75b909804ee7a896e17da808579206d1db7523b98bdf15bdc70e267e0a201bf293f980c1b5304337a7a78cc655aca07b9818b7169ab</span>,<span class="number">0x62b34eaac3d3a2b360805cc23147ff8754a9d90788461107a5c8cc7053a0910ca7af45035d333c9a0b7cf6a2c13c9c367ad8eea0ccda2a6d8e089b5ee07a76ef</span>,<span class="number">0x3e1c31f988e238869fad4794beb32164fa3bf3880041d1f9f2a65e2679f951491fcbeff1aa067313bf02100ae15d1af4d87050db05cec934e077c3eec238b72</span>,<span class="number">0x3c056ad33432e1cf5548ae3a6db21ee1471eb70619e0ad542bd38dd80f37b76b571ae6469bacd33f9618b7a61b8e8424fc33cae479375df72b064a5d1b8cd90f</span>,<span class="number">0x4caf081f5b949e65115e18b613ad8dc1fc208d2c5bea710b27b1db11d4a7eecc455c13f2fd92481f8cfea3e6fa75c0a58a154f12b6ce92c66107f617fd7ed7d8</span>]</span><br><span class="line">enc=<span class="number">0x191eb43459bd0f2d5ece00ab52c612668bb4c161014641a6e4afb41020465d7b82e9b60a55ab831bb5695f2fd832d08258c752ebf27ba0374b7b11b001b2629a</span></span><br><span class="line"><span class="comment">#第一部分</span></span><br><span class="line">t = <span class="built_in">len</span>(rs)</span><br><span class="line">kbits = <span class="number">400</span></span><br><span class="line">K = <span class="number">2</span> ** kbits</span><br><span class="line">P = identity_matrix(t) * p</span><br><span class="line">RC = matrix([[-<span class="number">1</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">1</span>]]) * matrix([rs, cs])</span><br><span class="line">KP = matrix([[K / p, <span class="number">0</span>], [<span class="number">0</span>, K]])</span><br><span class="line">M = block_matrix([[P, <span class="number">0</span>], [RC, KP]], subdivide=<span class="literal">False</span>)</span><br><span class="line">shortest_vector = M.LLL()</span><br><span class="line">x = shortest_vector[<span class="number">1</span>, -<span class="number">2</span>] / K * p % p</span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line"><span class="comment">#第二部分</span></span><br><span class="line">G=GF(p)</span><br><span class="line">factors, exps = <span class="built_in">zip</span>(*factor(p - <span class="number">1</span>))</span><br><span class="line">primes = [factors[i] ^ exps[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(factors))]</span><br><span class="line"><span class="built_in">print</span>(primes)</span><br><span class="line">dlogs = []</span><br><span class="line"><span class="keyword">for</span> fac <span class="keyword">in</span> primes[:-<span class="number">1</span>]:</span><br><span class="line">    t = (p - <span class="number">1</span>) // fac</span><br><span class="line">    dlog = discrete_log(G(<span class="built_in">pow</span>(enc, t, p)), G(<span class="built_in">pow</span>(x, t, p)))</span><br><span class="line">    dlogs += [dlog]</span><br><span class="line">s = (p - <span class="number">1</span>) // primes[-<span class="number">1</span>]</span><br><span class="line"><span class="built_in">print</span>(s)</span><br><span class="line">res = crt(dlogs, primes[:-<span class="number">1</span>])</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="string">b&#x27;flag&#123;&#x27;</span><span class="keyword">in</span> long_to_bytes(res + i * s):</span><br><span class="line">        <span class="built_in">print</span>(long_to_bytes(res + i * s))</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">        </span><br><span class="line"><span class="comment">#flag&#123;70b1b709ce431682addb581596320007&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="web"><a href="#web" class="headerlink" title="web"></a>web</h3><h4 id="这网页怪怪的"><a href="#这网页怪怪的" class="headerlink" title="这网页怪怪的"></a>这网页怪怪的</h4><p>第一部分是<strong>重定向</strong>，burp抓包发现隐含文件yunnuuu.php，然后tmp1利用php的弱比较绕过，tmp2使用伪协议读取flaaaaaaag.php文件内容为base64，然后解码即可</p>
+<p>下面是网页源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># yunnuuu.php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;flaaaaaaag.php&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$tmp1</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;tmp1&#x27;</span>];</span><br><span class="line"><span class="variable">$tmp2</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;tmp2&#x27;</span>];</span><br><span class="line"><span class="variable">$secret</span>=<span class="number">289114</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$tmp1</span>))&#123;</span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">&#x27;Too early&#x27;</span>);&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$tmp1</span>==<span class="variable">$secret</span>)&#123;</span><br><span class="line">        <span class="keyword">include</span>(<span class="variable">$tmp2</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span>(<span class="string">&#x27;you are close&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="misc"><a href="#misc" class="headerlink" title="misc"></a>misc</h3><h4 id="knn"><a href="#knn" class="headerlink" title="knn"></a>knn</h4><p>根据题目描述KNN，使用KNN分类模型进行预测。使用Python机器学习模块 - sklearn - 对数据结果进行分类；</p>
+<p>经过测试，发现需要对A车、B车要转换为二进制0和1再进行ascii解码。<del>（没学过，只能照抄大佬的了）</del>，不过只要调试好knn中n_neighbors的参数，就能得到最准确的flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载历史评分数据，指定编码为GBK</span></span><br><span class="line">history_data = pd.read_csv(</span><br><span class="line">    <span class="string">&quot;新能源汽车检测数据.csv&quot;</span>, encoding=<span class="string">&quot;GBK&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取待检测新能源车数据</span></span><br><span class="line">test_data = pd.read_csv(</span><br><span class="line">    <span class="string">&quot;待检测新能源车.csv&quot;</span>,</span><br><span class="line">    encoding=<span class="string">&quot;GBK&quot;</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取特征和目标变量</span></span><br><span class="line">X = history_data[[<span class="string">&quot;防碰撞评分&quot;</span>, <span class="string">&quot;电池容量评分&quot;</span>, <span class="string">&quot;智能驾驶能力&quot;</span>, <span class="string">&quot;智能座舱评分&quot;</span>]]</span><br><span class="line">y = history_data[<span class="string">&quot;名称&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 划分训练集和测试集</span></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(</span><br><span class="line">    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建KNN分类器，这里假设K取5，可根据实际情况调整</span></span><br><span class="line">knn = KNeighborsClassifier(n_neighbors=<span class="number">300</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在训练集上训练模型</span></span><br><span class="line">knn.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在测试集上进行预测</span></span><br><span class="line">y_pred = knn.predict(X_test)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算模型的准确率</span></span><br><span class="line">accuracy = accuracy_score(y_test, y_pred)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;模型准确率:<span class="subst">&#123;accuracy&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取待检测新能源车数据的特征</span></span><br><span class="line">test_X = test_data[[<span class="string">&quot;防碰撞评分&quot;</span>, <span class="string">&quot;电池容量评分&quot;</span>, <span class="string">&quot;智能驾驶能力&quot;</span>, <span class="string">&quot;智能座舱评分&quot;</span>]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用训练好的模型进行预测</span></span><br><span class="line">test_pred = knn.predict(test_X)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将预测结果添加到待检测新能源车数据中</span></span><br><span class="line">test_data[<span class="string">&quot;预测车型&quot;</span>] = test_pred</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将结果保存为csv文件</span></span><br><span class="line">csv_path = <span class="string">&quot;待检测新能源车_预测结果.csv&quot;</span></span><br><span class="line">test_data.to_csv(csv_path, index=<span class="literal">False</span>, encoding=<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line"></span><br><span class="line">df = pd.read_csv(csv_path, encoding=<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将预测车型列中的A车替换为0，B车替换为1</span></span><br><span class="line">df[<span class="string">&quot;预测车型&quot;</span>] = df[<span class="string">&quot;预测车型&quot;</span>].<span class="built_in">map</span>(&#123;<span class="string">&quot;A车&quot;</span>: <span class="string">&quot;0&quot;</span>, <span class="string">&quot;B车&quot;</span>: <span class="string">&quot;1&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将预测车型列的所有值连接成一个字符串</span></span><br><span class="line">binary_string = <span class="string">&quot;&quot;</span>.join(df[<span class="string">&quot;预测车型&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按每8位一组分割二进制字符串</span></span><br><span class="line">binary_chunks = [binary_string[i : i + <span class="number">8</span>] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(binary_string), <span class="number">8</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将每个8位二进制字符串转换为ASCII字符</span></span><br><span class="line">ascii_string = <span class="string">&quot;&quot;</span>.join([<span class="built_in">chr</span>(<span class="built_in">int</span>(chunk, <span class="number">2</span>)) <span class="keyword">for</span> chunk <span class="keyword">in</span> binary_chunks])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;转换后的ASCII码字符串为:&quot;</span>, ascii_string)</span><br></pre></td></tr></table></figure>
+<h2 id="其他组"><a href="#其他组" class="headerlink" title="其他组"></a>其他组</h2><h3 id="crypto-1"><a href="#crypto-1" class="headerlink" title="crypto"></a>crypto</h3><h4 id="simpleSignin"><a href="#simpleSignin" class="headerlink" title="simpleSignin"></a>simpleSignin</h4><p>题目：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> gmpy2 <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line">flag = <span class="string">b&#x27;xxx&#x27;</span></span><br><span class="line">p = next_prime(bytes_to_long(os.urandom(<span class="number">128</span>)))</span><br><span class="line">q = next_prime(bytes_to_long(os.urandom(<span class="number">128</span>)))</span><br><span class="line">r = next_prime(q)</span><br><span class="line">n = p * q * r</span><br><span class="line">e = <span class="number">0x10001</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;n = <span class="subst">&#123;n&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;c = <span class="subst">&#123;<span class="built_in">pow</span>(bytes_to_long(flag), e, n)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;gift1 = <span class="subst">&#123;p % (<span class="number">2</span>**<span class="number">10</span>)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;gift2 = <span class="subst">&#123;(p &gt;&gt; <span class="number">20</span>) % <span class="number">2</span> ** <span class="number">800</span>&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment"># n = 91717197306065801430692774296739087369692505805873730729014813677164858033475119219496549179322145782790263228034134781592967028480301579462111507372893508636592832600206391905790511488678949157112322777098684707325311891056750963286494634489093620270797637437274546909400418496263799669541769586017282231886023275686719495040493703402244867906367008837217453500300992995258096509545406775279177918160331853363991834113918051468978309081085686108283547874975768959542753094631595260890420558364636303078263220001513817844063960023424429484568985727987064710176511050208253838039386390968276801658300795687804601169987051671314061987254212363117325786734328360418591971610392966867659045907550755979167652038093091970078722854251659581538266806207906127491377972897441916942048136016416739633568604447564119372465662628724153812001753748410162478969725179843125714619352895967577899670208386148053595763674920185320834513587</span></span><br><span class="line"><span class="comment"># c = 53725206995000716522893276595058419071990290621803579636161714383330892673055811337947487241701642126496591685585109862245420917684160662867863785840324861826954623093740844326627026833476771622577100464186879804184565843869885634004202583123814660253474988365767802371596929119773493402264073966760818738577604694066757843772483509464516822006312737285138313587227005339175914335841617310097530993158296079585719772401849963001042345007495440110071538584261056055469925721208755935971137618873034799819342505088130217626174789908762309465751064851354313099531229991764250968313733026934453793364342598912519963653648573385780950148182927905527658001218917373163825532068287661941387464083148002185635404194796699532320249403305428191157038659625440168989244227207215946636349083290983113055351713899941081154804665455470002453942340935361232121886299764516109079270616076269084847241248414373185392810503507977061708566426</span></span><br><span class="line"><span class="comment"># gift1 = 513</span></span><br><span class="line"><span class="comment"># gift2 = 5077110719426498428662246006638349628986894614097694065336047422264042823893900747327210766546701290926253205743419412459378571920759093322149140413682875156857171051511499793127787270654329155934268596972449238336868326196360992252498463385</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>思路分析：</strong></p>
+<p>p的位数是128*8=1024位，gift1是p的低10位，gift2是p的低20位到820位，所以我们需要爆破低10位到20位，得到p的低820位后，使用coppersmith定理即可求出高104位，cooper是根据已知部分位数利用小根来求解未知位数，使用前提是</p>
+<script type="math/tex; mode=display">
+unknown\_bits÷p\_bits≤0.44</script><script type="math/tex; mode=display">
+known\_bits÷p\_bits≥0.56</script><p>这里显然是满足的，所以使用copper即可求出高204位，求出p后，直接求e在p-1下的逆元，无需求q和r</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> *</span><br><span class="line">n = <span class="number">91717197306065801430692774296739087369692505805873730729014813677164858033475119219496549179322145782790263228034134781592967028480301579462111507372893508636592832600206391905790511488678949157112322777098684707325311891056750963286494634489093620270797637437274546909400418496263799669541769586017282231886023275686719495040493703402244867906367008837217453500300992995258096509545406775279177918160331853363991834113918051468978309081085686108283547874975768959542753094631595260890420558364636303078263220001513817844063960023424429484568985727987064710176511050208253838039386390968276801658300795687804601169987051671314061987254212363117325786734328360418591971610392966867659045907550755979167652038093091970078722854251659581538266806207906127491377972897441916942048136016416739633568604447564119372465662628724153812001753748410162478969725179843125714619352895967577899670208386148053595763674920185320834513587</span></span><br><span class="line">c = <span class="number">53725206995000716522893276595058419071990290621803579636161714383330892673055811337947487241701642126496591685585109862245420917684160662867863785840324861826954623093740844326627026833476771622577100464186879804184565843869885634004202583123814660253474988365767802371596929119773493402264073966760818738577604694066757843772483509464516822006312737285138313587227005339175914335841617310097530993158296079585719772401849963001042345007495440110071538584261056055469925721208755935971137618873034799819342505088130217626174789908762309465751064851354313099531229991764250968313733026934453793364342598912519963653648573385780950148182927905527658001218917373163825532068287661941387464083148002185635404194796699532320249403305428191157038659625440168989244227207215946636349083290983113055351713899941081154804665455470002453942340935361232121886299764516109079270616076269084847241248414373185392810503507977061708566426</span></span><br><span class="line">leak = <span class="number">5077110719426498428662246006638349628986894614097694065336047422264042823893900747327210766546701290926253205743419412459378571920759093322149140413682875156857171051511499793127787270654329155934268596972449238336868326196360992252498463385</span></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line">PR.&lt;x&gt; = PolynomialRing(Zmod(n))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> trange(<span class="number">2</span>**<span class="number">10</span>):</span><br><span class="line">    p_low = (leak&lt;&lt;<span class="number">20</span>)+(i&lt;&lt;<span class="number">10</span>)+<span class="number">513</span></span><br><span class="line">    f = x*<span class="number">2</span>**<span class="number">820</span>+p_low</span><br><span class="line">    root = f.monic().small_roots(X=<span class="number">2</span>^<span class="number">204</span>,beta=<span class="number">0.33</span>)</span><br><span class="line">    <span class="keyword">if</span> root:</span><br><span class="line">        p = <span class="built_in">int</span>(root[<span class="number">0</span>]*<span class="number">2</span>**<span class="number">820</span>+p_low)</span><br><span class="line">        <span class="keyword">if</span> n%p==<span class="number">0</span>:</span><br><span class="line">            phi = p-<span class="number">1</span></span><br><span class="line">            d = inverse_mod(e,phi)</span><br><span class="line">            m = <span class="built_in">pow</span>(c,d,p)</span><br><span class="line">            flag = <span class="built_in">bytes</span>.fromhex(<span class="built_in">hex</span>(m)[<span class="number">2</span>:])</span><br><span class="line">            <span class="built_in">print</span>(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="eazy-crypto"><a href="#eazy-crypto" class="headerlink" title="eazy_crypto"></a>eazy_crypto</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> secret <span class="keyword">import</span> flag</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> getPrime</span><br><span class="line"></span><br><span class="line">flag = <span class="built_in">bin</span>(<span class="built_in">int</span>.from_bytes(flag, <span class="string">&#x27;big&#x27;</span>))[<span class="number">2</span>:]</span><br><span class="line"></span><br><span class="line">private_key = []</span><br><span class="line">g = getPrime(<span class="number">10</span>)</span><br><span class="line">private_key.append(g)</span><br><span class="line"><span class="keyword">for</span> i inrange(<span class="built_in">len</span>(flag) - <span class="number">1</span>):</span><br><span class="line">    g = g * <span class="number">2</span></span><br><span class="line">    private_key.append(g)</span><br><span class="line"></span><br><span class="line">a = getPrime(<span class="number">20</span>)</span><br><span class="line">b = getPrime(<span class="built_in">len</span>(flag) + <span class="number">20</span>)</span><br><span class="line">public_key = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> private_key:</span><br><span class="line">    public_key.append((a * i) % b)</span><br><span class="line"><span class="built_in">print</span>(public_key)</span><br><span class="line"></span><br><span class="line">c = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i inrange(<span class="built_in">len</span>(flag)):</span><br><span class="line">    c += <span class="built_in">int</span>(<span class="built_in">str</span>(flag)[i])*public_key[i]</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">[806186273, 1612372546, 3224745092, 6449490184, 12898980368, 25797960736, 51595921472, 103191842944, 206383685888, 412767371776, 825534743552, 1651069487104, 3302138974208, 6604277948416, 13208555896832, 26417111793664, 52834223587328, 105668447174656, 211336894349312, 422673788698624, 845347577397248, 1690695154794496, 3381390309588992, 6762780619177984, 13525561238355968, 27051122476711936, 54102244953423872, 108204489906847744, 216408979813695488, 432817959627390976, 865635919254781952, 1731271838509563904, 3462543677019127808, 6925087354038255616, 13850174708076511232, 27700349416153022464, 55400698832306044928, 110801397664612089856, 221602795329224179712, 443205590658448359424, 886411181316896718848, 1772822362633793437696, 3545644725267586875392, 7091289450535173750784, 14182578901070347501568, 28365157802140695003136, 56730315604281390006272, 113460631208562780012544, 226921262417125560025088, 453842524834251120050176, 907685049668502240100352, 1815370099337004480200704, 3630740198674008960401408, 7261480397348017920802816, 14522960794696035841605632, 29045921589392071683211264, 58091843178784143366422528, 116183686357568286732845056, 232367372715136573465690112, 464734745430273146931380224, 929469490860546293862760448, 1858938981721092587725520896, 3717877963442185175451041792, 7435755926884370350902083584, 14871511853768740701804167168, 29743023707537481403608334336, 59486047415074962807216668672, 118972094830149925614433337344, 237944189660299851228866674688, 475888379320599702457733349376, 951776758641199404915466698752, 1903553517282398809830933397504, 3807107034564797619661866795008, 7614214069129595239323733590016, 15228428138259190478647467180032, 30456856276518380957294934360064, 60913712553036761914589868720128, 121827425106073523829179737440256, 243654850212147047658359474880512, 487309700424294095316718949761024, 974619400848588190633437899522048, 1949238801697176381266875799044096, 3898477603394352762533751598088192, 7796955206788705525067503196176384, 15593910413577411050135006392352768, 31187820827154822100270012784705536, 62375641654309644200540025569411072, 124751283308619288401080051138822144, 249502566617238576802160102277644288, 499005133234477153604320204555288576, 998010266468954307208640409110577152, 1996020532937908614417280818221154304, 3992041065875817228834561636442308608, 7984082131751634457669123272884617216, 15968164263503268915338246545769234432, 31936328527006537830676493091538468864, 63872657054013075661352986183076937728, 127745314108026151322705972366153875456, 255490628216052302645411944732307750912, 510981256432104605290823889464615501824, 1021962512864209210581647778929231003648, 2043925025728418421163295557858462007296, 4087850051456836842326591115716924014592, 8175700102913673684653182231433848029184, 16351400205827347369306364462867696058368, 32702800411654694738612728925735392116736, 65405600823309389477225457851470784233472, 130811201646618778954450915702941568466944, 261622403293237557908901831405883136933888, 523244806586475115817803662811766273867776, 1046489613172950231635607325623532547735552, 2092979226345900463271214651247065095471104, 4185958452691800926542429302494130190942208, 8371916905383601853084858604988260381884416, 16743833810767203706169717209976520763768832, 33487667621534407412339434419953041527537664, 66975335243068814824678868839906083055075328, 133950670486137629649357737679812166110150656, 267901340972275259298715475359624332220301312, 535802681944550518597430950719248664440602624, 1071605363889101037194861901438497328881205248, 2143210727778202074389723802876994657762410496, 4286421455556404148779447605753989315524820992, 8572842911112808297558895211507978631049641984, 17145685822225616595117790423015957262099283968, 34291371644451233190235580846031914524198567936, 68582743288902466380471161692063829048397135872, 137165486577804932760942323384127658096794271744, 274330973155609865521884646768255316193588543488, 548661946311219731043769293536510632387177086976, 1097323892622439462087538587073021264774354173952, 2194647785244878924175077174146042529548708347904, 4389295570489757848350154348292085059097416695808, 8778591140979515696700308696584170118194833391616, 17557182281959031393400617393168340236389666783232, 35114364563918062786801234786336680472779333566464, 70228729127836125573602469572673360945558667132928, 140457458255672251147204939145346721891117334265856, 280914916511344502294409878290693443782234668531712, 561829833022689004588819756581386887564469337063424, 1123659666045378009177639513162773775128938674126848, 2247319332090756018355279026325547550257877348253696, 4494638664181512036710558052651095100515754696507392, 8989277328363024073421116105302190201031509393014784, 17978554656726048146842232210604380402063018786029568, 35957109313452096293684464421208760804126037572059136, 71914218626904192587368928842417521608252075144118272, 143828437253808385174737857684835043216504150288236544, 287656874507616770349475715369670086433008300576473088, 575313749015233540698951430739340172866016601152946176, 1150627498030467081397902861478680345732033202305892352, 2301254996060934162795805722957360691464066404611784704, 4602509992121868325591611445914721382928132809223569408, 9205019984243736651183222891829442765856265618447138816, 18410039968487473302366445783658885531712531236894277632, 36820079936974946604732891567317771063425062473788555264, 73640159873949893209465783134635542126850124947577110528, 147280319747899786418931566269271084253700249895154221056, 294560639495799572837863132538542168507400499790308442112, 589121278991599145675726265077084337014800999580616884224, 1178242557983198291351452530154168674029601999161233768448, 2356485115966396582702905060308337348059203998322467536896, 4712970231932793165405810120616674696118407996644935073792, 9425940463865586330811620241233349392236815993289870147584, 18851880927731172661623240482466698784473631986579740295168, 37703761855462345323246480964933397568947263973159480590336, 75407523710924690646492961929866795137894527946318961180672, 150815047421849381292985923859733590275789055892637922361344, 301630094843698762585971847719467180551578111785275844722688, 603260189687397525171943695438934361103156223570551689445376, 1206520379374795050343887390877868722206312447141103378890752, 2413040758749590100687774781755737444412624894282206757781504, 4826081517499180201375549563511474888825249788564413515563008, 9652163034998360402751099127022949777650499577128827031126016, 19304326069996720805502198254045899555300999154257654062252032, 38608652139993441611004396508091799110601998308515308124504064, 77217304279986883222008793016183598221203996617030616249008128, 154434608559973766444017586032367196442407993234061232498016256, 308869217119947532888035172064734392884815986468122464996032512, 617738434239895065776070344129468785769631972936244929992065024, 1235476868479790131552140688258937571539263945872489859984130048, 2470953736959580263104281376517875143078527891744979719968260096, 2271772865869042562343933210469277026878003414201539042867658625, 1873411123687967160823236878372080794476954459114657688666455683, 1076687639325816357781844214177688329674856548940894980264049799, 2153375278651632715563688428355376659349713097881789960528099598, 1636615949253147467262747314144280059420373826475159523987337629, 603097290456176970660865085722086859561695283661898650905813691, 1206194580912353941321730171444173719123390567323797301811627382, 2412389161824707882643460342888347438246781134647594603623254764, 2154643715599297801422291143210221617214509900006768810177647961]</span></span><br><span class="line"><span class="string">9300864384064097558471271281235466391616213967975393508307623247</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c += <span class="built_in">int</span>(<span class="built_in">str</span>(flag)[i])*public_key[i]</span><br></pre></td></tr></table></figure>
+<p><strong>思路分析：</strong></p>
+<p>可以看出刚开始的LCG中<script type="math/tex">a * i<<b</script>，当i逐渐变大，直到最后i的二进制位数是10+len(flag)，<script type="math/tex">a*i</script>的位数就是30+len(flag)&gt;20+len(flag)=b的位数，所以public_key的后十个数据都进行了一次有效的模b，其他的数mod b还是其本身；</p>
+<p>以最后两个数据为例：</p>
+<p>x=2412389161824707882643460342888347438246781134647594603623254764，y=2154643715599297801422291143210221617214509900006768810177647961</p>
+<script type="math/tex; mode=display">
+b=2^{len(flag) + 20},大概就是这个长度\\</script><script type="math/tex; mode=display">
+x=2^{(30+len(flag)-1)}\pmod{b}</script><script type="math/tex; mode=display">
+y=2^{(30+len(flag)}\pmod{b}</script><script type="math/tex; mode=display">
+y=2*2^{30+len(flag)-1}\pmod{b}=2x\pmod{b}</script><script type="math/tex; mode=display">
+所以,2x模一次b就是y（这里根据x和b的大小关系能够看出来，x就是b的一倍多大）</script><script type="math/tex; mode=display">
+即，y=2x-b，b=2x-y</script><p>这里x和y的取值只要是public_key的后十个数据中任意相邻的两个即可；然后求a，因为当i是private_key中第一个数据g时，<script type="math/tex">a*g<<b</script>，所以直接对publick_key中第一个数进行分解，分解得到列表的第二个就是a（因为a&gt;g），得到a和g后，按照源代码<strong>正向逻辑生成</strong><script type="math/tex">private\_key</script></p>
+<div class="note info">
+            <p>还有一种<strong>反向方法</strong>得到private_key</p><script type="math/tex; mode=display">因为，public\_key=a*i\pmod{b}\\</script><script type="math/tex; mode=display">所以，i=public\_key*a^{−1}\pmod{b}</script><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private_key = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> public_key:</span><br><span class="line">    private_key.append(int(i*pow(a,-1,b)%b))</span><br></pre></td></tr></table></figure>
+          </div>
+<p>得到private_key后，只需要解决背包加密即可：</p>
+<script type="math/tex; mode=display">
+已知，c += int(str(flag)[i])*public\_key[i]\pmod{b}\\</script><script type="math/tex; mode=display">
+因为public\_key=a * private\_key\pmod{b})</script><script type="math/tex; mode=display">
+所以，c+=int(str(flag)[i])*a * private\_key\pmod{b})</script><script type="math/tex; mode=display">
+c*a^{-1}=int(str(flag)[i])*private\_key\pmod{b}</script><p>所以我们只需要比较<script type="math/tex">c*a^{-1}和private\_key</script>的大小，如果前者大于后者，说明flag的最高位是1，同时<script type="math/tex">令c=c-private\_key</script>，反之flag的最高位是0（这个判断条件是在<script type="math/tex">private\_Key</script>的逆循环中进行的）,即可得到最终flag</p>
+<p>最终exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">from</span> sympy <span class="keyword">import</span> isprime, factor</span><br><span class="line"><span class="keyword">from</span> sympy <span class="keyword">import</span> factorint</span><br><span class="line"></span><br><span class="line">public_key=[<span class="number">806186273</span>, <span class="number">1612372546</span>, <span class="number">3224745092</span>, <span class="number">6449490184</span>, <span class="number">12898980368</span>, <span class="number">25797960736</span>, <span class="number">51595921472</span>, <span class="number">103191842944</span>, <span class="number">206383685888</span>, <span class="number">412767371776</span>, <span class="number">825534743552</span>, <span class="number">1651069487104</span>, <span class="number">3302138974208</span>, <span class="number">6604277948416</span>, <span class="number">13208555896832</span>, <span class="number">26417111793664</span>, <span class="number">52834223587328</span>, <span class="number">105668447174656</span>, <span class="number">211336894349312</span>, <span class="number">422673788698624</span>, <span class="number">845347577397248</span>, <span class="number">1690695154794496</span>, <span class="number">3381390309588992</span>, <span class="number">6762780619177984</span>, <span class="number">13525561238355968</span>, <span class="number">27051122476711936</span>, <span class="number">54102244953423872</span>, <span class="number">108204489906847744</span>, <span class="number">216408979813695488</span>, <span class="number">432817959627390976</span>, <span class="number">865635919254781952</span>, <span class="number">1731271838509563904</span>, <span class="number">3462543677019127808</span>, <span class="number">6925087354038255616</span>, <span class="number">13850174708076511232</span>, <span class="number">27700349416153022464</span>, <span class="number">55400698832306044928</span>, <span class="number">110801397664612089856</span>, <span class="number">221602795329224179712</span>, <span class="number">443205590658448359424</span>, <span class="number">886411181316896718848</span>, <span class="number">1772822362633793437696</span>, <span class="number">3545644725267586875392</span>, <span class="number">7091289450535173750784</span>, <span class="number">14182578901070347501568</span>, <span class="number">28365157802140695003136</span>, <span class="number">56730315604281390006272</span>, <span class="number">113460631208562780012544</span>, <span class="number">226921262417125560025088</span>, <span class="number">453842524834251120050176</span>, <span class="number">907685049668502240100352</span>, <span class="number">1815370099337004480200704</span>, <span class="number">3630740198674008960401408</span>, <span class="number">7261480397348017920802816</span>, <span class="number">14522960794696035841605632</span>, <span class="number">29045921589392071683211264</span>, <span class="number">58091843178784143366422528</span>, <span class="number">116183686357568286732845056</span>, <span class="number">232367372715136573465690112</span>, <span class="number">464734745430273146931380224</span>, <span class="number">929469490860546293862760448</span>, <span class="number">1858938981721092587725520896</span>, <span class="number">3717877963442185175451041792</span>, <span class="number">7435755926884370350902083584</span>, <span class="number">14871511853768740701804167168</span>, <span class="number">29743023707537481403608334336</span>, <span class="number">59486047415074962807216668672</span>, <span class="number">118972094830149925614433337344</span>, <span class="number">237944189660299851228866674688</span>, <span class="number">475888379320599702457733349376</span>, <span class="number">951776758641199404915466698752</span>, <span class="number">1903553517282398809830933397504</span>, <span class="number">3807107034564797619661866795008</span>, <span class="number">7614214069129595239323733590016</span>, <span class="number">15228428138259190478647467180032</span>, <span class="number">30456856276518380957294934360064</span>, <span class="number">60913712553036761914589868720128</span>, <span class="number">121827425106073523829179737440256</span>, <span class="number">243654850212147047658359474880512</span>, <span class="number">487309700424294095316718949761024</span>, <span class="number">974619400848588190633437899522048</span>, <span class="number">1949238801697176381266875799044096</span>, <span class="number">3898477603394352762533751598088192</span>, <span class="number">7796955206788705525067503196176384</span>, <span class="number">15593910413577411050135006392352768</span>, <span class="number">31187820827154822100270012784705536</span>, <span class="number">62375641654309644200540025569411072</span>, <span class="number">124751283308619288401080051138822144</span>, <span class="number">249502566617238576802160102277644288</span>, <span class="number">499005133234477153604320204555288576</span>, <span class="number">998010266468954307208640409110577152</span>, <span class="number">1996020532937908614417280818221154304</span>, <span class="number">3992041065875817228834561636442308608</span>, <span class="number">7984082131751634457669123272884617216</span>, <span class="number">15968164263503268915338246545769234432</span>, <span class="number">31936328527006537830676493091538468864</span>, <span class="number">63872657054013075661352986183076937728</span>, <span class="number">127745314108026151322705972366153875456</span>, <span class="number">255490628216052302645411944732307750912</span>, <span class="number">510981256432104605290823889464615501824</span>, <span class="number">1021962512864209210581647778929231003648</span>, <span class="number">2043925025728418421163295557858462007296</span>, <span class="number">4087850051456836842326591115716924014592</span>, <span class="number">8175700102913673684653182231433848029184</span>, <span class="number">16351400205827347369306364462867696058368</span>, <span class="number">32702800411654694738612728925735392116736</span>, <span class="number">65405600823309389477225457851470784233472</span>, <span class="number">130811201646618778954450915702941568466944</span>, <span class="number">261622403293237557908901831405883136933888</span>, <span class="number">523244806586475115817803662811766273867776</span>, <span class="number">1046489613172950231635607325623532547735552</span>, <span class="number">2092979226345900463271214651247065095471104</span>, <span class="number">4185958452691800926542429302494130190942208</span>, <span class="number">8371916905383601853084858604988260381884416</span>, <span class="number">16743833810767203706169717209976520763768832</span>, <span class="number">33487667621534407412339434419953041527537664</span>, <span class="number">66975335243068814824678868839906083055075328</span>, <span class="number">133950670486137629649357737679812166110150656</span>, <span class="number">267901340972275259298715475359624332220301312</span>, <span class="number">535802681944550518597430950719248664440602624</span>, <span class="number">1071605363889101037194861901438497328881205248</span>, <span class="number">2143210727778202074389723802876994657762410496</span>, <span class="number">4286421455556404148779447605753989315524820992</span>, <span class="number">8572842911112808297558895211507978631049641984</span>, <span class="number">17145685822225616595117790423015957262099283968</span>, <span class="number">34291371644451233190235580846031914524198567936</span>, <span class="number">68582743288902466380471161692063829048397135872</span>, <span class="number">137165486577804932760942323384127658096794271744</span>, <span class="number">274330973155609865521884646768255316193588543488</span>, <span class="number">548661946311219731043769293536510632387177086976</span>, <span class="number">1097323892622439462087538587073021264774354173952</span>, <span class="number">2194647785244878924175077174146042529548708347904</span>, <span class="number">4389295570489757848350154348292085059097416695808</span>, <span class="number">8778591140979515696700308696584170118194833391616</span>, <span class="number">17557182281959031393400617393168340236389666783232</span>, <span class="number">35114364563918062786801234786336680472779333566464</span>, <span class="number">70228729127836125573602469572673360945558667132928</span>, <span class="number">140457458255672251147204939145346721891117334265856</span>, <span class="number">280914916511344502294409878290693443782234668531712</span>, <span class="number">561829833022689004588819756581386887564469337063424</span>, <span class="number">1123659666045378009177639513162773775128938674126848</span>, <span class="number">2247319332090756018355279026325547550257877348253696</span>, <span class="number">4494638664181512036710558052651095100515754696507392</span>, <span class="number">8989277328363024073421116105302190201031509393014784</span>, <span class="number">17978554656726048146842232210604380402063018786029568</span>, <span class="number">35957109313452096293684464421208760804126037572059136</span>, <span class="number">71914218626904192587368928842417521608252075144118272</span>, <span class="number">143828437253808385174737857684835043216504150288236544</span>, <span class="number">287656874507616770349475715369670086433008300576473088</span>, <span class="number">575313749015233540698951430739340172866016601152946176</span>, <span class="number">1150627498030467081397902861478680345732033202305892352</span>, <span class="number">2301254996060934162795805722957360691464066404611784704</span>, <span class="number">4602509992121868325591611445914721382928132809223569408</span>, <span class="number">9205019984243736651183222891829442765856265618447138816</span>, <span class="number">18410039968487473302366445783658885531712531236894277632</span>, <span class="number">36820079936974946604732891567317771063425062473788555264</span>, <span class="number">73640159873949893209465783134635542126850124947577110528</span>, <span class="number">147280319747899786418931566269271084253700249895154221056</span>, <span class="number">294560639495799572837863132538542168507400499790308442112</span>, <span class="number">589121278991599145675726265077084337014800999580616884224</span>, <span class="number">1178242557983198291351452530154168674029601999161233768448</span>, <span class="number">2356485115966396582702905060308337348059203998322467536896</span>, <span class="number">4712970231932793165405810120616674696118407996644935073792</span>, <span class="number">9425940463865586330811620241233349392236815993289870147584</span>, <span class="number">18851880927731172661623240482466698784473631986579740295168</span>, <span class="number">37703761855462345323246480964933397568947263973159480590336</span>, <span class="number">75407523710924690646492961929866795137894527946318961180672</span>, <span class="number">150815047421849381292985923859733590275789055892637922361344</span>, <span class="number">301630094843698762585971847719467180551578111785275844722688</span>, <span class="number">603260189687397525171943695438934361103156223570551689445376</span>, <span class="number">1206520379374795050343887390877868722206312447141103378890752</span>, <span class="number">2413040758749590100687774781755737444412624894282206757781504</span>, <span class="number">4826081517499180201375549563511474888825249788564413515563008</span>, <span class="number">9652163034998360402751099127022949777650499577128827031126016</span>, <span class="number">19304326069996720805502198254045899555300999154257654062252032</span>, <span class="number">38608652139993441611004396508091799110601998308515308124504064</span>, <span class="number">77217304279986883222008793016183598221203996617030616249008128</span>, <span class="number">154434608559973766444017586032367196442407993234061232498016256</span>, <span class="number">308869217119947532888035172064734392884815986468122464996032512</span>, <span class="number">617738434239895065776070344129468785769631972936244929992065024</span>, <span class="number">1235476868479790131552140688258937571539263945872489859984130048</span>, <span class="number">2470953736959580263104281376517875143078527891744979719968260096</span>, <span class="number">2271772865869042562343933210469277026878003414201539042867658625</span>, <span class="number">1873411123687967160823236878372080794476954459114657688666455683</span>, <span class="number">1076687639325816357781844214177688329674856548940894980264049799</span>, <span class="number">2153375278651632715563688428355376659349713097881789960528099598</span>, <span class="number">1636615949253147467262747314144280059420373826475159523987337629</span>, <span class="number">603097290456176970660865085722086859561695283661898650905813691</span>, <span class="number">1206194580912353941321730171444173719123390567323797301811627382</span>, <span class="number">2412389161824707882643460342888347438246781134647594603623254764</span>, <span class="number">2154643715599297801422291143210221617214509900006768810177647961</span>]</span><br><span class="line">c = <span class="number">9300864384064097558471271281235466391616213967975393508307623247</span></span><br><span class="line">x = <span class="number">2412389161824707882643460342888347438246781134647594603623254764</span></span><br><span class="line">y = <span class="number">2154643715599297801422291143210221617214509900006768810177647961</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算a和b</span></span><br><span class="line">b = <span class="number">2</span> * x - y</span><br><span class="line">n = public_key[<span class="number">0</span>]</span><br><span class="line">factors = factorint(n)</span><br><span class="line">g = <span class="built_in">list</span>(factors.keys())[<span class="number">0</span>]</span><br><span class="line">a = <span class="built_in">list</span>(factors.keys())[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 得到private_key</span></span><br><span class="line">private_key = []</span><br><span class="line">private_key.append(g)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(public_key) - <span class="number">1</span>):</span><br><span class="line">    g = g * <span class="number">2</span></span><br><span class="line">    private_key.append(g)</span><br><span class="line"><span class="built_in">print</span>(private_key)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算c*a^(-1)的结果</span></span><br><span class="line">c = c * <span class="built_in">pow</span>(a, -<span class="number">1</span>, b) % b</span><br><span class="line"></span><br><span class="line"><span class="comment"># 倒循环计算出flag的高位--&gt;低位</span></span><br><span class="line">flag = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> private_key[::-<span class="number">1</span>]:</span><br><span class="line">    <span class="keyword">if</span> c &gt;= i:</span><br><span class="line">        c -= i</span><br><span class="line">        flag = <span class="string">&quot;1&quot;</span> + flag</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        flag = <span class="string">&quot;0&quot;</span> + flag</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">bytes</span>.fromhex(<span class="built_in">hex</span>(<span class="built_in">int</span>(flag, <span class="number">2</span>))[<span class="number">2</span>:]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># [787, 1574, 3148, 6296, 12592, 25184, 50368, 100736, 201472, 402944, 805888, 1611776, 3223552, 6447104, 12894208, 25788416, 51576832, 103153664, 206307328, 412614656, 825229312, 1650458624, 3300917248, 6601834496, 13203668992, 26407337984, 52814675968, 105629351936, 211258703872, 422517407744, 845034815488, 1690069630976, 3380139261952, 6760278523904, 13520557047808, 27041114095616, 54082228191232, 108164456382464, 216328912764928, 432657825529856, 865315651059712, 1730631302119424, 3461262604238848, 6922525208477696, 13845050416955392, 27690100833910784, 55380201667821568, 110760403335643136, 221520806671286272, 443041613342572544, 886083226685145088, 1772166453370290176, 3544332906740580352, 7088665813481160704, 14177331626962321408, 28354663253924642816, 56709326507849285632, 113418653015698571264, 226837306031397142528, 453674612062794285056, 907349224125588570112, 1814698448251177140224, 3629396896502354280448, 7258793793004708560896, 14517587586009417121792, 29035175172018834243584, 58070350344037668487168, 116140700688075336974336, 232281401376150673948672, 464562802752301347897344, 929125605504602695794688, 1858251211009205391589376, 3716502422018410783178752, 7433004844036821566357504, 14866009688073643132715008, 29732019376147286265430016, 59464038752294572530860032, 118928077504589145061720064, 237856155009178290123440128, 475712310018356580246880256, 951424620036713160493760512, 1902849240073426320987521024, 3805698480146852641975042048, 7611396960293705283950084096, 15222793920587410567900168192, 30445587841174821135800336384, 60891175682349642271600672768, 121782351364699284543201345536, 243564702729398569086402691072, 487129405458797138172805382144, 974258810917594276345610764288, 1948517621835188552691221528576, 3897035243670377105382443057152, 7794070487340754210764886114304, 15588140974681508421529772228608, 31176281949363016843059544457216, 62352563898726033686119088914432, 124705127797452067372238177828864, 249410255594904134744476355657728, 498820511189808269488952711315456, 997641022379616538977905422630912, 1995282044759233077955810845261824, 3990564089518466155911621690523648, 7981128179036932311823243381047296, 15962256358073864623646486762094592, 31924512716147729247292973524189184, 63849025432295458494585947048378368, 127698050864590916989171894096756736, 255396101729181833978343788193513472, 510792203458363667956687576387026944, 1021584406916727335913375152774053888, 2043168813833454671826750305548107776, 4086337627666909343653500611096215552, 8172675255333818687307001222192431104, 16345350510667637374614002444384862208, 32690701021335274749228004888769724416, 65381402042670549498456009777539448832, 130762804085341098996912019555078897664, 261525608170682197993824039110157795328, 523051216341364395987648078220315590656, 1046102432682728791975296156440631181312, 2092204865365457583950592312881262362624, 4184409730730915167901184625762524725248, 8368819461461830335802369251525049450496, 16737638922923660671604738503050098900992, 33475277845847321343209477006100197801984, 66950555691694642686418954012200395603968, 133901111383389285372837908024400791207936, 267802222766778570745675816048801582415872, 535604445533557141491351632097603164831744, 1071208891067114282982703264195206329663488, 2142417782134228565965406528390412659326976, 4284835564268457131930813056780825318653952, 8569671128536914263861626113561650637307904, 17139342257073828527723252227123301274615808, 34278684514147657055446504454246602549231616, 68557369028295314110893008908493205098463232, 137114738056590628221786017816986410196926464, 274229476113181256443572035633972820393852928, 548458952226362512887144071267945640787705856, 1096917904452725025774288142535891281575411712, 2193835808905450051548576285071782563150823424, 4387671617810900103097152570143565126301646848, 8775343235621800206194305140287130252603293696, 17550686471243600412388610280574260505206587392, 35101372942487200824777220561148521010413174784, 70202745884974401649554441122297042020826349568, 140405491769948803299108882244594084041652699136, 280810983539897606598217764489188168083305398272, 561621967079795213196435528978376336166610796544, 1123243934159590426392871057956752672333221593088, 2246487868319180852785742115913505344666443186176, 4492975736638361705571484231827010689332886372352, 8985951473276723411142968463654021378665772744704, 17971902946553446822285936927308042757331545489408, 35943805893106893644571873854616085514663090978816, 71887611786213787289143747709232171029326181957632, 143775223572427574578287495418464342058652363915264, 287550447144855149156574990836928684117304727830528, 575100894289710298313149981673857368234609455661056, 1150201788579420596626299963347714736469218911322112, 2300403577158841193252599926695429472938437822644224, 4600807154317682386505199853390858945876875645288448, 9201614308635364773010399706781717891753751290576896, 18403228617270729546020799413563435783507502581153792, 36806457234541459092041598827126871567015005162307584, 73612914469082918184083197654253743134030010324615168, 147225828938165836368166395308507486268060020649230336, 294451657876331672736332790617014972536120041298460672, 588903315752663345472665581234029945072240082596921344, 1177806631505326690945331162468059890144480165193842688, 2355613263010653381890662324936119780288960330387685376, 4711226526021306763781324649872239560577920660775370752, 9422453052042613527562649299744479121155841321550741504, 18844906104085227055125298599488958242311682643101483008, 37689812208170454110250597198977916484623365286202966016, 75379624416340908220501194397955832969246730572405932032, 150759248832681816441002388795911665938493461144811864064, 301518497665363632882004777591823331876986922289623728128, 603036995330727265764009555183646663753973844579247456256, 1206073990661454531528019110367293327507947689158494912512, 2412147981322909063056038220734586655015895378316989825024, 4824295962645818126112076441469173310031790756633979650048, 9648591925291636252224152882938346620063581513267959300096, 19297183850583272504448305765876693240127163026535918600192, 38594367701166545008896611531753386480254326053071837200384, 77188735402333090017793223063506772960508652106143674400768, 154377470804666180035586446127013545921017304212287348801536, 308754941609332360071172892254027091842034608424574697603072, 617509883218664720142345784508054183684069216849149395206144, 1235019766437329440284691569016108367368138433698298790412288]</span></span><br><span class="line"><span class="comment"># b&#x27;flag&#123;e2zy_puBlic_crypt0&#125;&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.fun/2025/04/24/2025%E8%83%BD%E6%BA%90%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E9%83%A8%E5%88%86wp/" title="2025能源网络安全部分wp">http://zh1yu.fun/2025/04/24/2025能源网络安全部分wp/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%AF%94%E8%B5%9Bwp/" rel="tag"># 比赛wp</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/04/20/CVE-2019-0708-%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2%E6%9C%8D%E5%8A%A1RCE/" rel="prev" title="CVE-2019-0708(远程桌面服务RCE)">
+      <i class="fa fa-chevron-left"></i> CVE-2019-0708(远程桌面服务RCE)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/04/28/%E7%BE%8E%E5%A5%BD%E7%9A%84%E4%B8%80%E5%88%BB/" rel="next" title="美好的一刻">
+      美好的一刻 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BE%E4%BC%9A%E7%BB%84"><span class="nav-number">1.</span> <span class="nav-text">社会组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#crypto"><span class="nav-number">1.1.</span> <span class="nav-text">crypto</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NumberTheory"><span class="nav-number">1.1.1.</span> <span class="nav-text">NumberTheory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#easy-lwe"><span class="nav-number">1.1.2.</span> <span class="nav-text">easy_lwe</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#web"><span class="nav-number">1.2.</span> <span class="nav-text">web</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%99%E7%BD%91%E9%A1%B5%E6%80%AA%E6%80%AA%E7%9A%84"><span class="nav-number">1.2.1.</span> <span class="nav-text">这网页怪怪的</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#misc"><span class="nav-number">1.3.</span> <span class="nav-text">misc</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#knn"><span class="nav-number">1.3.1.</span> <span class="nav-text">knn</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BB%84"><span class="nav-number">2.</span> <span class="nav-text">其他组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#crypto-1"><span class="nav-number">2.1.</span> <span class="nav-text">crypto</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#simpleSignin"><span class="nav-number">2.1.1.</span> <span class="nav-text">simpleSignin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#eazy-crypto"><span class="nav-number">2.1.2.</span> <span class="nav-text">eazy_crypto</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zh1yu"
+      src="/images/zh1yu2.jpg">
+  <p class="site-author-name" itemprop="name">zh1yu</p>
+  <div class="site-description" itemprop="description">花有重开日,人无再少年</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/1182418846@qq.com" title="QQ → 1182418846@qq.com"><i class="qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zh1yu</span>
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<!-- 引入jQuery -->
+<script type="text/javascript" src="//libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+
+<!-- 雪花特效 -->
+<script type="text/javascript" src="/js/snow.js"></script>
+
+</body>
+</html>
