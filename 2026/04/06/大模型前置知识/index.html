@@ -24,17 +24,23 @@
     var CONFIG = {"hostname":"zh1yu.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="花有重开日,人无再少年">
-<meta property="og:type" content="website">
-<meta property="og:title" content="知鱼的Blog">
-<meta property="og:url" content="http://zh1yu.fun/tags/%E8%80%83%E7%A0%94/index.html">
+  <meta name="description" content="预训练大致思想：通过一个已经训练好的模型A，去完成一个小数据量的任务B（使用模型A的浅层参数） 使用模型A的浅层参数去训练任务B得到模型B，方法：1.微调（一种迁移学习技术），2.冻结 eg：模型A用于分类猫和狗，任务B区分鸭和鹅（任务A和任务B要极其相似才可以使用） 图像领域的预训练卷积神经网络（CNN），一般用于图片分类任务，CNN由多个层级构成，每层学习到的特征不一样，越浅层学到的特征越通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型前置知识">
+<meta property="og:url" content="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/index.html">
 <meta property="og:site_name" content="知鱼的Blog">
-<meta property="og:description" content="花有重开日,人无再少年">
+<meta property="og:description" content="预训练大致思想：通过一个已经训练好的模型A，去完成一个小数据量的任务B（使用模型A的浅层参数） 使用模型A的浅层参数去训练任务B得到模型B，方法：1.微调（一种迁移学习技术），2.冻结 eg：模型A用于分类猫和狗，任务B区分鸭和鹅（任务A和任务B要极其相似才可以使用） 图像领域的预训练卷积神经网络（CNN），一般用于图片分类任务，CNN由多个层级构成，每层学习到的特征不一样，越浅层学到的特征越通">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/1.png">
+<meta property="og:image" content="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/2.png">
+<meta property="article:published_time" content="2026-04-06T08:31:49.000Z">
+<meta property="article:modified_time" content="2026-04-06T12:12:15.584Z">
 <meta property="article:author" content="zh1yu">
+<meta property="article:tag" content="大模型">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/1.png">
 
-<link rel="canonical" href="http://zh1yu.fun/tags/%E8%80%83%E7%A0%94/">
+<link rel="canonical" href="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/">
 
 
 <script id="page-configurations">
@@ -42,12 +48,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: 考研 | 知鱼的Blog</title>
+  <title>大模型前置知识 | 知鱼的Blog</title>
   
 
 
@@ -155,51 +161,123 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">考研
-          <small>标签</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/zh1yu2.jpg">
+      <meta itemprop="name" content="zh1yu">
+      <meta itemprop="description" content="花有重开日,人无再少年">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="知鱼的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大模型前置知识
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2026-04-06 16:31:49 / 修改时间：20:12:15" itemprop="dateCreated datePublished" datetime="2026-04-06T16:31:49+08:00">2026-04-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" itemprop="url" rel="index"><span itemprop="name">大模型</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2026</span>
+        <span id="more"></span>
+<h1 id="预训练"><a href="#预训练" class="headerlink" title="预训练"></a>预训练</h1><p>大致思想：通过一个已经训练好的模型A，去完成一个小数据量的任务B（使用模型A的浅层参数）</p>
+<p>使用模型A的浅层参数去训练任务B得到模型B，方法：1.微调（一种迁移学习技术），2.冻结</p>
+<p>eg：模型A用于分类猫和狗，任务B区分鸭和鹅（任务A和任务B要极其相似才可以使用）</p>
+<h2 id="图像领域的预训练"><a href="#图像领域的预训练" class="headerlink" title="图像领域的预训练"></a>图像领域的预训练</h2><p>卷积神经网络（CNN），一般用于图片分类任务，CNN由多个层级构成，每层学习到的特征不一样，<strong>越浅层学到的特征越通用（横竖撇捺），越深层学到的特征与具体任务的关联性越强（人脸-人脸轮廓，汽车-汽车轮廓）</strong></p>
+<p><img src="1.png" alt="图片"></p>
+<p>如果我们要做一个图像分类任务：猫狗图片各十张，设计一个深度神经网络区分猫狗图片。对于这个任务设计一个深度神经网络是不可能的，<strong>因为深度学习在训练阶段需要大量的数据</strong>，当前图片数量过少。</p>
+<p>但可以利用网上现有的大量已经做好分类标注的图片，比如Imagenet中有大量图片，我们利用其中数据训练出一个模型A，然后对模型A做一定的改进得到模型B，有两种改进方法：</p>
+<p>1.冻结（frozen）：浅层参数使用模型A的参数，<strong>高层参数随机初始化，浅层参数一直不变</strong>，然后将各十张猫狗照片训练参数</p>
+<p>2.微调（fune-tuning）（常用）：浅层参数使用模型A的参数，<strong>高层层数随机化</strong>，然后将各十张猫狗照片训练参数，<strong>这里浅层参数会随着任务的训练不断发生变化</strong></p>
+<p><img src="2.png" alt="图片"></p>
+<p>第一行和第二行都是从头训练，第三行是用B的参数进行冻结预训练，第四行是用A的参数进行微调预训练</p>
+<h1 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h1><p>通俗说语言模型就是计算一个句子的概率，即对于语言序列$ <code>w_1,w_2,...,w_n</code> $，语言模型就是计算该序列的概率，即$ P(w_1,w_2,…w_n) $。($ w_i表示一个词 $)</p>
+<p>通过两个实例来了解上述意思：</p>
+<p>1.假设给定两句话”判断这个词的磁性”和”判断这个词的磁性”,语言模型会认为后者更自然，转化为数学语言即：<script type="math/tex">P(判断，这个，词，的，词性)>P(判断，这个，词，的，磁性)</script></p>
+<p>2.假设给定一句话做填空 “判断这个词的____”，则问题就变成了给定前面的词，找出后面的一个词是什么，转化为数学语言就是：<script type="math/tex">P(词性|判断，这个，词，的)>P(磁性|判断，这个，词，的)</script></p>
+<p>由两个实例给出语言模型更加具体描述：给定一个由<script type="math/tex">n</script>各词组成的句子<script type="math/tex">W=w_1,w_2,⋯,w_n</script>，计算这个句子的概率<script type="math/tex">P(w_1,w_2,⋯,w_n)</script>，或者根据上文计算下一个词的概率<script type="math/tex">P(w_n|w_1,w_2,⋯,w_{n-1})</script></p>
+<p>语言模型的两个分支：统计语言模型和神经网络语言模型</p>
+<h2 id="统计语-言模型"><a href="#统计语-言模型" class="headerlink" title="统计语  言模型"></a>统计语  言模型</h2>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
+        
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2026-03-16T21:20:18+08:00"
-              content="2026-03-16">
-          03-16
-        </time>
-      </div>
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zh1yu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zh1yu.fun/2026/04/06/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86/" title="大模型前置知识">http://zh1yu.fun/2026/04/06/大模型前置知识/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2026/03/16/%E8%80%83%E7%A0%94%E5%A4%8D%E8%AF%95/" itemprop="url">
-            <span itemprop="name">考研复试</span>
-          </a>
-      </div>
 
-    </header>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag"># 大模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/03/16/%E8%80%83%E7%A0%94%E5%A4%8D%E8%AF%95/" rel="prev" title="考研复试">
+      <i class="fa fa-chevron-left"></i> 考研复试
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
@@ -275,6 +353,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="nav-number">1.</span> <span class="nav-text">预训练</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E9%A2%86%E5%9F%9F%E7%9A%84%E9%A2%84%E8%AE%AD%E7%BB%83"><span class="nav-number">1.1.</span> <span class="nav-text">图像领域的预训练</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">语言模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E8%AF%AD-%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">统计语  言模型</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
