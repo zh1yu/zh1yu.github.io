@@ -231,61 +231,121 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 在dvwa的pikachu学会xss的一些基本原理和方法后，来xss-labs测试一下</p>
+        <p>在dvwa的pikachu学会xss的一些基本原理和方法后，来xss-labs测试一下</p>
 <span id="more"></span>
 <p>ps：这里好像都是反射型的，至少前九关是这样，后面的没有做</p>
-<h2 id="leve1（无过滤）"><a href="#leve1（无过滤）" class="headerlink" title="leve1（无过滤）"></a>leve1（无过滤）</h2><p>第一关没难度</p>
+<h2 id="leve1无过滤">leve1（无过滤）</h2>
+<p>第一关没难度</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：?name=<span class="language-xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<h2 id="leve2（闭合script标签绕过）"><a href="#leve2（闭合script标签绕过）" class="headerlink" title="leve2（闭合script标签绕过）"></a>leve2（闭合script标签绕过）</h2><p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>失败，看下前端源码：</p>
-<p><img src="1.png" alt="图片"></p>
+<h2 id="leve2闭合script标签绕过">leve2（闭合script标签绕过）</h2>
+<p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>失败，看下前端源码：</p>
+<figure>
+<img src="1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们需要主动闭合，使<code>&lt;script&gt;标签</code>逃逸出来</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：?keyword=<span class="string">&#x27;&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="2.png" alt="图片"></p>
-<p>或者下面的payload：<code>&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
-<h2 id="leve3（单引号onclick事件绕过）"><a href="#leve3（单引号onclick事件绕过）" class="headerlink" title="leve3（单引号onclick事件绕过）"></a>leve3（单引号onclick事件绕过）</h2><p>尝试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>失败，继续看源码：</p>
-<p><img src="3.png" alt="图片"></p>
-<p>左尖括号和右尖括号都被转义了，所以我们用不了标签，接下来只能尝试<strong>事件弹窗</strong>，先看下<code>&#39; &quot; &lt; &gt;</code>有哪些被转义</p>
-<p><img src="4.png" alt="图片"></p>
+<figure>
+<img src="2.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>或者下面的payload：<code>"&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+<h2 id="leve3单引号onclick事件绕过">leve3（单引号onclick事件绕过）</h2>
+<p>尝试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>失败，继续看源码：</p>
+<figure>
+<img src="3.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>左尖括号和右尖括号都被转义了，所以我们用不了标签，接下来只能尝试<strong>事件弹窗</strong>，先看下<code>' " &lt; &gt;</code>有哪些被转义</p>
+<figure>
+<img src="4.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>这里只有单引号没有被转义，那就用<code>onclick</code>来弹窗</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：#<span class="string">&#x27; onclick=&#x27;</span><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><br></pre></td></tr></table></figure>
 <p>这里的井号可有可无的，onclick后面的单引号与后面原先的单引号闭合，然后我们点击输入框，即可成功</p>
-<p><img src="5.png" alt="图片"></p>
-<h2 id="leve4（双引号onclick事件绕过）"><a href="#leve4（双引号onclick事件绕过）" class="headerlink" title="leve4（双引号onclick事件绕过）"></a>leve4（双引号onclick事件绕过）</h2><p>这里同样方法测试，发现单双引号都没过滤，还发现value的值是被双引号包含（与上一题的不同点），直接把payload的单引号换成双引号即可</p>
+<figure>
+<img src="5.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h2 id="leve4双引号onclick事件绕过">leve4（双引号onclick事件绕过）</h2>
+<p>这里同样方法测试，发现单双引号都没过滤，还发现value的值是被双引号包含（与上一题的不同点），直接把payload的单引号换成双引号即可</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：#<span class="string">&quot; onclick=&quot;</span><span class="title function_">alert</span>(<span class="variable language_">document</span>.<span class="property">cookie</span>)</span><br></pre></td></tr></table></figure>
-<p><img src="6.png" alt="图片"></p>
+<figure>
+<img src="6.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后点击输入框的#即可</p>
-<h2 id="leve5（a标签js伪协议绕过）"><a href="#leve5（a标签js伪协议绕过）" class="headerlink" title="leve5（a标签js伪协议绕过）"></a>leve5（a标签js伪协议绕过）</h2><p>发现script标签里的r和i之间被加上了下划线，那么script肯定用不了了，<code>&#39; &quot; &lt; &gt;</code>都没被过滤，然后发现onclick事件也用不了</p>
-<p><img src="7.png" alt="图片"><img src="8.png" alt="图片"></p>
+<h2 id="leve5a标签js伪协议绕过">leve5（a标签js伪协议绕过）</h2>
+<p>发现script标签里的r和i之间被加上了下划线，那么script肯定用不了了，<code>' " &lt; &gt;</code>都没被过滤，然后发现onclick事件也用不了</p>
+<p><img src="7.png" alt="图片" /><img src="8.png" alt="图片" /></p>
 <p>那这里只能用a标签了</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：#<span class="string">&quot;&gt;&lt;a href=javascript:alert(1)&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="9.png" alt="图片"></p>
-<h2 id="level6（大小写绕过）"><a href="#level6（大小写绕过）" class="headerlink" title="level6（大小写绕过）"></a>level6（大小写绕过）</h2><p>测试一下href和ri和on，确认下a标签和script标签和onclick事件能不能用</p>
-<p><img src="10.png" alt="图片"></p>
+<figure>
+<img src="9.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h2 id="level6大小写绕过">level6（大小写绕过）</h2>
+<p>测试一下href和ri和on，确认下a标签和script标签和onclick事件能不能用</p>
+<figure>
+<img src="10.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>只能尝试script大小写了（双写肯定不行的）</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：<span class="string">&quot;&gt;&lt;scRipt&gt;alert(1)&lt;/scRipt&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="11.png" alt="图片"></p>
+<figure>
+<img src="11.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p><strong>除了script大小写，还可以href大小写，和on大小写都能绕</strong></p>
-<h2 id="level7（双写绕过）"><a href="#level7（双写绕过）" class="headerlink" title="level7（双写绕过）"></a>level7（双写绕过）</h2><p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，发现script没了，只剩下尖括号了，那这里应该是过滤了script关键字，那就可以用双写绕过了</p>
-<p><img src="12.png" alt="图片"></p>
+<h2 id="level7双写绕过">level7（双写绕过）</h2>
+<p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，发现script没了，只剩下尖括号了，那这里应该是过滤了script关键字，那就可以用双写绕过了</p>
+<figure>
+<img src="12.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">paylaod：<span class="string">&quot;&gt;&lt;scscriptript&gt;alert(1)&lt;/scscriptript&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="13.png" alt="图片"></p>
+<figure>
+<img src="13.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p><strong>这里用其他的双写也能绕过，如a标签的href和事件的onclick中的on双写都可以</strong></p>
-<h2 id="level8（href之unicode编码绕过）"><a href="#level8（href之unicode编码绕过）" class="headerlink" title="level8（href之unicode编码绕过）"></a>level8（href之unicode编码绕过）</h2><p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
-<p><img src="14.png" alt="图片"></p>
-<p>可以看到输入的内容赋值给href，而href可以执行js伪协议即<code>href=javascript:alert(1)</code>，但是这里被过滤了，大小写也绕不了，但是href在执行过程中回对unicode编码，如果我们传输的是<code>javascript:alert(1)</code>的unicode编码，那么执行过程就会解码，就成功绕过了，在线<a target="_blank" rel="noopener" href="https://www.matools.com/code-convert-unicode">unicode编码</a></p>
-<p><img src="15.png" alt="图片"></p>
+<h2
+id="level8href之unicode编码绕过">level8（href之unicode编码绕过）</h2>
+<p>测试<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+<figure>
+<img src="14.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>可以看到输入的内容赋值给href，而href可以执行js伪协议即<code>href=javascript:alert(1)</code>，但是这里被过滤了，大小写也绕不了，但是href在执行过程中回对unicode编码，如果我们传输的是<code>javascript:alert(1)</code>的unicode编码，那么执行过程就会解码，就成功绕过了，在线<a
+target="_blank" rel="noopener" href="https://www.matools.com/code-convert-unicode">unicode编码</a></p>
+<figure>
+<img src="15.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">paylaod：&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#41;</span><br></pre></td></tr></table></figure>
-<p><img src="16.png" alt="图片"></p>
+<figure>
+<img src="16.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后点击友情链接就能绕过</p>
-<h2 id="level9（href之unicode编码绕过）"><a href="#level9（href之unicode编码绕过）" class="headerlink" title="level9（href之unicode编码绕过）"></a>level9（href之unicode编码绕过）</h2><p>查看源码发现我（href之unicode编码绕过）们的输入中需要包含<code>http://</code>，我们可以这样构造：</p>
-<p><img src="17.png" alt="图片"></p>
+<h2
+id="level9href之unicode编码绕过">level9（href之unicode编码绕过）</h2>
+<p>查看源码发现我（href之unicode编码绕过）们的输入中需要包含<code>http://</code>，我们可以这样构造：</p>
+<figure>
+<img src="17.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#41;//http://</span><br></pre></td></tr></table></figure>
 <p>我们最后使用一个双斜杠给它隔断</p>
-<p><img src="18.png" alt="图片"></p>
+<figure>
+<img src="18.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后点击友情链接就能绕过</p>
 <p>后面的有点难，有时间再搞吧</p>
 <p><strong>参考文章</strong>：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/l2872253606/article/details/125638898">https://blog.csdn.net/l2872253606/article/details/125638898</a></p>
+<p>https://blog.csdn.net/l2872253606/article/details/125638898</p>
 
     </div>
 
@@ -409,7 +469,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#leve1%EF%BC%88%E6%97%A0%E8%BF%87%E6%BB%A4%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">leve1（无过滤）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve2%EF%BC%88%E9%97%AD%E5%90%88script%E6%A0%87%E7%AD%BE%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">leve2（闭合script标签绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve3%EF%BC%88%E5%8D%95%E5%BC%95%E5%8F%B7onclick%E4%BA%8B%E4%BB%B6%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">leve3（单引号onclick事件绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve4%EF%BC%88%E5%8F%8C%E5%BC%95%E5%8F%B7onclick%E4%BA%8B%E4%BB%B6%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">leve4（双引号onclick事件绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve5%EF%BC%88a%E6%A0%87%E7%AD%BEjs%E4%BC%AA%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">leve5（a标签js伪协议绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level6%EF%BC%88%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">level6（大小写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level7%EF%BC%88%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">level7（双写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level8%EF%BC%88href%E4%B9%8Bunicode%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">level8（href之unicode编码绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level9%EF%BC%88href%E4%B9%8Bunicode%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87%EF%BC%89"><span class="nav-number">9.</span> <span class="nav-text">level9（href之unicode编码绕过）</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#leve1%E6%97%A0%E8%BF%87%E6%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">leve1（无过滤）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve2%E9%97%AD%E5%90%88script%E6%A0%87%E7%AD%BE%E7%BB%95%E8%BF%87"><span class="nav-number">2.</span> <span class="nav-text">leve2（闭合script标签绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve3%E5%8D%95%E5%BC%95%E5%8F%B7onclick%E4%BA%8B%E4%BB%B6%E7%BB%95%E8%BF%87"><span class="nav-number">3.</span> <span class="nav-text">leve3（单引号onclick事件绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve4%E5%8F%8C%E5%BC%95%E5%8F%B7onclick%E4%BA%8B%E4%BB%B6%E7%BB%95%E8%BF%87"><span class="nav-number">4.</span> <span class="nav-text">leve4（双引号onclick事件绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leve5a%E6%A0%87%E7%AD%BEjs%E4%BC%AA%E5%8D%8F%E8%AE%AE%E7%BB%95%E8%BF%87"><span class="nav-number">5.</span> <span class="nav-text">leve5（a标签js伪协议绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level6%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">6.</span> <span class="nav-text">level6（大小写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level7%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87"><span class="nav-number">7.</span> <span class="nav-text">level7（双写绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level8href%E4%B9%8Bunicode%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="nav-number">8.</span> <span class="nav-text">level8（href之unicode编码绕过）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#level9href%E4%B9%8Bunicode%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87"><span class="nav-number">9.</span> <span class="nav-text">level9（href之unicode编码绕过）</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

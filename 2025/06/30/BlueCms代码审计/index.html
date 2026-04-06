@@ -241,62 +241,140 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 初识代码审计，先学习bluecms，这个系统因为比较老，所以相对而言比较简单</p>
+        <p>初识代码审计，先学习bluecms，这个系统因为比较老，所以相对而言比较简单</p>
 <span id="more"></span>
-<h3 id="系统搭建"><a href="#系统搭建" class="headerlink" title="系统搭建"></a>系统搭建</h3><p>该系统的下载地址：<a href="https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fsource-trace%2Fbluecms">https://github.com/source-trace/bluecms</a>，先把源码下载到www的目录下：</p>
-<p><img src="1.png" alt="图片"></p>
+<h3 id="系统搭建">系统搭建</h3>
+<p>该系统的下载地址：<a
+href="https://cloud.tencent.com/developer/tools/blog-entry?target=https%3A%2F%2Fgithub.com%2Fsource-trace%2Fbluecms">https://github.com/source-trace/bluecms</a>，先把源码下载到www的目录下：</p>
+<figure>
+<img src="1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>访问<code>http://localhost:90/bluecms/uploads/install</code></p>
-<p><img src="2.png" alt="图片"></p>
+<figure>
+<img src="2.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>然后安装程序(ps：这里phpstudy搭建的bluecms所用的apach版本要低于7才可以)</p>
-<p><img src="3.png" alt="图片"></p>
+<figure>
+<img src="3.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>安装后访问<code>http://localhost:90/bluecms/uploads</code>，即可来到登录页面</p>
-<p><img src="4.png" alt="图片"></p>
-<h3 id="第一个xss"><a href="#第一个xss" class="headerlink" title="第一个xss"></a>第一个xss</h3><p>这里有用户名和密码，弱口令和sql注入都可以尝试下，但随着安全意识提升，这种登录口的漏洞越来越少，我们尝试这里的注册点：</p>
-<p><img src="5.png" alt="图片"></p>
-<p><img src="6.png" alt="图片"></p>
+<figure>
+<img src="4.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h3 id="第一个xss">第一个xss</h3>
+<p>这里有用户名和密码，弱口令和sql注入都可以尝试下，但随着安全意识提升，这种登录口的漏洞越来越少，我们尝试这里的注册点：</p>
+<figure>
+<img src="5.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="6.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>这里需要我们写入个人信息，<strong>关键点：</strong>这里可能存在<strong>存储型xss</strong>，我们填入信息：</p>
-<p><img src="7.png" alt="图片"></p>
+<figure>
+<img src="7.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们如果直接向其中一个信息字段写入xss的内容，可能会被前端给拦截，我们赌它后端不会被检测，使用抓包软件修改字段内容再发送，加入该xss字段：<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></p>
-<p><img src="8.png" alt="图片"></p>
+<figure>
+<img src="8.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们使用这个账号进行登录：</p>
-<p><img src="9.png" alt="图片"></p>
+<figure>
+<img src="9.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>查看源码：</p>
-<p><img src="10.png" alt="图片"></p>
+<figure>
+<img src="10.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>成功写入，存在存储型xss漏洞</p>
-<h3 id="sql注入漏洞（宽字节）"><a href="#sql注入漏洞（宽字节）" class="headerlink" title="sql注入漏洞（宽字节）"></a>sql注入漏洞（宽字节）</h3><p>观察到uploads目录下有admin文件，访问该目录：</p>
-<p><img src="11.png" alt="图片"></p>
-<p>测试语句：<code>admin&#39; or 1=1 --+</code>，<code>admin or 1=1 --+</code>也不行，那就看下源码：</p>
-<p><img src="12.png" alt="图片"></p>
+<h3 id="sql注入漏洞宽字节">sql注入漏洞（宽字节）</h3>
+<p>观察到uploads目录下有admin文件，访问该目录：</p>
+<figure>
+<img src="11.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>测试语句：<code>admin' or 1=1 --+</code>，<code>admin or 1=1 --+</code>也不行，那就看下源码：</p>
+<figure>
+<img src="12.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>这里用到了<code>check_admin</code>函数校验，我们去看下它的执行逻辑，跳到<code>common.fun.php</code>文件：</p>
-<p><img src="13.png" alt="图片"></p>
+<figure>
+<img src="13.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>这里有一个全局类对象<code>global $db</code>，然后调用<code>getone</code>方法判断输入是否合法</p>
-<p><img src="14.png" alt="图片"></p>
+<figure>
+<img src="14.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>我们需要要找到这个对象从哪new得到的，在当前文件查找<strong>include关键字</strong>，没找到，不过在login.php找到了包含<code>/include/common.inc.php</code></p>
 <p>然后果然在/include/common.inc.php中找到了$db的所属类：<strong>mysql</strong></p>
-<p><img src="15.png" alt="图片"></p>
+<figure>
+<img src="15.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>还发现了一个对输入参数的过滤：</p>
-<p><img src="16.png" alt="图片"></p>
-<p><code>get_magic_quotes_gpc()</code>是 PHP 5.4 之前的一个函数，用于检测是否启用了 <code>magic_quotes_gpc</code>（自动对用户输入转义的功能）。</p>
-<p>如果返回 <code>false</code>（未启用），则手动调用 <code>deep_addslashes()</code> 对输入数据转义</p>
+<figure>
+<img src="16.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p><code>get_magic_quotes_gpc()</code>是 PHP 5.4
+之前的一个函数，用于检测是否启用了
+<code>magic_quotes_gpc</code>（自动对用户输入转义的功能）。</p>
+<p>如果返回 <code>false</code>（未启用），则手动调用
+<code>deep_addslashes()</code> 对输入数据转义</p>
 <p><strong><code>deep_addslashes()</code></strong></p>
 <ul>
-<li>是一个自定义函数（递归处理数组的 <code>addslashes()</code>），作用是为特殊字符（如单引号 <code>&#39;</code>、双引号 <code>&quot;</code>、反斜杠 <code>\</code>）添加反斜杠转义。</li>
-<li>例如：<code>I&#39;m</code> → <code>I\&#39;m</code>，<strong>防止 SQL 语句被恶意闭合</strong></li>
+<li>是一个自定义函数（递归处理数组的
+<code>addslashes()</code>），作用是为特殊字符（如单引号
+<code>'</code>、双引号 <code>"</code>、反斜杠
+<code>\</code>）添加反斜杠转义。</li>
+<li>例如：<code>I'm</code> → <code>I\'m</code>，<strong>防止 SQL
+语句被恶意闭合</strong></li>
 </ul>
 <p><code>deep_addslashes()</code>的处理逻辑：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deep_addslashes</span>(<span class="params"><span class="variable">$str</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="title function_ invoke__">is_array</span>(<span class="variable">$str</span>))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">foreach</span>(<span class="variable">$str</span> <span class="keyword">as</span> <span class="variable">$key</span>=&gt;<span class="variable">$val</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="variable">$str</span>[<span class="variable">$key</span>] = <span class="title function_ invoke__">deep_addslashes</span>(<span class="variable">$val</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="variable">$str</span> = <span class="title function_ invoke__">addslashes</span>(<span class="variable">$str</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="variable">$str</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>找到了这些之后，我们还需要找到mysql类的初始化定义，发现在<code>mysql.class.php</code>文件中</p>
-<p><img src="17.png" alt="图片"></p>
-<p>不过我们注意到使用了gbk编码，而这很容易导致宽字节注入，宽字节注入的两个条件就是<strong>1.数据库使用GBK/GB2312等多字节字符集</strong>，<strong>2.使用了不安全的转义函数</strong>，显然这里同时满足，可以宽字节注入的原因：如果我们使用<code>&#39;</code>闭合，那么系统会给我们加上一个转义字符<code>\</code>，使<code>&#39;</code>成为普通字符，但如果我们在<code>&#39;</code>前面加上<code>%df</code>，而<code>\</code>的ascii(gbk)编码是<code>%5c</code>，拼接在一起就是<code>%df%5c&#39;</code>，因为gbk的编码字符涉及到汉字编码非常广泛，所以会将<code>%df%5c</code>视作一个汉字<code>運</code>来解码，从而单引号逃逸，构成宽字节注入</p>
-<p>我们尝试宽字节注入：<code>%df&#39; or 1=1 #</code>，这里用<code>--+</code>不行，不知道为什么，但没关系，我们先在前端提交，密码随便输：</p>
-<p><img src="18.png" alt="图片"></p>
+<figure>
+<img src="17.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>不过我们注意到使用了gbk编码，而这很容易导致宽字节注入，宽字节注入的两个条件就是<strong>1.数据库使用GBK/GB2312等多字节字符集</strong>，<strong>2.使用了不安全的转义函数</strong>，显然这里同时满足，可以宽字节注入的原因：如果我们使用<code>'</code>闭合，那么系统会给我们加上一个转义字符<code>\</code>，使<code>'</code>成为普通字符，但如果我们在<code>'</code>前面加上<code>%df</code>，而<code>\</code>的ascii(gbk)编码是<code>%5c</code>，拼接在一起就是<code>%df%5c'</code>，因为gbk的编码字符涉及到汉字编码非常广泛，所以会将<code>%df%5c</code>视作一个汉字<code>運</code>来解码，从而单引号逃逸，构成宽字节注入</p>
+<p>我们尝试宽字节注入：<code>%df' or 1=1 #</code>，这里用<code>--+</code>不行，不知道为什么，但没关系，我们先在前端提交，密码随便输：</p>
+<figure>
+<img src="18.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>发现失败大概率就是因为经过这里有特殊字符，经过url编码，后端解码得到的字符不是我们最初的构造字符，所以失败，对于这种，一般在抓包软件中提交，这样不经过前端校验，直接由后端处理</p>
-<p><img src="19.png" alt="图片"></p>
-<p>当然并非只有这一种形式构造，还可以：<code>%ef&#39; or 1=1 #</code>，<strong>只要%ef和%5c经过gbk编码可以得到一个汉字即可</strong></p>
-<p><img src="20.png" alt="图片"></p>
-<h3 id="第二个xss"><a href="#第二个xss" class="headerlink" title="第二个xss"></a>第二个xss</h3><p>根据源码，我们找到<code>/bluecms/uploads/admin/ad_phone.php</code>，写入xss内容：</p>
-<p><img src="21.png" alt="图片"></p>
-<p><img src="22.png" alt="图片"></p>
+<figure>
+<img src="19.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<p>当然并非只有这一种形式构造，还可以：<code>%ef' or 1=1 #</code>，<strong>只要%ef和%5c经过gbk编码可以得到一个汉字即可</strong></p>
+<figure>
+<img src="20.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<h3 id="第二个xss">第二个xss</h3>
+<p>根据源码，我们找到<code>/bluecms/uploads/admin/ad_phone.php</code>，写入xss内容：</p>
+<figure>
+<img src="21.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
+<figure>
+<img src="22.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 
     </div>
 
@@ -420,7 +498,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">系统搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAxss"><span class="nav-number">2.</span> <span class="nav-text">第一个xss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%EF%BC%88%E5%AE%BD%E5%AD%97%E8%8A%82%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">sql注入漏洞（宽字节）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AAxss"><span class="nav-number">4.</span> <span class="nav-text">第二个xss</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">系统搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAxss"><span class="nav-number">2.</span> <span class="nav-text">第一个xss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AE%BD%E5%AD%97%E8%8A%82"><span class="nav-number">3.</span> <span class="nav-text">sql注入漏洞（宽字节）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AAxss"><span class="nav-number">4.</span> <span class="nav-text">第二个xss</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

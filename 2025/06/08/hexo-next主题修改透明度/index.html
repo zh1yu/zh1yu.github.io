@@ -220,20 +220,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p> 发现博客主页的文章简介总是会挡住背景图片，导致很难看，于是我们可以修改其透明度，让图片显现出来</p>
+        <p>发现博客主页的文章简介总是会挡住背景图片，导致很难看，于是我们可以修改其透明度，让图片显现出来</p>
 <span id="more"></span>
 <p>1.在<code>根目录/source/</code>新建文件夹_data：这里是站点根目录</p>
-<p>在 <code>_data</code> 文件夹下新建 <code>styles.styl</code> 文件，然后写入：</p>
+<p>在 <code>_data</code> 文件夹下新建 <code>styles.styl</code>
+文件，然后写入：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//###### 博客内容透明化 ######</span></span><br><span class="line"></span><br><span class="line">:root &#123;</span><br><span class="line">  --content-bg-<span class="attr">color</span>:#ffffffe6;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>这里<code>#ffffffe6</code>表示透明度为10%，如果想更加透明可以问AI进行修改即可</p>
 <p>2.在<code>/themes/next\_config.yml</code>中搜索：<code>custom_file_path</code>，并把里面的<code>style: source/_data/styles.styl</code>的注释给取消</p>
-<p><img src="1.png" alt="图片"></p>
+<figure>
+<img src="1.png" alt="图片" />
+<figcaption aria-hidden="true">图片</figcaption>
+</figure>
 <p>3.<strong>这步有可能可以跳过</strong>,如果最后没成功，再来进行这一步（反正我是不要需要这一步）</p>
 <p>在根目录的站点配置文件中，找到<code>skip_render</code>字段，添加：<code>_data/**</code>，即</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">skip_render</span>:</span><br><span class="line">  - <span class="string">&quot;_data/**&quot;</span></span><br></pre></td></tr></table></figure>
 <p>4.重新部署就可以了</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo s -g</span><br></pre></td></tr></table></figure>
-<p><strong>参考文章：</strong><a target="_blank" rel="noopener" href="https://hui-shao.com/next-transparent-background/">https://hui-shao.com/next-transparent-background/</a></p>
+<p><strong>参考文章：</strong><a
+target="_blank" rel="noopener" href="https://hui-shao.com/next-transparent-background/">https://hui-shao.com/next-transparent-background/</a></p>
 
     </div>
 
