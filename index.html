@@ -192,7 +192,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-04-08 11:25:51" itemprop="dateModified" datetime="2026-04-08T11:25:51+08:00">2026-04-08</time>
+                <time title="修改时间：2026-04-08 11:41:21" itemprop="dateModified" datetime="2026-04-08T11:41:21+08:00">2026-04-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -223,7 +223,7 @@
 <h2 id="图像领域的预训练">图像领域的预训练</h2>
 <p>卷积神经网络（CNN），一般用于图片分类任务，CNN由多个层级构成，每层学习到的特征不一样，<strong>越浅层学到的特征越通用（横竖撇捺），越深层学到的特征与具体任务的关联性越强（人脸-人脸轮廓，汽车-汽车轮廓）</strong></p>
 <figure>
-<img src="D:\Blog\source_posts\大模型前置知识\1.png" alt="图片" />
+<img src="1.png" alt="图片" />
 <figcaption aria-hidden="true">图片</figcaption>
 </figure>
 <p>如果我们要做一个图像分类任务：猫狗图片各十张，设计一个深度神经网络区分猫狗图片。对于这个任务设计一个深度神经网络是不可能的，<strong>因为深度学习在训练阶段需要大量的数据</strong>，当前图片数量过少。</p>
@@ -231,7 +231,7 @@
 <p>1.冻结（frozen）：浅层参数使用模型A的参数，<strong>高层参数随机初始化，浅层参数一直不变</strong>，然后将各十张猫狗照片训练参数</p>
 <p>2.微调（fune-tuning）（常用）：浅层参数使用模型A的参数，<strong>高层参数随机化</strong>，然后将各十张猫狗照片训练参数，<strong>这里浅层参数会随着任务的训练不断发生变化</strong></p>
 <figure>
-<img src="D:\Blog\source_posts\大模型前置知识\2.png" alt="图片" />
+<img src="2.png" alt="图片" />
 <figcaption aria-hidden="true">图片</figcaption>
 </figure>
 <p>第一行和第二行都是从头训练，第三行是用B的参数进行冻结预训练，第四行是用A的参数进行微调预训练</p>
